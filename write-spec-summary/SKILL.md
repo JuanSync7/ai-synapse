@@ -1,6 +1,9 @@
 ---
 name: write-spec-summary
 description: Write or update a concise specification summary document that stays in sync with a companion spec. Use when the user needs to create a spec summary, update a spec summary, sync a summary with its spec, or asks for a "spec summary". Triggered by requests like "write a spec summary", "summarize the spec", "update spec summary", "sync summary with spec".
+domain: docs.spec
+intent: summarize
+tags: [summary, digest, overview]
 user-invocable: true
 argument-hint: "[path to spec document] [optional: output path for summary]"
 ---
@@ -12,7 +15,7 @@ This skill produces a **Layer 2 — Spec Summary** in the 4-layer doc hierarchy:
 ```
 Layer 1: Platform Spec          (manual)
 Layer 2: Spec Summary           ← YOU ARE HERE
-Layer 3: Authoritative Spec     ← write-spec (required input — must exist)
+Layer 3: Authoritative Spec     ← write-spec-docs (required input — must exist)
 Layer 4: Implementation Guide   ← write-impl
 ```
 
@@ -247,7 +250,7 @@ When the user asks to "update" or "sync" a summary:
 ## Integration
 
 **Upstream (required before this skill):**
-- `write-spec` — the companion spec must exist before writing a summary
+- `write-spec-docs` — the companion spec must exist before writing a summary
 
 **Downstream (invoke after this skill):**
 - `write-design` — generate a technical design document with task decomposition and contracts
@@ -259,6 +262,6 @@ When the user asks to "update" or "sync" a summary:
 ## Document Chain
 
 ```
-write-spec  →  write-spec-summary  →  write-design  →  write-implementation
- _SPEC.md      _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
+write-spec-docs  →  write-spec-summary  →  write-design  →  build-plan
+ _SPEC.md            _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
 ```

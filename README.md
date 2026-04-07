@@ -16,7 +16,7 @@ Layer 2 — Spec Summary            /write-spec-summary
           §2+: Requirements digest for technical stakeholders
                │
                ▼
-Layer 3 — Authoritative Spec      /write-spec
+Layer 3 — Authoritative Spec      /write-spec-docs
           Full FR/NFR requirements, rationale, acceptance criteria,
           traceability matrix
                │
@@ -32,7 +32,7 @@ Layer 4 — Implementation Guide    /write-impl
 
 | Skill | Invoke | Required Input | Output |
 |-------|--------|---------------|--------|
-| `write-spec` | `/write-spec` | System description + context | Authoritative spec (Layer 3) |
+| `write-spec-docs` | `/write-spec-docs` | System description + context | Authoritative spec (Layer 3) |
 | `write-spec-summary` | `/write-spec-summary` | Spec file path | Summary with §1 Generic Overview (Layer 2) |
 | `write-impl` | `/write-impl` | Spec file path | Phased implementation guide (Layer 4) |
 

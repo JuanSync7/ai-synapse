@@ -1,6 +1,9 @@
 ---
 name: generate-test-prompts
 description: Generates diverse, unbiased test prompts for evaluating a Claude Code skill. Operates blind — sees only the skill's name and one-line description, never the SKILL.md body. Produces prompts across naive, experienced, adversarial, and wrong-tool personas. Triggered by "generate test prompts", "write test cases for skill", "create eval prompts".
+domain: meta.eval
+intent: generate
+tags: [test prompts, personas, blind]
 user-invocable: true
 argument-hint: "[skill name] [skill description (one line)]"
 ---
@@ -11,7 +14,7 @@ Generates realistic, diverse test prompts for a skill. You operate **blind** —
 
 ## What You See
 
-- **Skill name** (e.g., "write-spec")
+- **Skill name** (e.g., "write-spec-docs")
 - **Skill description** (e.g., "Writes a formal requirements specification document for a software system or subsystem")
 
 ## What You Do NOT See
@@ -87,11 +90,11 @@ A user whose request sounds related but actually needs a different skill.
 
 **What this tests:** Does the skill recognize when it's not the right tool?
 
-**Example (for write-spec):**
+**Example (for write-spec-docs):**
 ```
 "can you take this spec and give me a shorter version for the stakeholder meeting"
 ```
-(This needs write-spec-summary, not write-spec)
+(This needs write-spec-summary, not write-spec-docs)
 
 ## Writing Prompts
 

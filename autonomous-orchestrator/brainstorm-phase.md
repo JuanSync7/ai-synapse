@@ -102,8 +102,8 @@ After approach selection is approved, produce a **design sketch** — not a full
 
 The design sketch is the "what and why." It is NOT:
 - A full technical design (that's the `write-design` skill, later in the pipeline)
-- A spec with formal requirements (that's `write-spec`)
-- An implementation plan with code (that's `write-implementation`)
+- A spec with formal requirements (that's `write-spec-docs`)
+- An implementation plan with code (that's `build-plan`)
 
 The sketch is a lightweight artifact that gives the next stage enough context to produce its formal output.
 

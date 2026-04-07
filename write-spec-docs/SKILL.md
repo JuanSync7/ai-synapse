@@ -1,6 +1,9 @@
 ---
-name: write-spec
+name: write-spec-docs
 description: Writes a formal requirements specification document for a software system or subsystem. Use when the user needs to define requirements, acceptance criteria, and traceability for a system component. Triggered by requests like "write a spec", "create requirements", "specification document".
+domain: docs.spec
+intent: write
+tags: [spec, requirements, FR, NFR, traceability]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"
 ---
@@ -14,7 +17,7 @@ Layer 1: Platform Spec          (manual)
 Layer 2: Spec Summary           ← write-spec-summary
 Layer 3: Authoritative Spec     ← YOU ARE HERE
 Layer 4: Design Document        ← write-design
-Layer 5: Implementation Plan    ← write-implementation
+Layer 5: Implementation Plan    ← build-plan
 ```
 
 **Before writing, verify:**
@@ -224,7 +227,7 @@ prompt:         string    # the complete prompt for the section agent, with
                           # {{slot_id}} markers for prior_slots entries
 ```
 
-### write-spec section dependency graph
+### write-spec-docs section dependency graph
 
 ```
 Wave 1 (parallel — no dependencies):
@@ -351,6 +354,6 @@ Run through this before presenting the draft to the user:
 ## Document Chain
 
 ```
-write-spec  →  write-spec-summary  →  write-design  →  write-implementation
- _SPEC.md      _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
+write-spec-docs  →  write-spec-summary  →  write-design  →  build-plan
+ _SPEC.md            _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
 ```

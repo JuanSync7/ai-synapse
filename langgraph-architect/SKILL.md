@@ -1,6 +1,9 @@
 ---
 name: langgraph-architect
 description: "Design, review, or code-review LangGraph workflow graphs. Supports interactive and autonomous design (via design brief). Trigger: 'design a graph', 'build a langgraph', 'brainstorm a workflow', 'architect a pipeline', 'review this graph', 'critique this design', 'review my langgraph code', 'code review langgraph'."
+domain: frameworks.langgraph
+intent: write
+tags: [langgraph, graph, workflow, state machine]
 user-invocable: true
 argument-hint: "[describe the graph you want to design, or point to code/spec to review]"
 ---

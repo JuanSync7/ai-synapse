@@ -12,7 +12,7 @@ Every system or subsystem is documented across four layers. Each layer has one o
 |-------|--------------|------|-------|
 | 1 | Platform Spec | Platform-wide scope, cross-system contracts | (manual) |
 | 2 | Spec Summary | Distilled view; §1 is tech-agnostic and scrapeable | `write-spec-summary` |
-| 3 | Authoritative Spec | Full FR/NFR requirements with traceability | `write-spec` |
+| 3 | Authoritative Spec | Full FR/NFR requirements with traceability | `write-spec-docs` |
 | 4 | Implementation Guide | Phased tasks, code appendix, HOW to build | `write-impl` |
 
 ### Layer Rules

@@ -1,6 +1,9 @@
 ---
 name: autonomous-orchestrator
 description: Runs a fully autonomous development pipeline — chains brainstorming, specs, design, implementation, and documentation through stakeholder-reviewer gates at every transition. Triggered by "build autonomously", "autonomous orchestrator", "overnight pipeline", "autonomous development", "run the full pipeline", "build this overnight", "run autonomous".
+domain: orchestration
+intent: execute
+tags: [pipeline, autonomous, end-to-end]
 user-invocable: true
 argument-hint: "[goal or path to brief.yaml] [--template full|feature|bugfix|docs-only] [--stages stage1,stage2,...] [--from <stage> [<path>]]"
 ---

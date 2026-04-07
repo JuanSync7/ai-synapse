@@ -60,7 +60,7 @@
 
 **Prompt:** "I have a spec for a new notification service. Can you break it down into tasks and figure out what can be parallelized?"
 
-**Why this tests the skill:** Tests whether the skill recognizes this is a planning request (needs writing-plans or write-implementation) rather than an execution request — no existing task list to dispatch.
+**Why this tests the skill:** Tests whether the skill recognizes this is a planning request (needs writing-plans or build-plan) rather than an execution request — no existing task list to dispatch.
 
 ### Wrong Tool: Wants debugging parallelism
 

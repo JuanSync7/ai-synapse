@@ -1,6 +1,9 @@
 ---
-name: write-implementation
-description: Use when you have a spec AND a design document and need a bias-free implementation plan with isolated test and implementation phases, before touching code
+name: build-plan
+description: Use when you have implementation docs (from write-implementation-docs) and need a bias-free execution plan with agent isolation phases, before touching code
+domain: code.plan
+intent: plan
+tags: [execution, phases, agent isolation, bias-free]
 user-invocable: true
 argument-hint: "[path to spec] [path to design document]"
 ---
@@ -15,7 +18,7 @@ This skill extends the `writing-plans` pattern (checkboxes, exact file paths, bi
 
 **Why this matters:** When the same agent writes both test and implementation, it writes tests that validate its own mental model — not the spec's requirements. Separating them forces the test agent to derive test cases from the contract and spec alone, producing tests that are an independent verification rather than a mirror of the implementation.
 
-**Announce at start:** "I'm using the write-implementation skill to create a bias-free implementation plan."
+**Announce at start:** "I'm using the build-plan skill to create a bias-free implementation plan."
 
 ## Progress Tracking
 
@@ -34,8 +37,8 @@ TaskCreate: "Phase E: Full suite verification"
 Mark each `in_progress` when starting, `completed` when done. When dispatching agents, set `model:` explicitly on every Agent dispatch — do not rely on the session default.
 
 **Input requirements:**
-1. A spec document (or spec summary) — the source of truth for requirements
-2. A design document (from `write-design` or equivalent) — task decomposition, contracts, dependencies
+1. An implementation docs document (from `write-implementation-docs`) — the source of truth for contracts, task sections, and dependency graph
+2. The companion spec — for FR number reference during test phase planning
 
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - User preferences for plan location override this default.
@@ -45,14 +48,15 @@ Mark each `in_progress` when starting, `completed` when done. When dispatching a
 ```
 Layer 1: Platform Spec          (manual)
 Layer 2: Spec Summary           ← write-spec-summary
-Layer 3: Authoritative Spec     ← write-spec (required input)
-Layer 4: Design Document        ← write-design (required input)
-Layer 5: Implementation Plan    ← YOU ARE HERE (write-implementation)
+Layer 3: Authoritative Spec     ← write-spec-docs
+Layer 4: Design Document        ← write-design-docs
+Layer 5: Implementation Docs    ← write-implementation-docs (required input)
+Layer 6: Build Plan             ← YOU ARE HERE (build-plan)
 ```
 
 ## When to Use This vs. writing-plans
 
-| | `write-implementation` (this skill) | `writing-plans` |
+| | `build-plan` (this skill) | `writing-plans` |
 |---|---|---|
 | **Input** | Spec + design document pair | Spec or requirements alone |
 | **Output** | Five-phase plan (Phase 0/A/B/C/D/E) with isolation | Interleaved test+implement per task |
@@ -76,16 +80,16 @@ Phase 0 ──► [REVIEW GATE] ──► Phase A ──► Phase B ──► Ph
 
 ### Phase 0 — Contract Definitions
 
-Extract contracts from the design document's Code Appendix (Part B, Contract entries) and organize them into implementable files. This is the shared type surface both test and implementation agents work against.
+Phase 0 contracts are already defined in the implementation docs. Copy them verbatim — do not re-derive from the design doc. Organize them into implementable files as the shared type surface both test and implementation agents work against.
 
 **What it contains:**
-- State TypedDicts — copied from design doc contract entries
-- Config dataclasses — copied from design doc contract entries
-- Exception types — copied from design doc contract entries
+- State TypedDicts — copied from implementation docs contract entries
+- Config dataclasses — copied from implementation docs contract entries
+- Exception types — copied from implementation docs contract entries
 - Function signature stubs — bodies are `raise NotImplementedError("Task B-X.Y")`
-- Pure utility functions — copied fully implemented from design doc
+- Pure utility functions — copied fully implemented from implementation docs
 
-**Phase 0 code is complete, copy-pasteable Python.** It comes from the design doc's contract entries — the plan organizes them into file-by-file creation steps.
+**Phase 0 code is complete, copy-pasteable Python.** It comes from the implementation docs' contract entries — the plan organizes them into file-by-file creation steps.
 
 **Review gate:** Phase 0 must be human-reviewed before Phase A begins.
 

@@ -1,6 +1,9 @@
 ---
 name: write-test-docs
 description: Writes the test planning document from the engineering guide, Phase 0 contracts, and spec acceptance criteria. Produces per-module test specifications and integration test plans — the source of truth that write-module-tests agents use to implement pytest code. Triggered by "write test docs", "test planning document", "test specification document".
+domain: docs.post-build
+intent: write
+tags: [test planning, test spec, integration tests]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: engineering guide path] [optional: output path]"
 ---

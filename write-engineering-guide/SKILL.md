@@ -1,6 +1,9 @@
 ---
 name: write-engineering-guide
 description: Writes a post-implementation engineering guide documenting what was built, why decisions were made, and how each component works. Use after implementation is complete to create a maintenance/upgrade reference for developers and operators. Test planning documentation belongs in write-test-docs (invoked after this skill). Triggered by "write an engineering guide", "document the implementation", "post-implementation doc", "engineering guide".
+domain: docs.post-build
+intent: write
+tags: [engineering guide, maintenance, post-implementation]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: source directory path] [optional: output path]"
 ---
@@ -26,8 +29,8 @@ This skill produces a **Layer 5 — Engineering Guide** in the documentation hie
 ```
 Layer 1: Platform Spec           (manual)
 Layer 2: Spec Summary            ← write-spec-summary
-Layer 3: Authoritative Spec      ← write-spec
-Layer 4: Implementation Plan     ← write-impl / write-implementation
+Layer 3: Authoritative Spec      ← write-spec-docs
+Layer 4: Implementation Plan     ← write-impl / build-plan
 Layer 5: Engineering Guide       ← YOU ARE HERE (post-implementation)
 ```
 
@@ -50,7 +53,7 @@ This skill operates in two modes depending on context:
 
 ### Standalone mode (default)
 
-When invoked directly by the user (not from `write-implementation`), use the Planning Stage + wave execution model below. This mirrors Phase C of `write-implementation` — the same context isolation applies regardless of invocation source.
+When invoked directly by the user (not from `build-plan`), use the Planning Stage + wave execution model below. This mirrors Phase C of `build-plan` — the same context isolation applies regardless of invocation source.
 
 #### Planning Stage (NON-SKIPPABLE)
 
@@ -115,8 +118,8 @@ Execute the `section_context_map` using **parallel-agents-dispatch**:
 3. **Wave 2** — dispatch the cross-cutter agent with all Wave 1 outputs + spec inlined. Apply the Phase C-cross isolation contract from the Parallel mode section below.
 4. **Assemble** — the cross-cutter agent assembles the final guide at the standard output path.
 
-### Parallel mode (Phase C of write-implementation)
-Used when invoked from `write-implementation`'s Phase C. Two sub-phases:
+### Parallel mode (Phase C of build-plan)
+Used when invoked from `build-plan`'s Phase C. Two sub-phases:
 
 **Phase C-parallel — module agents (all parallel):**
 

@@ -21,7 +21,7 @@ stage:
 ```yaml
 stage:
   name: spec
-  skill: write-spec
+  skill: write-spec-docs
   input_from: brainstorm
   output_type: "formal spec (markdown)"
   output_path: "docs/superpowers/specs/<date>-<topic>-spec.md"

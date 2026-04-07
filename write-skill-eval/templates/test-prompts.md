@@ -39,7 +39,7 @@ Generate prompts across these personas:
 ### Wrong Tool (1-2 prompts)
 - Requests that sound similar but need a different skill
 - Tests: does the skill recognize it's not the right fit?
-- Example style: "summarize this existing spec for me" (needs write-spec-summary, not write-spec)
+- Example style: "summarize this existing spec for me" (needs write-spec-summary, not write-spec-docs)
 
 ## Quality Checks
 

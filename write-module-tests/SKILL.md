@@ -1,6 +1,9 @@
 ---
 name: write-module-tests
 description: Implements pytest test code for a module using its write-test-docs module section as the only source of truth. Agents receive the module's test spec section and Phase 0 contracts — never source files, engineering guide, or other modules' test specs.
+domain: code.test
+intent: write
+tags: [pytest, module tests, test code]
 user-invocable: false
 ---
 

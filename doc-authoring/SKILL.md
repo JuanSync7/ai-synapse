@@ -1,6 +1,9 @@
 ---
 name: doc-authoring
 description: Router for the doc-authoring skill suite. Use when unsure which documentation skill to invoke. Routes by document ROLE (pipeline, integration, platform, extension) and LAYER (spec, summary, design, implementation, engineering guide, module tests). Covers placement, naming, cross-referencing, and governance.
+domain: docs
+intent: route
+tags: [router, documentation, layer]
 user-invocable: true
 argument-hint: "[describe what you want to document]"
 ---
@@ -43,7 +46,7 @@ Layer 1 — Platform Spec          (written manually — no skill)
 Layer 2 — Spec Summary            -> invoke /write-spec-summary
                |
                v
-Layer 3 — Authoritative Spec      -> invoke /write-spec
+Layer 3 — Authoritative Spec      -> invoke /write-spec-docs
                |
                v
 Layer 4 — Implementation Plan     -> invoke /write-impl
@@ -60,7 +63,7 @@ Layer 6 — Module Tests            -> invoke /write-module-tests or /write-test
 |-------------|----------------|
 | Summarize an existing spec | `/write-spec-summary` |
 | Sync a summary with an updated spec | `/write-spec-summary` (update mode) |
-| Write requirements / a new spec | `/write-spec` |
+| Write requirements / a new spec | `/write-spec-docs` |
 | Write an implementation plan (pre-build) | `/write-impl` |
 | Document what was built / post-implementation reference | `/write-engineering-guide` |
 | Test team handoff / maintenance reference | `/write-engineering-guide` |

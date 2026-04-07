@@ -220,4 +220,4 @@
 
 **Prompt:** "run autonomous: just write me a spec for the payment module, nothing else"
 
-**Why this tests the skill:** User wants a single artifact (spec only), not a pipeline — tests whether the skill recognizes this might be better served by invoking `write-spec` directly, or whether it gracefully handles a single-stage request via `--stages brainstorm,spec`.
+**Why this tests the skill:** User wants a single artifact (spec only), not a pipeline — tests whether the skill recognizes this might be better served by invoking `write-spec-docs` directly, or whether it gracefully handles a single-stage request via `--stages brainstorm,spec`.

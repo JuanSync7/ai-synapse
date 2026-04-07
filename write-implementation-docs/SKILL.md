@@ -1,6 +1,9 @@
 ---
 name: write-implementation-docs
 description: Use when you have a spec AND a design doc and need to produce the implementation source-of-truth before touching code. Triggered by "write implementation docs", "write-implementation-docs", "impl docs", "create implementation reference", "implementation source of truth".
+domain: docs.impl
+intent: write
+tags: [implementation, source-of-truth, handoff]
 user-invocable: true
 argument-hint: "[system name] [spec path] [design doc path] [optional: output path]"
 ---
@@ -8,7 +11,7 @@ argument-hint: "[system name] [spec path] [design doc path] [optional: output pa
 ## Layer Context
 
 ```
-Layer 3: Authoritative Spec     ← write-spec (required input)
+Layer 3: Authoritative Spec     ← write-spec-docs (required input)
 Layer 4: Design Document        ← write-design (required input)
 Layer 5: Implementation Docs    ← YOU ARE HERE
 Layer 6: Implementation         ← implement-code (reads this document)
@@ -226,7 +229,7 @@ Before assembling the final document:
 
 **Document chain:**
 ```
-write-spec → write-design → write-implementation-docs
+write-spec-docs → write-design → write-implementation-docs
                                      ↓
                                implement-code
                                      ↓

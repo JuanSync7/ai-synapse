@@ -1,6 +1,9 @@
 ---
 name: generate-output-criteria
 description: Generates binary output quality criteria for evaluating a Claude Code skill's outputs. Operates as an impartial judge — reads the full SKILL.md to understand the domain but writes criteria from an evaluator's perspective, not the author's. Triggered by "generate output criteria", "write eval criteria for skill", "create output quality checks".
+domain: meta.eval
+intent: generate
+tags: [output criteria, quality checks]
 user-invocable: true
 argument-hint: "[path to skill directory]"
 ---

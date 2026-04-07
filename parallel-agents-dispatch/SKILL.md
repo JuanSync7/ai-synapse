@@ -1,6 +1,9 @@
 ---
 name: parallel-agents-dispatch
 description: Executes multi-task workflows by assessing task independence and dispatching parallel agent waves with model selection and context isolation — triggered by executing any plan, task list, or multi-step workflow
+domain: orchestration
+intent: execute
+tags: [parallel, waves, dispatch]
 user-invocable: true
 argument-hint: "[path to plan or task list]"
 ---
@@ -45,14 +48,14 @@ Without this skill, you default to sequential execution with your session model 
 - You don't decide upfront whether tasks are parallel — this skill assesses that
 
 **When NOT to use — redirect instead:**
-- **No existing plan or task list** (user wants to create one) → redirect to `write-implementation` or `writing-plans`
+- **No existing plan or task list** (user wants to create one) → redirect to `build-plan` or `writing-plans`
 - **Ad-hoc debugging** (user wants to investigate failures in parallel, no structured plan) → redirect to `dispatching-parallel-agents`
 - **Single exploration question** (no multi-task workflow) → handle directly, no dispatch needed
 
 **Relationship to existing skills:**
 - `dispatching-parallel-agents` — ad-hoc debugging parallelism (different scope)
 - `subagent-driven-development` — sequential execution in published plugin chain; this skill is the preferred execution path when you want smarter orchestration
-- `write-implementation` — produces plans whose phases map directly to waves
+- `build-plan` — produces plans whose phases map directly to waves
 
 ## The Process
 
@@ -122,7 +125,7 @@ Wave 2: tasks depending only on Wave 1 outputs
 Wave 3: tasks depending only on Wave 1 + Wave 2 outputs
 ```
 
-**When the plan already defines phases** (e.g., write-implementation Phase A/B/C/D), adopt those directly — they already encode the dependency graph.
+**When the plan already defines phases** (e.g., build-plan Phase A/B/C/D), adopt those directly — they already encode the dependency graph.
 
 ### Present the wave plan
 

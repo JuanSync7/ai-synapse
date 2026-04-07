@@ -1,6 +1,9 @@
 ---
 name: improve-skill
 description: Improves any Claude Code skill (SKILL.md) by running a Karpathy-style score-fix-rescore loop against quality criteria. Supports two passes — structural (score SKILL.md against checklist + EVAL.md structural criteria) and behavioral (run skill on test prompts, grade outputs against EVAL.md output criteria, trace failures to SKILL.md, fix). Triggered by "improve this skill", "fix the skill", "review skill quality", "make the skill better".
+domain: meta.create
+intent: improve
+tags: [skill, quality, score-fix loop]
 user-invocable: true
 argument-hint: "[path to SKILL.md] [optional: --structural-only | --behavioral-only]"
 ---

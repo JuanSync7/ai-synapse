@@ -1,6 +1,9 @@
 ---
 name: write-design-docs
 description: Use when you have a spec and need to create a design document with task decomposition and code contracts before implementation. Triggered by "write design docs", "write-design-docs", "design document", "create design", "technical design".
+domain: docs.design
+intent: write
+tags: [design, task decomposition, contracts]
 user-invocable: true
 argument-hint: "[system name] [spec path] [optional: output path]"
 ---
@@ -8,7 +11,7 @@ argument-hint: "[system name] [spec path] [optional: output path]"
 ## Layer Context
 
 ```
-Layer 3: Authoritative Spec     ← write-spec (required input)
+Layer 3: Authoritative Spec     ← write-spec-docs (required input)
 Layer 4: Design Document        ← YOU ARE HERE
 Layer 5: Implementation Docs    ← write-implementation-docs (consumes this document)
 Layer 6: Implementation         ← implement-code (receives pattern entries directly)
@@ -249,7 +252,7 @@ Before assembling the final document:
 ## Integration
 
 **Upstream (required before this skill):**
-- `write-spec` — the spec (Layer 3) must exist. Extract all REQ/FR IDs before writing.
+- `write-spec-docs` — the spec (Layer 3) must exist. Extract all REQ/FR IDs before writing.
 
 **Downstream (in order):**
 1. `write-implementation-docs` — copies Part B CONTRACT entries into Phase 0, writes isolated task sections
@@ -259,7 +262,7 @@ Before assembling the final document:
 
 **Document chain:**
 ```
-write-spec → write-design-docs → write-implementation-docs
+write-spec-docs → write-design-docs → write-implementation-docs
                                         ↓
                                   implement-code
                                         ↓
