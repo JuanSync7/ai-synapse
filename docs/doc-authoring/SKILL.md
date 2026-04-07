@@ -1,6 +1,6 @@
 ---
 name: doc-authoring
-description: Router for the doc-authoring skill suite. Use when unsure which documentation skill to invoke. Routes by document ROLE (pipeline, integration, platform, extension) and LAYER (spec, summary, design, implementation, engineering guide, module tests). Covers placement, naming, cross-referencing, and governance.
+description: "Use when asked to write documentation and you're unsure whether it should be a spec, summary, design doc, implementation doc, engineering guide, or test plan. Also use for doc placement, naming, and cross-referencing questions."
 domain: docs
 intent: route
 tags: [router, documentation, layer]
@@ -10,7 +10,13 @@ argument-hint: "[describe what you want to document]"
 
 # Documentation Skills Router
 
-You are helping the user identify and invoke the correct skill for their documentation task. The doc-authoring suite routes across two dimensions: **Role** (what kind of document) and **Layer** (which step in the authoring chain).
+This is the entry point when a user needs documentation but hasn't specified the type. It identifies the right doc skill to invoke based on what the user is trying to produce.
+
+## Wrong-Tool Detection
+
+- **User wants to write code** → not a doc skill; proceed to implementation directly
+- **User wants to improve an existing skill** → redirect to `/improve-skill`
+- **User already knows which doc type** → invoke that skill directly (`write-spec-docs`, `write-design-docs`, etc.)
 
 ## Two-Dimensional Routing
 

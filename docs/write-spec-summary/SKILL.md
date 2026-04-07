@@ -8,6 +8,11 @@ user-invocable: true
 argument-hint: "[path to spec document] [optional: output path for summary]"
 ---
 
+## Wrong-Tool Detection
+
+- **User wants to write a full spec from scratch** → redirect to `/write-spec-docs`
+- **User wants a design doc** → redirect to `/write-design-docs`
+
 ## Layer Context
 
 This skill produces a **Layer 2 — Spec Summary** in the 4-layer doc hierarchy:

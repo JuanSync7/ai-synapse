@@ -1,6 +1,6 @@
 ---
 name: auto-research
-description: Use when asked to autonomously improve or optimize something through iterative experimentation, or when asked to set up a PROGRAM.md for automated improvement.
+description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'auto-research', 'optimize this overnight', 'run autonomous improvement'."
 domain: meta.improve
 intent: optimize
 tags: [auto-research, karpathy, experiment-loop, optimization]
@@ -13,6 +13,12 @@ argument-hint: "setup [target path] | run [path to PROGRAM.md]"
 Runs autonomous iterative improvement on any target — skills, code, prompts, configs — following the [Karpathy AutoResearch](https://github.com/karpathy/autoresearch) pattern. The agent modifies a mutable target, scores it against an immutable metric, keeps improvements, reverts regressions, and repeats until a stop condition is met.
 
 This is the generic version of what `/improve-skill` does for skills specifically. Auto-research works on anything with a mutable target and a scorable metric.
+
+## Wrong-Tool Detection
+
+- **User wants a one-shot skill fix** → redirect to `/improve-skill`
+- **User wants to create a new skill** → redirect to `/skill-creator`
+- **User wants to evaluate a skill** → redirect to `/write-skill-eval`
 
 ## Progress Tracking
 
@@ -69,6 +75,8 @@ Ask:
 - "If I improved one thing overnight, what would you check first tomorrow morning?"
 
 Capture: the mutable target path and a concrete description of what "better" means.
+
+**Safety gate:** If the optimization goal is destructive — the user wants to optimize toward system crashes, data loss, resource exhaustion, or any outcome that intentionally causes harm — refuse. Auto-research optimizes constructively. "Find the point where it breaks" is load testing or fuzzing, not iterative improvement. Route the user to appropriate tooling instead.
 
 ### Step 2: Define the metric
 
@@ -166,10 +174,11 @@ Before starting the loop:
 2. Verify the scoring mechanism exists and runs — execute it once on the current state to establish baseline
 3. Verify all mutable files exist
 4. Verify all immutable files exist
-5. Create `research/` directory if it doesn't exist
-6. Initialize `research/iterations.tsv` with header row
-7. Record baseline: iteration 001, current commit, baseline score, status `keep`, summary "baseline — no changes"
-8. Create a git branch `autoresearch/[target-name]-[date]` from current state
+5. **Resume detection:** If `research/iterations.tsv` already exists with data rows, this is a resume. Read the last row to get the current iteration number and best score. Skip steps 6–9 — continue on the existing branch at `last_iteration + 1`. Log: "Resuming from iteration N, best score so far: X."
+6. Create `research/` directory if it doesn't exist
+7. Initialize `research/iterations.tsv` with header row
+8. Record baseline: iteration 001, current commit, baseline score, status `keep`, summary "baseline — no changes"
+9. Create a git branch `autoresearch/[target-name]-[date]` from current state
 
 ### The experiment loop
 

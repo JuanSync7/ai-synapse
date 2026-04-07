@@ -12,6 +12,12 @@ argument-hint: "[path to skill directory]"
 
 Routes to the correct sub-skill for generating evaluation artifacts. The evaluation suite produces an EVAL.md file that improve-skill consumes during its automated loop.
 
+## Wrong-Tool Detection
+
+- **User wants only test prompts (no criteria)** → redirect to `/generate-test-prompts`
+- **User wants only output quality criteria (no prompts)** → redirect to `/generate-output-criteria`
+- **User wants to improve a skill using an existing EVAL.md** → redirect to `/improve-skill`
+
 ## Progress Tracking
 
 At the start, create a task list:

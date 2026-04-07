@@ -1,6 +1,6 @@
 ---
 name: autonomous-orchestrator
-description: Runs a fully autonomous development pipeline — chains brainstorming, specs, design, implementation, and documentation through stakeholder-reviewer gates at every transition. Triggered by "build autonomously", "autonomous orchestrator", "overnight pipeline", "autonomous development", "run the full pipeline", "build this overnight", "run autonomous".
+description: Use when you want to build a feature end-to-end autonomously — from brainstorming through specs, design, code, and documentation with review at every step. Triggered by "build autonomously", "overnight pipeline", "run the full pipeline", "build this overnight".
 domain: orchestration
 intent: execute
 tags: [pipeline, autonomous, end-to-end]
@@ -263,11 +263,8 @@ stages:
 
 ## Wrong-Tool Detection
 
-Before starting the pipeline, check whether the user's request is actually a better fit for a different tool:
-
-**Redirect to `superpowers:brainstorming`** when the user explicitly asks for interactive, back-and-forth brainstorming (keywords: "interactively", "back and forth", "let's discuss", "react in real time", "brainstorm with you"). Tell the user: "This sounds like an interactive brainstorming session rather than an autonomous pipeline. I'll use `superpowers:brainstorming` instead, which gives you direct control of the conversation."
-
-**Suggest direct skill invocation** when the user asks for a single artifact with no pipeline (keywords: "just write me a spec", "only a design", "nothing else"). Tell the user: "You're asking for a single artifact. I can run the orchestrator with `--stages brainstorm,<target-stage>`, or you can invoke `<skill-name>` directly for faster results. Which do you prefer?"
+- **User wants interactive, back-and-forth brainstorming** ("let's discuss", "brainstorm with you", "react in real time") → redirect to `/superpowers:brainstorming`
+- **User wants a single artifact with no pipeline** ("just write me a spec", "only a design", "nothing else") → redirect to the relevant direct skill (e.g., `/write-spec-docs`)
 
 ## Coexistence
 

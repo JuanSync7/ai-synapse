@@ -14,6 +14,13 @@ Creates new Claude Code skills and generates their evaluation artifacts. Follows
 
 Creating a skill is an act of context injection — you're not programming the agent, you're loading its context with judgment it can't derive from training alone. A skill that works changes agent output; a skill that doesn't just adds token noise. This workflow ensures you prove the need first (Phase 1.5), write only what changes behavior (Phase 2), and validate it does (Phases 3-7).
 
+## Wrong-Tool Detection
+
+- **User wants to improve an existing skill** → redirect to `/improve-skill [path]`
+- **User wants to evaluate or re-evaluate a skill** → redirect to `/write-skill-eval [path]`
+- **User wants to run a skill** → invoke the skill directly, not skill-creator
+- **User wants to edit SKILL.md without the creation workflow** → let them; skill-creator is for *new* skills, not ad-hoc edits
+
 ## Progress Tracking (applies to skill-creator itself AND every skill it creates)
 
 **For skill-creator itself:** Create a task list at the start:
@@ -31,7 +38,7 @@ TaskCreate: "Loop 3 Improve — Phase 6-7: Validate and iterate (or hand off to 
 
 Mark each task `in_progress` when starting, `completed` when done.
 
-**For every skill you create:** If the skill has multiple steps, phases, or stages, include a Progress Tracking section with explicit TaskCreate examples showing what tasks to create. The user sees a persistent task list at the bottom of their session — this is the primary way they track progress through multi-step skills.
+**For every skill you create:** If the skill has 3 or more distinct phases, include a Progress Tracking section with explicit TaskCreate examples showing what tasks to create. The user sees a persistent task list at the bottom of their session — this is the primary way they track progress through multi-step skills. Two-phase skills don't need this — the overhead exceeds the value.
 
 ```markdown
 ## Progress Tracking
@@ -53,18 +60,16 @@ Mark each task `in_progress` when starting, `completed` when done.
 
 Before building a skill, internalize these — they determine whether the skill actually changes agent behavior or just adds noise.
 
-1. **Context injection, not a program** — only include what the agent can't derive from training
-2. **Mental model before mechanics** — conceptual framing before rules
+1. **Context injection, not a program** — only include what the agent can't derive from training. State decisions ("default to X", "always Y", "never Z"), not options. A skill that lists possibilities is documentation, not context injection.
+2. **Mental model before mechanics** — conceptual framing paragraph before any rules or workflow steps
 3. **Description is a routing contract** — trigger conditions, not workflow summary
-4. **Explicit scope boundaries** — what this does, doesn't do, and what sibling handles instead
+4. **Explicit scope boundaries** (enforced via the mandatory Wrong-Tool Detection section) — what this does, doesn't do, and what sibling handles instead
 5. **Policy over procedure** — teach judgment, not mechanical steps
-6. **Opinionated over descriptive** — SKILL.md encodes decisions ("default to X", "always Y", "never Z"), not options. Educational content belongs in reference files. A skill that lists possibilities is just documentation.
-7. **Safe defaults for blocking operations** — every HITL gate, approval checkpoint, or interactive prompt must define a provisional/safe default for headless execution. Silent auto-approve is not acceptable. This applies to any skill that can block.
-8. **Every instruction traces to a failure mode** — if removing it wouldn't change output, remove it
-9. **Progressive disclosure** — always-on in SKILL.md, on-demand in companion files
-10. **Restriction when discipline demands it** — some skills must override defaults
-11. **Loud failure on preconditions** — check inputs, surface failures, never proceed silently
-12. **Concrete over abstract** — filled-in examples, good/bad contrasts
+6. **Every instruction traces to a failure mode** — if removing it wouldn't change output, remove it
+7. **Progressive disclosure** — always-on in SKILL.md, on-demand in companion files
+8. **Restriction when discipline demands it** — some skills must override defaults. Every HITL gate or approval checkpoint must define a safe default for headless execution (silent auto-approve is not acceptable).
+9. **Loud failure on preconditions** — check inputs, surface failures, never proceed silently
+10. **Concrete over abstract** — filled-in examples, good/bad contrasts
 
 ## Workflow
 
@@ -87,19 +92,37 @@ The build loop's output (the skill) is the eval loop's input (the thing to test)
 1. **Capture intent** — What should this skill enable Claude to do?
 2. **Identify triggers** — What user phrases/contexts should invoke it?
 3. **Define output** — What does the skill produce? (document, code, config, etc.)
-4. **Check for siblings** — Does this overlap with existing skills? If so, clarify boundaries.
+4. **Check for siblings** — Read `SKILLS_REGISTRY.yaml`. Does this overlap with existing skills? If so, clarify the boundary sentence: "[this skill] does X, [sibling] does Y."
 
-**Before proceeding:** Verify you have a clear goal — you need a trigger phrase the user would say, a defined output artifact, and no unresolvable overlap with an existing skill. If any are missing, ask a specific question before continuing. Proceeding with an underspecified goal produces a skill with wrong triggers or unclear scope.
+**Phase 1 gate — all must be true before proceeding:**
+- [ ] You can write at least one trigger phrase a user would say
+- [ ] You can name the output artifact (document, code file, config, etc.)
+- [ ] No existing skill in `SKILLS_REGISTRY.yaml` covers this trigger — or you can state the boundary sentence
+- [ ] The user has confirmed the intent (do not infer a skill goal from an ambiguous request)
+
+If any are false, ask a specific question. Proceeding with an underspecified goal produces a skill with wrong triggers or unclear scope.
 
 ### Phase 1.5: Baseline Test
 
-Run the core task WITHOUT the skill first. If Claude already produces correct output unaided, the skill teaches behavior that needs no teaching — stop and document why instead.
+Spawn a subagent with the user's task prompt and NO skill context (no SKILL.md in its session). Capture the output.
+
+Evaluate the baseline against the intended behavior:
+- **Output already correct** → the skill is unnecessary. Stop and tell the user why.
+- **Output partially correct** → the skill need only address the gaps. Note which specific behaviors need injection.
+- **Output fails** → proceed to Phase 2 with a concrete list of what the skill must change.
+
+Record the baseline output and your evaluation — every Phase 2 decision must trace back to a specific baseline failure. If it doesn't, the instruction is noise.
 
 > If you cannot show it fails without the skill, you cannot prove the skill is needed.
 
 ### Phase 2: Write the Skill
 
 > **Read [`references/skill-design-principles.md`](references/skill-design-principles.md)** before writing the SKILL.md body — full reasoning and examples for each principle.
+
+**The SKILL.md boundary test:** For each piece of content, ask: "Does the agent need this in every execution, or only at a specific decision point?"
+- Every execution → SKILL.md (always-on)
+- Specific decision point → companion file with read-trigger (on-demand)
+- Never during execution → outside execution fence (EVAL.md, PROGRAM.md, etc.)
 
 Build the skill directory:
 
@@ -155,7 +178,7 @@ Point to companion files from SKILL.md using this format:
 ```yaml
 ---
 name: skill-name
-description: [Triggering conditions ONLY — the phrases/contexts that should invoke this skill. Never summarize the workflow. If the description could replace reading the SKILL.md body, it's wrong.]
+description: [Triggering conditions ONLY — phrases a USER would say. Never summarize the workflow. Never use internal architecture terms. If the description could replace reading the SKILL.md body, it's wrong.]
 domain: [pick from TAXONOMY.md domains]
 intent: [pick from TAXONOMY.md intents]
 tags: [freeform, lowercase, hyphenated]
@@ -168,28 +191,44 @@ argument-hint: "[expected arguments]"
 ```yaml
 description: "Use when asked to create a new skill, build a skill for X, or write a skill."
 ```
-*Trigger conditions only — the agent must read the body to learn how.*
+*Trigger conditions in user language — the agent must read the body to learn how.*
 
-**Bad description:**
+**Bad description (workflow summary):**
 ```yaml
 description: "Creates skills by understanding intent, building SKILL.md with companion files, generating EVAL.md, and running improve-skill validation loops."
 ```
 *Summarizes the workflow — the agent may follow this instead of reading the body.*
 
+**Bad description (internal vocabulary):**
+```yaml
+description: "Routes by document ROLE (pipeline, integration, platform, extension) and LAYER (spec, summary, design, implementation, engineering guide, module tests)."
+```
+*Uses architecture terms (ROLE, LAYER) that no user would say. Write in the user's language: "Use when asked to write documentation and you're unsure whether it should be a spec, design doc, or engineering guide."*
+
 #### Writing Principles
 
 - **Imperative voice** for instructions. ("Validate the input" not "The input should be validated")
-- **Keep SKILL.md under 500 lines.** Move detail needed only at one phase into companion files with explicit read-triggers.
+- **Keep SKILL.md under 500 lines — hard cap, not target.** If approaching it, move phase-specific detail to companion files. If 500 lines genuinely cannot hold the always-on judgment, the skill's scope is too broad — split it.
 - **SKILL.md is opinionated, references are educational.** SKILL.md states decisions and defaults ("always use X", "never Y"). Reference files teach patterns with annotated examples. If SKILL.md reads like documentation listing options, it's wrong — it should read like a senior engineer's judgment calls.
 - **Phrasing that sticks** — authority signals ("must", "always") and commitment signals ("you have verified") increase compliance with discipline-enforcing instructions.
+- **Every skill must have a Wrong-Tool Detection section.** Place it after the opening mental model paragraph, before workflow sections. Use the standard format:
+  ```markdown
+  ## Wrong-Tool Detection
+  
+  - **User wants X** → redirect to `/sibling-skill`
+  - **User wants Y** → not this skill; suggest Z instead
+  ```
+  Name specific sibling skills and their triggers. If the skill has no adjacent siblings (rare), state what the skill does NOT do.
 
 ### Phase 2.5: Pipeline Registration
 
-After writing the SKILL.md, determine if the skill should be pipeline-routable:
+A skill is pipeline-routable if ALL of these are true:
+- It consumes a defined input artifact type (not just a user prompt)
+- It produces a defined output artifact type (not just a conversational response)
+- Other skills could depend on its output as a prerequisite
+- It makes sense as a stage in an assembled multi-skill pipeline
 
-> "Is this skill a pipeline stage — should it appear in assembled pipelines when the orchestrator routes goals? (yes/no)"
-
-If **no**: skip this phase. The skill will appear in `SKILLS_REGISTRY.yaml` without a `pipeline:` block (inventory only, not router-selectable).
+If ANY are false: skip this phase. The skill will appear in `SKILLS_REGISTRY.yaml` without a `pipeline:` block (inventory only, not router-selectable).
 
 If **yes**, collect the following and append the entry to `SKILLS_REGISTRY.yaml` under the correct domain/group:
 
@@ -245,16 +284,18 @@ Show the user the appended entry and confirm.
 
 ### Phase 3: Generate Test Cases
 
-First, identify the skill type — it determines what to test:
+Classify the skill type — this determines what failure mode to prioritize in EVAL.md:
 
-| Skill type | What to test |
+| Skill type | Primary failure mode to test |
 |-----------|--------------|
-| Discipline-enforcing | Does output fail without the skill? Does it hold under rationalization pressure? |
-| Technique | Is the technique applied correctly? Is it skipped under time/complexity pressure? |
-| Pattern | Is the pattern applied completely? Are edge cases covered? |
-| Reference | Is the referenced content actually used, or does the agent invent instead? |
+| Discipline-enforcing | Agent rationalizes past the constraint under pressure |
+| Technique | Agent skips the technique when task is complex or time-pressured |
+| Pattern | Agent applies the pattern partially, missing edge cases |
+| Reference | Agent invents content instead of consulting the referenced material |
 
-After writing the skill, run `/generate-test-prompts` with only the skill's name and description:
+Record the classification. After Phase 4, verify at least one output criterion tests this primary failure mode — if none does, add one.
+
+Run `/generate-test-prompts` with only the skill's name and description:
 
 ```
 /generate-test-prompts [skill-name] [one-line description]

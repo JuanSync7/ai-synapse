@@ -1,6 +1,6 @@
 ---
 name: parallel-agents-dispatch
-description: Executes multi-task workflows by assessing task independence and dispatching parallel agent waves with model selection and context isolation — triggered by executing any plan, task list, or multi-step workflow
+description: Use when you have a plan or task list and need to execute the tasks in parallel where possible. Triggered by "execute this plan", "run these tasks", "dispatch the implementation", or any multi-step task list.
 domain: orchestration
 intent: execute
 tags: [parallel, waves, dispatch]
@@ -51,6 +51,11 @@ Without this skill, you default to sequential execution with your session model 
 - **No existing plan or task list** (user wants to create one) → redirect to `build-plan` or `writing-plans`
 - **Ad-hoc debugging** (user wants to investigate failures in parallel, no structured plan) → redirect to `dispatching-parallel-agents`
 - **Single exploration question** (no multi-task workflow) → handle directly, no dispatch needed
+
+## Wrong-Tool Detection
+
+- **User has no plan yet and wants to create one** → redirect to `/build-plan`
+- **User wants ad-hoc parallel debugging with no structured task list** → redirect to `/dispatching-parallel-agents`
 
 **Relationship to existing skills:**
 - `dispatching-parallel-agents` — ad-hoc debugging parallelism (different scope)

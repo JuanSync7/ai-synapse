@@ -8,6 +8,12 @@ user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"
 ---
 
+## Wrong-Tool Detection
+
+- **User wants a quick summary of an existing spec** → redirect to `/write-spec-summary`
+- **User wants a design doc with task decomposition** → redirect to `/write-design-docs`
+- **User wants to update an existing spec** → this skill writes new specs; for updates, read the existing spec first and revise
+
 ## Layer Context
 
 This skill produces a **Layer 3 — Authoritative Spec** in the 5-layer doc hierarchy:

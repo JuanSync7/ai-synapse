@@ -14,6 +14,12 @@ A skill for designing LangGraph workflows through opinionated, convention-driven
 
 **Scope:** This skill designs graph specs, reviews graph specs, and reviews LangGraph/LangChain code. It does NOT generate implementation code (the graph spec is the implementation guide — see Implementation section), write tests, or manage deployment. For implementation, use the graph spec directly with `references/*.py`. For testing, use `/test-runner`.
 
+## Wrong-Tool Detection
+
+- **User wants implementation code written from a graph spec** → not this skill; use the graph spec with `references/*.py` directly
+- **User wants to write or run tests** → redirect to `/test-runner`
+- **User wants to build a full feature end-to-end** → redirect to `/autonomous-orchestrator`
+
 ## Progress Tracking
 
 At the start of a design session, create a task list:

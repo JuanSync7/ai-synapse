@@ -25,6 +25,11 @@ Generates realistic, diverse test prompts for a skill. You operate **blind** —
 
 This constraint prevents implementation bias. You generate prompts a real user would write, not prompts that test known capabilities.
 
+## Wrong-Tool Detection
+
+- **User wants output quality criteria** → redirect to `/generate-output-criteria`
+- **User wants a full EVAL.md (prompts + criteria)** → redirect to `/write-skill-eval`
+
 ## Persona Framework
 
 Generate prompts across four personas. Each persona exercises different failure modes:

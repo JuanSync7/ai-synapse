@@ -1,6 +1,6 @@
 ---
 name: build-plan
-description: Use when you have implementation docs (from write-implementation-docs) and need a bias-free execution plan with agent isolation phases, before touching code
+description: "Use when you have implementation docs and need an execution plan that breaks work into independent tasks before writing code. Triggered by 'build plan', 'execution plan', 'create a plan from the implementation docs'."
 domain: code.plan
 intent: plan
 tags: [execution, phases, agent isolation, bias-free]
@@ -54,16 +54,11 @@ Layer 5: Implementation Docs    ← write-implementation-docs (required input)
 Layer 6: Build Plan             ← YOU ARE HERE (build-plan)
 ```
 
-## When to Use This vs. writing-plans
+## Wrong-Tool Detection
 
-| | `build-plan` (this skill) | `writing-plans` |
-|---|---|---|
-| **Input** | Spec + design document pair | Spec or requirements alone |
-| **Output** | Five-phase plan (Phase 0/A/B/C/D/E) with isolation | Interleaved test+implement per task |
-| **Agent model** | Multi-agent with context barriers | Single-agent TDD |
-| **Best for** | Larger systems, when bias prevention matters | Small features, quick tasks |
-
-The discriminator: **do you have a design document from `write-design`?** If yes → this skill. If just a spec or feature request → `writing-plans`.
+- **User has only a spec or feature request, no design document** → redirect to `/writing-plans`
+- **User wants interleaved test+implement steps for a small feature** → redirect to `/writing-plans`
+- **User has a design document from `write-design-docs`** → this skill is correct; proceed
 
 ## Scope Check
 

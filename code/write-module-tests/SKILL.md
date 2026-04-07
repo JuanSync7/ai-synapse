@@ -1,6 +1,6 @@
 ---
 name: write-module-tests
-description: Implements pytest test code for a module using its write-test-docs module section as the only source of truth. Agents receive the module's test spec section and Phase 0 contracts — never source files, engineering guide, or other modules' test specs.
+description: "Use when you have a test plan and need to implement the actual pytest code for a specific module. Triggered by 'write module tests', 'implement the tests', 'create pytest code for this module'."
 domain: code.test
 intent: write
 tags: [pytest, module tests, test code]
@@ -8,6 +8,10 @@ user-invocable: false
 ---
 
 # Write Module Tests
+
+Implements pytest test code for a single module, working exclusively from the test plan as its source of truth. The agent never reads source code — tests are derived from documented behavior and contracts, ensuring they verify the specification, not the implementation.
+
+**Preconditions — stop and surface an error if any are missing:** (1) Test plan section for this module from write-test-docs, (2) Phase 0 contracts for the module's interfaces. If either is missing, tell the user: "Cannot write tests for [module] — missing [artifact]. Run /write-test-docs first."
 
 ## Purpose
 

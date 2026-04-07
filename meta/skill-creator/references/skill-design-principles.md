@@ -189,6 +189,8 @@ Consider discussing the approach with the user first.
 ```
 *"Generally" and "consider" are escape hatches. The agent will skip this under pressure.*
 
+**HITL gates in headless execution:** Every approval checkpoint or interactive prompt must define a safe default for headless/autonomous runs. Silent auto-approve is not acceptable — the default must be the conservative action (e.g., pause and surface to user, skip the optional step, or fail with a clear message).
+
 ---
 
 ## 9. Loud failure on preconditions

@@ -18,6 +18,12 @@ Generates a complete, self-contained single-page interactive animation as one HT
 - User asks for an interactive single-page animation or explainer
 - User wants an animated demo page for a process or system
 
+## Wrong-Tool Detection
+
+- **User wants a multi-page website** → not this skill; this creates single-page animations only
+- **User wants a static diagram or chart** → suggest using Mermaid or a charting library directly
+- **User wants a React/Vue component** → not this skill; this produces vanilla HTML/CSS/JS only
+
 ## Critical Rule: No TypeScript in Browser Scripts
 
 **NEVER use TypeScript syntax inside `<script>` tags.** Browsers cannot parse TypeScript, and the entire script block will silently fail with zero error output — the page loads but nothing works.

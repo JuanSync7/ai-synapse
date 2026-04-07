@@ -10,6 +10,14 @@ allowed-tools: Bash, Read, Grep, Glob, Edit, Agent
 
 # Test Runner Skill
 
+Executes pytest test suites through a validated pipeline — discovers tests, runs them safely, captures structured output, and optionally enters a fix loop when failures occur. The goal is reliable, reproducible test execution with clear pass/fail reporting.
+
+## Wrong-Tool Detection
+
+- **User wants to write test code** → redirect to `/write-module-tests`
+- **User wants a test planning document** → redirect to `/write-test-docs`
+- **User wants to run non-pytest tests** → this skill is pytest-specific; proceed without it
+
 ## Purpose
 
 Run pytest tests through the safe execution workflow. Validates test files for dangerous

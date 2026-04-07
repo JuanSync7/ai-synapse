@@ -19,6 +19,12 @@ Layer 6: Implementation         ← implement-code (receives pattern entries dir
 
 # Write Design Docs
 
+## Wrong-Tool Detection
+
+- **User wants a spec (requirements, acceptance criteria)** → redirect to `/write-spec-docs`
+- **User wants implementation-level task details** → redirect to `/write-implementation-docs`
+- **User wants to jump straight to code** → redirect to `/build-plan` or code directly
+
 This skill produces the design document that bridges a specification (what to build) and implementation docs (how to build it). It answers: how should the system be decomposed into tasks, and what is the code contract surface?
 
 The document has two parts:

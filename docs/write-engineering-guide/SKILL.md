@@ -1,6 +1,6 @@
 ---
 name: write-engineering-guide
-description: Writes a post-implementation engineering guide documenting what was built, why decisions were made, and how each component works. Use after implementation is complete to create a maintenance/upgrade reference for developers and operators. Test planning documentation belongs in write-test-docs (invoked after this skill). Triggered by "write an engineering guide", "document the implementation", "post-implementation doc", "engineering guide".
+description: "Use when implementation is complete and you need to document what was built, why decisions were made, and how components work. Triggered by 'write an engineering guide', 'document the implementation', 'post-implementation doc', 'engineering guide'."
 domain: docs.post-build
 intent: write
 tags: [engineering guide, maintenance, post-implementation]
@@ -44,6 +44,13 @@ Layer 5: Engineering Guide       ← YOU ARE HERE (post-implementation)
 - Read the companion design document if one exists
 
 **Companion spec is strongly recommended but not blocking.** If no formal spec exists, document the system based on what the code does and what the design document (if any) intended. Note the absence of a spec in the document header.
+
+## Wrong-Tool Detection
+
+- **User wants a spec** → redirect to `/write-spec-docs`
+- **User wants test planning** → redirect to `/write-test-docs`
+- **User wants pre-implementation docs** → redirect to `/write-implementation-docs`
+- **This skill is for POST-implementation documentation only.**
 
 ---
 
@@ -267,126 +274,31 @@ Decisions belong in **Section 3 (Module Reference → Key design decisions)** wh
 
 ## Module Section Format
 
-> **In parallel mode (Phase C-parallel):** each module section is written by a dedicated agent with this isolation:
-> - Agent input: assigned source file(s) + spec FR numbers only
-> - Must NOT receive: other module files, test files
-> - Output: standalone markdown file at `docs/tmp/module-<name>.md`
-> - All 5 sub-sections required (Purpose, How it works, Key decisions, Configuration, Error behavior)
-
-````markdown
-### `src/path/to/module.py` — [Module Name]
-
-**Purpose:**
-
-[One paragraph explaining what this module does and why it exists.]
-
-**How it works:**
-
-[Step-by-step walkthrough. Number the steps for sequential logic. Include short code
-snippets (5–25 lines) pulled from the actual source for non-obvious algorithms.
-Reference real function and class names. Trace the public interface and key internal
-logic — do not line-by-line walk through trivial helpers.]
-
-**Key design decisions:**
-
-| Decision | Alternatives Considered | Why This Choice |
-|----------|------------------------|-----------------|
-| [what was decided] | [other options evaluated] | [reason this was chosen] |
-
-**Configuration:**
-
-| Parameter | Type | Default | Effect |
-|-----------|------|---------|--------|
-| [name] | [type] | [default] | [what changes when this is modified] |
-
-*If this module has no configurable parameters, write: "This module has no configurable parameters."*
-
-**Error behavior:**
-
-[What exceptions this module raises. Under what conditions. What callers should do when
-they receive each error. Which failures are retried internally.]
-````
+> **Read [`references/module-section-format.md`](references/module-section-format.md)** when writing or reviewing a Module Reference section (Section 3).
 
 ---
 
 ## Architecture Decision Format
 
-Use this format for each decision in Section 2:
-
-````markdown
-### Decision: [Short title, e.g., "LangGraph for pipeline orchestration"]
-
-**Context:** [Why this decision had to be made. What constraints or requirements drove it.]
-
-**Options considered:**
-1. **[Option A]** — [trade-offs: what it enables, what it costs]
-2. **[Option B]** — [trade-offs]
-3. **[Option C]** — [trade-offs]
-
-**Choice:** [Option X]
-
-**Rationale:** [Why this option over the others. Be specific about the deciding factors.]
-
-**Consequences:**
-- **Positive:** [What this enables or simplifies]
-- **Negative:** [What this costs or constrains]
-- **Watch for:** [What to revisit if circumstances change]
-````
-
-Capture decisions at two levels:
-- **Technology decisions** — why a specific library, framework, or external service was chosen
-- **Design decisions** — why a specific pattern, threshold, data structure, or algorithm was used
+> **Read [`references/architecture-decision-format.md`](references/architecture-decision-format.md)** when writing Architecture Decisions (Section 2).
 
 ---
 
 ## End-to-End Data Flow Section
 
-Section 4 must include **2–3 scenarios** that together cover the system's primary paths:
-
-1. **Happy path** — The most common successful execution. Pick a realistic input and trace it through every stage.
-2. **Error / fallback path** — An input that triggers error handling, fallback logic, or early termination. Show where the flow diverges and what the caller receives.
-3. **Edge case path** (optional but recommended) — An input that exercises a conditional branch or rare routing decision.
-
-For each scenario:
-1. Show the **input** as a concrete example (not abstract description)
-2. Walk through each stage in order, showing:
-   - The **state object shape** at the start of the stage (code block with typed fields)
-   - What **action** the stage performs
-   - The **state object shape** at the end (highlighting changed fields)
-3. Document **branching points** — what conditions cause different paths
-4. Show the **final output** shape
-
-This section is critical for test teams building integration tests. Seeing exact state transitions makes precise assertions possible.
+> **Read [`references/data-flow-format.md`](references/data-flow-format.md)** when writing the End-to-End Data Flow section (Section 4).
 
 ---
 
 ## Integration Contracts Section (Section 6)
 
-**Section 6 documents the system boundary — how external callers interact with this system.** It is NOT about internal module-to-module contracts (those are covered in each module's Purpose and Error behavior sub-sections in Section 3).
-
-Section 6 must cover:
-- **Entry point signature** — the public function or API endpoint callers use
-- **Input contract** — required/optional fields, types, constraints, validation rules
-- **Output contract** — response shape, which fields are always present vs conditional
-- **External dependency contracts** — what the system assumes about services it depends on (databases, LLMs, embedding models, etc.)
-
----
+> **Read [`references/integration-contracts-format.md`](references/integration-contracts-format.md)** when writing Integration Contracts (Section 6).
 
 ---
 
 ## Configuration Reference (Section 5)
 
-Group parameters by module. For each parameter:
-
-| Column | What to include |
-|--------|----------------|
-| Parameter | Exact config key, in backticks |
-| Type | Type annotation using the project's type system (e.g., `float`, `int`, `list[str]`, `bool` for Python; `number`, `string[]` for TypeScript) |
-| Default | Actual default value from code |
-| Valid Range / Options | Numeric range or allowed enum values |
-| Effect | Precise behavioral description — what changes when this value is modified |
-
-For parameters where the effect is non-obvious (e.g., a threshold that changes routing behavior), include a short explanatory note below the table row.
+> **Read [`references/configuration-reference-format.md`](references/configuration-reference-format.md)** when writing the Configuration Reference (Section 5).
 
 ---
 
@@ -411,27 +323,7 @@ For parameters where the effect is non-obvious (e.g., a threshold that changes r
 
 ## Spec Requirement Coverage Verification
 
-If a companion spec (Layer 3) exists, verify coverage after writing:
-
-1. List every functional requirement ID from the spec (e.g., REQ-101, FR-201).
-2. For each requirement, confirm at least one Module Reference section addresses it.
-3. If any requirement is not covered by the guide, either:
-   - The module that implements it was missed — add the module section.
-   - The requirement was descoped or not implemented — note it in Known Limitations (Section 9).
-
-Include a **Requirement Coverage Summary** at the end of the document:
-
-```markdown
-## Appendix: Requirement Coverage
-
-| Spec Requirement | Covered By (Module Section) |
-|------------------|-----------------------------|
-| REQ-101 | `src/path/module.py` — Module Name |
-| REQ-102 | `src/path/other.py` — Other Module |
-| REQ-103 | Not implemented — see Known Limitations |
-```
-
-If no companion spec exists, omit this appendix and note in the document header: "No formal spec companion — guide is based on implemented behavior."
+> **Read [`references/spec-coverage-verification.md`](references/spec-coverage-verification.md)** when verifying spec coverage after writing the guide (or during the review loop).
 
 ---
 

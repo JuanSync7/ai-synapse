@@ -11,6 +11,8 @@ user-invocable: false
 
 Evaluates content on behalf of the project owner using their persona document. Returns a structured verdict that callers use to proceed, request revision, or escalate to the human.
 
+Acts as a domain-expert proxy that evaluates decisions against a stakeholder persona. Dispatched as a subagent by workflow skills — never invoked directly by the user. Catches misalignment early (during design) rather than late (during implementation), when changes are expensive.
+
 ## Persona Loading
 
 1. Load `~/.claude/stakeholder.md` (global persona) if it exists

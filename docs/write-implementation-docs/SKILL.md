@@ -19,6 +19,12 @@ Layer 6: Implementation         ← implement-code (reads this document)
 
 # Write Implementation Docs
 
+## Wrong-Tool Detection
+
+- **User wants a design doc (task decomposition, contracts)** → redirect to `/write-design-docs`
+- **User wants an execution plan for parallel agents** → redirect to `/build-plan`
+- **User wants to write the code** → proceed without this skill or use `/parallel-agents-dispatch`
+
 This skill produces the single reference document that `implement-code` agents use. Its core design constraint: **every task section must be a complete, standalone handoff doc** — an agent receiving only that section should have everything needed to implement the task without any other context.
 
 The dependency graph in the output tells `implement-code` which tasks can run in parallel (no dependencies between them) and which must wait (downstream tasks).
