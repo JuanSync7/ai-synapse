@@ -1,0 +1,170 @@
+# SKILLS_REGISTRY.yaml — v2
+# Complete inventory of all skills. Single source of truth for pipeline metadata.
+# Skills without a pipeline: block are present for inventory purposes only.
+# Files without version: 2 are rejected by the autonomous-orchestrator with a clear error.
+
+version: 2
+
+# Built-in stages: executed directly by the orchestrator, not dispatched as skills.
+# Only stage_name and output_type are required — input_type is absent (no predecessor).
+# Listed here so the dependency resolver can find them when walking requires chains.
+# context_types for brainstorm (approach_selection, design_approval) are defined
+# in brainstorm-phase.md, not here — built_ins entries are for the dependency resolver only.
+built_ins:
+  - stage_name: brainstorm
+    output_type: design_sketch
+
+registry:
+  - name: engineering
+    summary: "Plan and build software: specs, design, implementation, code execution, documentation"
+    children:
+      - name: planning
+        summary: "Pre-code artifacts that define what to build and how"
+        children:
+          - name: requirements
+            summary: "Capture and formalize what the system must do"
+            skills:
+              - name: write-spec
+                description: "Formal requirements spec with FRs, NFRs, acceptance criteria"
+                pipeline:
+                  stage_name: spec
+                  input_type: design_sketch
+                  output_type: formal_spec
+                  context_type: spec_review
+                  requires_all: [brainstorm]
+                  skippable: true
+              - name: write-spec-summary
+                description: "Concise spec digest synced with companion spec"
+                pipeline:
+                  stage_name: spec-summary
+                  input_type: formal_spec
+                  output_type: spec_digest
+                  context_type: spec_review
+                  requires_all: [spec]
+                  skippable: true
+          - name: design
+            summary: "Decompose requirements into tasks, contracts, and implementation plans"
+            skills:
+              - name: write-design-docs
+                description: "Technical design with task decomposition and code contracts"
+                pipeline:
+                  stage_name: design
+                  input_type: formal_spec
+                  output_type: technical_design
+                  context_type: design_approval
+                  requires_all: [spec]
+                  skippable: true
+              - name: write-implementation-docs
+                description: "Phased implementation plan from design doc (canonical impl stage)"
+                pipeline:
+                  stage_name: impl
+                  input_type: technical_design
+                  output_type: implementation_plan
+                  context_type: design_approval
+                  requires_all: [design]
+                  skippable: true
+              - name: write-implementation
+                description: "Legacy implementation plan skill — superseded by write-implementation-docs for pipeline use; retained for direct invocation"
+                # No pipeline block — not router-selectable
+          - name: write-commit
+                description: "Writes or improves a git commit message from a diff or change description"
+                # No pipeline block — terminal on-demand helper; output does not feed any pipeline stage
+
+      - name: execution
+        summary: "Run implementations via parallel and subagent-driven development"
+        skills:
+          - name: parallel-agents-dispatch
+            description: "Execute implementation plan via parallel subagents (code stage)"
+            pipeline:
+              stage_name: code
+              input_type: implementation_plan | technical_design
+              output_type: source_code
+              context_type: code_review
+              requires_any: [impl, design]    # impl preferred; design accepted if impl skipped
+              skippable: false
+
+      - name: documentation
+        summary: "Document what was built: engineering guides"
+        skills:
+          - name: write-engineering-guide
+            description: "Post-implementation engineering guide"
+            pipeline:
+              stage_name: eng-guide
+              input_type: source_code | spec_digest
+              output_type: engineering_guide
+              context_type: doc_review
+              requires_any: [code, spec-summary]   # code in normal flow; spec-summary in docs-only
+              skippable: true
+
+  - name: quality
+    summary: "Verify correctness: test planning, test implementation"
+    children:
+      - name: testing
+        summary: "Write and implement tests from engineering artifacts"
+        skills:
+          - name: write-test-docs
+            description: "Test planning document from engineering guide and spec"
+            pipeline:
+              stage_name: test-docs
+              input_type: engineering_guide
+              output_type: test_plan
+              context_type: doc_review
+              requires_all: [eng-guide]
+              skippable: true
+          - name: write-module-tests
+            description: "Pytest test code from test plan (per-module)"
+            pipeline:
+              stage_name: tests
+              input_type: test_plan
+              output_type: test_files
+              context_type: code_review
+              requires_all: [test-docs]
+              skippable: true
+
+  - name: meta
+    summary: "Skills about skills: create, evaluate, improve, orchestrate, animate"
+    children:
+      - name: skill-lifecycle
+        summary: "Build and maintain skills"
+        skills:
+          - name: skill-creator
+            description: "Creates new skills with EVAL.md and registry entry"
+          - name: improve-skill
+            description: "Karpathy-style score-fix-rescore loop for skill quality"
+          - name: write-skill-eval
+            description: "Generates EVAL.md with output criteria and test prompts"
+          - name: generate-output-criteria
+            description: "Generates binary pass/fail output criteria as impartial judge"
+          - name: generate-test-prompts
+            description: "Generates diverse test prompts blind to SKILL.md body"
+          - name: doc-authoring
+            description: "Router: directs to write-spec-summary, write-spec, or write-engineering-guide"
+            # Not pipeline-routable: function subsumed by the v2 router for pipeline use.
+            # Retained as a direct-invocation skill for single-artifact documentation requests.
+      - name: orchestration
+        summary: "Coordinate multi-skill workflows"
+        skills:
+          - name: autonomous-orchestrator
+            description: "Fully autonomous dev pipeline with stakeholder gates"
+          - name: stakeholder-reviewer
+            description: "Evaluates decisions against stakeholder persona (APPROVE/REVISE/ESCALATE)"
+      - name: creative
+        summary: "Non-pipeline creative and visualization tools"
+        skills:
+          - name: create-animation-page
+            description: "Single-page interactive animation as one HTML file with embedded CSS/JS"
+
+presets:
+  # Presets are trusted stage sequences — used as-is, bypassing dependency resolution
+  # and type validation. This allows presets to intentionally skip stages whose
+  # requires chain would otherwise force inclusion (e.g., bugfix skips spec despite
+  # design.requires_all: [spec]).
+  full:     [brainstorm, spec, spec-summary, design, impl, code, eng-guide, test-docs, tests]
+  feature:  [brainstorm, spec, design, impl, code, eng-guide, test-docs, tests]
+  bugfix:   [brainstorm, design, code]
+  # bugfix drops tests vs v1 — inline tests produced by the code stage suffice for scoped fixes.
+  # test-docs requires eng-guide which is not in bugfix scope.
+  docs-only: [brainstorm, spec, spec-summary, eng-guide]
+  # docs-only intentionally excludes test-docs — produces no test artifacts.
+  # v2 change: full and feature now include test-docs before tests (new in v2).
+  # v1 full was: [brainstorm, spec, spec-summary, design, impl, code, eng-guide, tests]
