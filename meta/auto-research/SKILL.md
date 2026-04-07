@@ -1,8 +1,8 @@
 ---
 name: auto-research
 description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'auto-research', 'optimize this overnight', 'run autonomous improvement'."
-domain: meta.improve
-intent: optimize
+domain: meta.create
+intent: improve
 tags: [auto-research, karpathy, experiment-loop, optimization]
 user-invocable: true
 argument-hint: "setup [target path] | run [path to PROGRAM.md]"
@@ -14,9 +14,11 @@ Runs autonomous iterative improvement on any target — skills, code, prompts, c
 
 This is the generic version of what `/improve-skill` does for skills specifically. Auto-research works on anything with a mutable target and a scorable metric.
 
+**Relationship to `/improve-skill`:** For skills, improve-skill gets you to the EVAL.md ceiling (all binary criteria passing). Auto-research picks up where improve-skill stops — optimizing beyond the ceiling using comparative evaluation. If a skill hasn't hit its EVAL.md ceiling yet, redirect to `/improve-skill` first.
+
 ## Wrong-Tool Detection
 
-- **User wants a one-shot skill fix** → redirect to `/improve-skill`
+- **User wants a one-shot skill fix** or **skill hasn't hit EVAL.md ceiling yet** → redirect to `/improve-skill`
 - **User wants to create a new skill** → redirect to `/skill-creator`
 - **User wants to evaluate a skill** → redirect to `/write-skill-eval`
 
@@ -49,7 +51,7 @@ This skill handles autonomous iterative improvement with a measurable metric. It
 - **One-shot fixes** — use `/improve-skill` for a single structural/behavioral pass on a skill
 - **Greenfield creation** — use `/skill-creator` to build something from scratch
 - **Code review** — this is optimization, not evaluation of existing quality
-- **Tasks without a scorable metric** — if you can't measure "better," auto-research can't help
+- **Tasks without a scorable metric or comparison dimensions** — if you can't measure or compare "better," auto-research can't help
 
 ## Two modes
 
@@ -78,35 +80,60 @@ Capture: the mutable target path and a concrete description of what "better" mea
 
 **Safety gate:** If the optimization goal is destructive — the user wants to optimize toward system crashes, data loss, resource exhaustion, or any outcome that intentionally causes harm — refuse. Auto-research optimizes constructively. "Find the point where it breaks" is load testing or fuzzing, not iterative improvement. Route the user to appropriate tooling instead.
 
-### Step 2: Define the metric
+### Step 2: Classify scoring mode and define the metric
 
-Ask:
+First, classify the target's output determinism — this determines the scoring approach:
 
+| Output type | Scoring mode | Examples |
+|-------------|-------------|----------|
+| **Deterministic** — same input always produces comparable output | **Numerical** — absolute metrics (N/M, seconds, pass count) | Test suites, benchmarks, build times, binary criteria counts |
+| **Semi-deterministic** — output varies per run or requires judgment to evaluate | **Comparative** — A/B preference by LLM judge | Skill quality beyond EVAL.md ceiling, code style/logging quality, document conciseness, format adherence |
+
+**Comparative is the default.** Most optimization targets involve judgment. Only use numerical when the metric is truly reproducible and objective (e.g., `pytest` pass count, execution time).
+
+Then define the metric based on the mode:
+
+**For numerical mode**, ask:
 - "How would you know if I made it worse?"
 - "Can you score the output on a scale — like N criteria out of M?"
 
-**Quality gate:** If the user's metric is subjective ("it should feel better") or binary ("it passes or fails"), push back:
+A valid numerical metric must be: scorable by an agent without human review, producing a numeric or N/M result, and able to distinguish "better" from "same" from "worse."
 
-- "That metric requires human judgment — can we decompose it into binary checks an agent can score autonomously?"
-- "That's a gate, not a gradient. If it passes, there's nothing to optimize. Can we define quality levels — like 4/6 criteria passing today, targeting 6/6?"
+**For comparative mode**, ask:
+- "What specific dimensions should I compare when judging version A vs version B?"
+- "Which dimensions matter most? Rank them."
 
-A valid metric must be: scorable by an agent without human review, producing a numeric or N/M result, and able to distinguish "better" from "same" from "worse."
+A valid comparative metric must define: concrete comparison dimensions (not "overall quality"), a priority ranking of those dimensions, and what "better" looks like for each dimension.
 
-**Good metric:** "5/8 EVAL.md criteria passing, targeting 8/8" — gradient, scorable, concrete target.
-**Bad metric:** "the output should be better quality" — subjective, no number, no target.
+**Good numerical metric:** "5/8 EVAL.md criteria passing, targeting 8/8" — gradient, scorable, concrete target.
+**Good comparative metric:** "Compare on: (1) error message specificity, (2) log level correctness, (3) coverage across functions — prioritized in that order."
+**Bad metric (either mode):** "the output should be better quality" — subjective, no dimensions, no target.
+
+**Quality gate:** If the user's metric is purely binary ("it passes or fails"), push back — that's a gate, not a gradient. If the user's metric is subjective without dimensions ("it should feel better"), push back — decompose into concrete dimensions the agent can evaluate.
 
 ### Step 3: Identify the scoring mechanism
 
-The metric needs something that runs it. Ask:
+The metric needs something that runs it. The mechanism depends on the scoring mode.
 
+**For numerical mode**, ask:
 - "Is there an existing test suite, EVAL.md, or benchmark script that produces this score?"
 - "If not, what would we need to build before starting?"
 
-**Quality gate:** If no scoring mechanism exists, stop setup. The user needs to create one first. Auto-research cannot run without automated scoring — the agent would have no way to decide keep vs. revert.
+For skills below EVAL.md ceiling: the scoring mechanism is EVAL.md + the blind tester.
+For code: it could be `pytest`, a benchmark runner, or a linter with countable rules.
 
-For skills: the scoring mechanism is EVAL.md + the blind tester.
-For code: it could be `pytest` with quality assertions (not just pass/fail correctness).
-For prompts: it could be a rubric applied by a judge model.
+**For comparative mode**, the scoring mechanism is an LLM judge with a fixed comparison protocol. No external script needed — the agent runs the judge during each iteration. The protocol is:
+
+1. Generate output from the current version using the test inputs
+2. Retrieve the previous best output (stored or regenerated from the best commit)
+3. Present both outputs to the judge in **randomized order** (to avoid position bias)
+4. Judge evaluates each comparison dimension from PROGRAM.md independently
+5. Judge returns: **preferred A**, **preferred B**, or **tie** — with cited evidence for each dimension
+6. Aggregate across dimensions using the priority ranking: a win on dimension 1 outweighs a loss on dimension 3
+
+Record the comparison dimensions and protocol in PROGRAM.md so run mode can execute it without improvising.
+
+**Quality gate:** If no scoring mechanism exists (numerical) or no comparison dimensions are defined (comparative), stop setup. Auto-research cannot run without automated scoring.
 
 ### Step 4: Draw the mutable/immutable boundary
 
@@ -190,24 +217,39 @@ LOOP:
   3. Make a focused change — one idea per iteration, not multiple
   4. git commit with a descriptive message
   5. Run the scoring mechanism as defined in PROGRAM.md
-  6. Compare score to previous best
+  6. Compare to previous best:
+     - Numerical mode: compare scores directly (5/6 > 4/6)
+     - Comparative mode: run A/B judge protocol — present previous best
+       output and current output in randomized order, judge each
+       dimension, aggregate by priority ranking
   7. Record in research/iterations.tsv:
-     iteration, commit hash, score, status (keep|discard|crash), one-line summary
-  8. If score improved → keep, advance branch
-  9. If score equal or worse → git reset to previous best commit
+     - Numerical: iteration, commit, score (N/M), status, summary
+     - Comparative: iteration, commit, verdict (preferred|tie|rejected),
+       dimension wins (e.g., "2/3"), status, summary
+  8. If improved (numerical: higher score; comparative: preferred) → keep, advance branch
+  9. If equal or worse (numerical: same/lower; comparative: tie/rejected) → git reset to previous best commit
   10. Check stop conditions — if met, exit loop
   11. If not met → repeat
 ```
 
 > **Read [`references/research-format.md`](references/research-format.md)** for iterations.tsv and changelog.md format specifications.
 
-**Example iteration log after 3 cycles:**
+**Example iteration log — numerical mode:**
 
 ```
 iteration	commit	score	status	change_summary
 001	a3f2c1d	4/6	keep	baseline — no changes
 002	b7e9d4a	5/6	keep	simplified template, removed redundant rule
 003	c1a8f3b	4/6	discard	removed mental model paragraph — regression
+```
+
+**Example iteration log — comparative mode:**
+
+```
+iteration	commit	verdict	dim_wins	status	change_summary
+001	a3f2c1d	—	—	keep	baseline — no changes
+002	b7e9d4a	preferred	2/3	keep	tightened error messages — won on specificity and level, tied on coverage
+003	c1a8f3b	rejected	1/3	discard	verbose logging — won coverage but lost specificity and level
 ```
 
 ### On crash or error
@@ -234,12 +276,13 @@ When a stop condition is met:
 - **Never stop to ask the user** — the user may be away. If stuck, try a different strategy. If truly out of ideas after exhausting all directions, stop and report in changelog.md
 - **Git is the experiment tracker** — every attempt is a commit, every revert is a git reset. The full history is recoverable
 
-> **Execution scope:** Ignore `EVAL.md`, `SCOPE.md` during execution — these are skill-specific artifacts that may or may not exist on the target.
+> **Execution scope:** In numerical mode, ignore `EVAL.md`, `SCOPE.md` during execution — these are skill-specific artifacts that may or may not exist on the target. In comparative mode, if EVAL.md exists and the target is a skill at ceiling, use it as a **regression guard** (binary check before comparative scoring) — do not ignore it.
 
 ## When to Hand Off
 
 | Task | Route to |
 |------|----------|
-| Target is specifically a skill and you want a single improvement pass | `/improve-skill [path]` |
+| Target is a skill that hasn't hit its EVAL.md ceiling yet | `/improve-skill [path]` |
 | Need to create EVAL.md for a skill before auto-research | `/write-skill-eval [path]` |
 | Need to create the skill itself first | `/skill-creator [description]` |
+

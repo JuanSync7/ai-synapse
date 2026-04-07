@@ -11,3 +11,4 @@ Skills about skills. Creates, evaluates, and improves Claude Code skills.
 | [write-skill-eval](write-skill-eval/) | route | Router — generates EVAL.md via test prompts and output criteria |
 | [generate-test-prompts](generate-test-prompts/) | generate | Blind test prompt generation across personas |
 | [generate-output-criteria](generate-output-criteria/) | generate | Binary output quality criteria for skill evaluation |
+| [auto-research](auto-research/) | improve | Autonomous iterative improvement with numerical or A/B comparative scoring |
