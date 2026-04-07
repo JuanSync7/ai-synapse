@@ -19,14 +19,14 @@ Creating a skill is an act of context injection — you're not programming the a
 **For skill-creator itself:** Create a task list at the start:
 
 ```
-TaskCreate: "Phase 1: Understand — capture intent, triggers, output, siblings"
-TaskCreate: "Phase 1.5: Baseline test"
-TaskCreate: "Phase 2: Write the skill"
-TaskCreate: "Phase 2.5: Pipeline registration — add to SKILLS_REGISTRY.yaml"
-TaskCreate: "Phase 3: Generate test prompts"
-TaskCreate: "Phase 4: Generate output criteria"
-TaskCreate: "Phase 5: Assemble EVAL.md"
-TaskCreate: "Phase 6-7: Validate and iterate"
+TaskCreate: "Loop 1 Build — Phase 1: Understand intent, triggers, output, siblings"
+TaskCreate: "Loop 1 Build — Phase 1.5: Baseline test"
+TaskCreate: "Loop 1 Build — Phase 2: Write the skill"
+TaskCreate: "Loop 1 Build — Phase 2.5: Pipeline registration"
+TaskCreate: "Loop 2 Eval — Phase 3: Generate test prompts"
+TaskCreate: "Loop 2 Eval — Phase 4: Generate output criteria"
+TaskCreate: "Loop 2 Eval — Phase 5: Assemble EVAL.md"
+TaskCreate: "Loop 3 Improve — Phase 6-7: Validate and iterate (or hand off to auto-research)"
 ```
 
 Mark each task `in_progress` when starting, `completed` when done.
@@ -68,6 +68,20 @@ Before building a skill, internalize these — they determine whether the skill 
 
 ## Workflow
 
+Skill creation has three loops with different lifecycles:
+
+| Loop | Phases | Produces | Runs | Owner |
+|------|--------|----------|------|-------|
+| **Build** | 1 → 1.5 → 2 → 2.5 | The skill itself | Once, during creation | skill-creator |
+| **Eval** | 3 → 4 → 5 | EVAL.md | Once, after build | skill-creator |
+| **Improve** | 6 → 7 | Better skill | Repeatedly, decoupled | `/improve-skill` or `/auto-research` |
+
+The build loop's output (the skill) is the eval loop's input (the thing to test). The improve loop feeds back into the build loop — if it surfaces failures, you fix SKILL.md. The improve loop is the only one that re-runs over the skill's lifetime, and it's the one that becomes autonomous with auto-research.
+
+---
+
+### Loop 1: Build
+
 ### Phase 1: Understand
 
 1. **Capture intent** — What should this skill enable Claude to do?
@@ -102,6 +116,11 @@ skill-name/
 ├── PROGRAM.md        (optional — research directions for auto-research loops)
 └── research/         (optional — iterations.tsv + changelog.md from auto-research)
 ```
+
+> **Read [`references/scope-format.md`](references/scope-format.md)** when creating SCOPE.md.
+> **Read [`references/program-format.md`](references/program-format.md)** when creating PROGRAM.md.
+> **Read [`references/test-inputs-format.md`](references/test-inputs-format.md)** when creating test-inputs/.
+> **Read [`references/research-format.md`](references/research-format.md)** for iterations.tsv and changelog.md format.
 
 **Execution fence:** When a model *executes* a skill, it reads SKILL.md, templates/, references/, rules/, and examples/. It ignores `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` — these are improvement/migration artifacts, not execution context. Include this fence in every skill you create:
 
@@ -220,6 +239,10 @@ After appending, verify:
 
 Show the user the appended entry and confirm.
 
+---
+
+### Loop 2: Eval
+
 ### Phase 3: Generate Test Cases
 
 First, identify the skill type — it determines what to test:
@@ -266,20 +289,37 @@ Combine the outputs from Phase 3 and Phase 4 into an EVAL.md in the skill's dire
 (From /generate-test-prompts)
 ```
 
+---
+
+### Loop 3: Improve
+
+This loop is **decoupled** from skill creation. It runs immediately after the eval loop, but also re-runs whenever you want to optimize or port to a smaller model. Skill-creator sets it up; `/improve-skill` or `/auto-research` executes it.
+
 ### Phase 6: Validate
 
-Run `/improve-skill [path to SKILL.md]` to execute the full structural + behavioral loop. This validates that:
+Run `/improve-skill [path to SKILL.md]` for a single-pass structural + behavioral check:
 - The SKILL.md passes all structural quality criteria
 - The skill produces outputs that pass all EVAL.md output criteria
 - Failures are traced back to SKILL.md and fixed
 
-### Phase 7: Iterate
+### Phase 7: Iterate or hand off to auto-research
 
-If improve-skill surfaces failures:
+**Manual iteration** — if improve-skill surfaces failures:
 1. Fix SKILL.md based on traced root causes
 2. Re-run the behavioral loop
 3. If output criteria need adjustment (they were wrong, not the skill), update via `/generate-output-criteria`
 4. If test prompts are insufficient, add more via `/generate-test-prompts`
+
+**Autonomous iteration** — for skills worth optimizing overnight:
+
+> **Read [`references/scope-format.md`](references/scope-format.md)**, [`references/program-format.md`](references/program-format.md)**, [`references/test-inputs-format.md`](references/test-inputs-format.md)**, and [`references/research-format.md`](references/research-format.md)** for templates and filled examples of each artifact below.
+
+1. Create `SCOPE.md` — 5-line capability profile (if not created during Phase 2)
+2. Create `test-inputs/` — 3–5 fixed stimulus files (prompts or input files)
+3. Create `PROGRAM.md` — research directions, mutable/immutable file boundaries, exploration strategies, constraints, loop mechanics, stop conditions
+4. Hand off to `/auto-research [path]` — it reads PROGRAM.md, iterates against EVAL.md, logs results to `research/iterations.tsv` and `research/changelog.md`, and commits improvements via git
+
+Do not pre-create `research/` — the auto-research agent creates it on first iteration.
 
 ## Skill Quality Standards
 
@@ -310,7 +350,8 @@ A complete skill has:
 
 | Task | Route to |
 |------|----------|
-| Skill needs structural improvement | `/improve-skill [path]` |
+| Skill needs structural improvement (single pass) | `/improve-skill [path]` |
+| Skill needs autonomous multi-iteration improvement | `/auto-research [path]` |
 | Need to regenerate test prompts | `/generate-test-prompts [name] [description]` |
 | Need to regenerate output criteria | `/generate-output-criteria [path]` |
 | Need full EVAL.md from scratch | `/write-skill-eval [path]` |
