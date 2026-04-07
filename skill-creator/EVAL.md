@@ -1,1 +1,0 @@
-/home/juansync7/ai-skills/skill-creator/EVAL.md
