@@ -126,7 +126,7 @@ Ask:
 
 - "I need at least 2–3 concrete directions to explore. What do you think is causing the current score to be low?"
 
-Do not suggest strategies. The user knows their domain — draw it out of them.
+Do not suggest strategies. Do not add strategies the user did not provide. The PROGRAM.md exploration directions must contain only what the user stated — no "bonus" ideas, no "combine best results" steps, no inferred strategies. The user knows their domain — draw it out of them. If run mode exhausts all user-provided strategies, it may invent variations at that point — but setup mode never invents.
 
 ### Step 6: Define stop conditions
 

@@ -1,3 +1,4 @@
 iteration	commit	score	status	change_summary
 001	1b9644b	19/25	keep	baseline — initial skill creation
 002	1b9644b	25/25	keep	added progress tracking, scope boundaries, good/bad contrasts, concrete iteration log example
+003	pending	27/28	keep	behavioral pass — strengthened ask-dont-suggest to prohibit invented strategies in setup mode
