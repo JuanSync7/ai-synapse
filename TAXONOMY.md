@@ -17,6 +17,7 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | `meta` | Skills about skills |
 | `meta.eval` | Skill evaluation |
 | `meta.create` | Skill creation and improvement |
+| `optimization` | Autonomous iterative improvement |
 | `orchestration` | Multi-agent coordination |
 | `creative` | Standalone creative/visual |
 | `frameworks.langgraph` | LangGraph-specific tools |

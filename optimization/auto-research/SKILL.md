@@ -1,7 +1,7 @@
 ---
 name: auto-research
 description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'auto-research', 'optimize this overnight', 'run autonomous improvement'."
-domain: meta.create
+domain: optimization
 intent: improve
 tags: [auto-research, karpathy, experiment-loop, optimization]
 user-invocable: true
