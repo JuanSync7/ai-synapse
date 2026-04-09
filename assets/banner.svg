@@ -10,6 +10,13 @@
       @keyframes diamondPulse { 0%,100%{opacity:.2} 50%{opacity:.6} }
       @keyframes dendritePulse { 0%,100%{stroke-opacity:.06} 50%{stroke-opacity:.18} }
       @keyframes dendritePulse2 { 0%,100%{stroke-opacity:.04} 50%{stroke-opacity:.14} }
+      /* Axon fire: mostly invisible, brief flash on, then dark */
+      @keyframes axonFire1 { 0%,100%{stroke-opacity:0} 12%{stroke-opacity:.35} 18%{stroke-opacity:.25} 25%{stroke-opacity:0} }
+      @keyframes axonFire2 { 0%,100%{stroke-opacity:0} 40%{stroke-opacity:0} 48%{stroke-opacity:.3} 55%{stroke-opacity:.2} 62%{stroke-opacity:0} }
+      @keyframes axonFire3 { 0%,100%{stroke-opacity:0} 65%{stroke-opacity:0} 72%{stroke-opacity:.28} 80%{stroke-opacity:.18} 88%{stroke-opacity:0} }
+      @keyframes axonFire4 { 0%,20%{stroke-opacity:0} 25%{stroke-opacity:.32} 30%{stroke-opacity:.22} 38%{stroke-opacity:0} 100%{stroke-opacity:0} }
+      @keyframes axonFire5 { 0%,50%{stroke-opacity:0} 55%{stroke-opacity:.3} 62%{stroke-opacity:.15} 68%{stroke-opacity:0} 100%{stroke-opacity:0} }
+      @keyframes axonFire6 { 0%,75%{stroke-opacity:0} 80%{stroke-opacity:.35} 85%{stroke-opacity:.2} 92%{stroke-opacity:0} 100%{stroke-opacity:0} }
       @keyframes somaGlow { 0%,100%{opacity:.5} 50%{opacity:.9} }
       @keyframes fireFlash { 0%,15%,100%{opacity:0} 5%,10%{opacity:.7} }
 
@@ -31,6 +38,25 @@
       .dp4{animation:dendritePulse2 6s ease-in-out infinite}
       .dp5{animation:dendritePulse2 6s ease-in-out 2s infinite}
       .dp6{animation:dendritePulse2 6s ease-in-out 4s infinite}
+      /* Axon fire classes — each has a unique duration+delay combo for randomness */
+      .af1{animation:axonFire1 4.5s ease-in-out infinite}
+      .af2{animation:axonFire2 5.2s ease-in-out .8s infinite}
+      .af3{animation:axonFire3 6.1s ease-in-out 1.4s infinite}
+      .af4{animation:axonFire4 4.8s ease-in-out 2.1s infinite}
+      .af5{animation:axonFire5 5.7s ease-in-out .3s infinite}
+      .af6{animation:axonFire6 6.5s ease-in-out 3.2s infinite}
+      .af7{animation:axonFire1 5.3s ease-in-out 2.6s infinite}
+      .af8{animation:axonFire2 4.2s ease-in-out 1.9s infinite}
+      .af9{animation:axonFire3 5.8s ease-in-out .5s infinite}
+      .af10{animation:axonFire4 6.3s ease-in-out 3.8s infinite}
+      .af11{animation:axonFire5 4.6s ease-in-out 1.1s infinite}
+      .af12{animation:axonFire6 5.1s ease-in-out 2.4s infinite}
+      .af13{animation:axonFire1 6.8s ease-in-out 4.2s infinite}
+      .af14{animation:axonFire2 5.5s ease-in-out 1.6s infinite}
+      .af15{animation:axonFire3 4.3s ease-in-out 3.5s infinite}
+      .af16{animation:axonFire4 5.9s ease-in-out .7s infinite}
+      .af17{animation:axonFire5 6.2s ease-in-out 2.9s infinite}
+      .af18{animation:axonFire6 4.9s ease-in-out 1.3s infinite}
       .sg1{animation:somaGlow 4s ease-in-out infinite}
       .sg2{animation:somaGlow 4s ease-in-out 1s infinite}
       .sg3{animation:somaGlow 4s ease-in-out 2s infinite}
@@ -168,7 +194,7 @@
     <path d="M90,280 C100,295 95,310 100,330" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
   </g>
   <!-- Axon (long projection toward center) -->
-  <path d="M130,190 C170,195 220,190 270,185 C320,180 370,175 410,175" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width="1.2" class="dp1"/>
+  <path d="M130,190 C170,195 220,190 270,185 C320,180 370,175 410,175" fill="none" stroke="#a3e635" stroke-opacity=".35" stroke-width="1.2" class="af1"/>
   <!-- Axon terminals (synaptic boutons) -->
   <g class="dp4">
     <path d="M410,175 C425,168 435,160 445,155" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".8"/>
@@ -198,7 +224,7 @@
     <path d="M1110,300 C1100,315 1095,335 1085,350" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
   </g>
   <!-- Axon toward center -->
-  <path d="M1070,210 C1030,205 980,210 930,215 C880,220 830,225 790,225" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width="1.2" class="dp2"/>
+  <path d="M1070,210 C1030,205 980,210 930,215 C880,220 830,225 790,225" fill="none" stroke="#a3e635" stroke-opacity=".35" stroke-width="1.2" class="af2"/>
   <g class="dp5">
     <path d="M790,225 C775,218 765,210 755,202" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".8"/>
     <path d="M790,225 C775,228 762,230 750,228" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".8"/>
@@ -422,50 +448,49 @@
   </g>
 
   <!-- ==================== INTER-NEURON AXON CONNECTIONS ==================== -->
-  <!-- Long-range connections between neuron clusters (original) -->
-  <path d="M230,140 C280,170 320,190 350,200" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp1"/>
-  <path d="M210,270 C260,250 310,230 350,200" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp2"/>
-  <path d="M350,200 C420,195 480,200 530,210" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width="1.1" class="dp3"/>
-  <path d="M670,190 C720,195 780,200 850,200" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width="1.1" class="dp1"/>
-  <path d="M850,200 C890,180 930,150 970,140" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp2"/>
-  <path d="M850,200 C890,230 940,260 990,270" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp3"/>
-  <path d="M310,70 C340,100 350,140 350,200" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp2"/>
-  <path d="M290,320 C320,290 340,250 350,200" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp3"/>
-  <path d="M890,90 C870,120 860,160 850,200" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp1"/>
-  <path d="M910,320 C880,290 860,250 850,200" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
+  <!-- Long-range axon connections (fire randomly on/off) -->
+  <path d="M230,140 C280,170 320,190 350,200" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1" class="af3"/>
+  <path d="M210,270 C260,250 310,230 350,200" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".9" class="af4"/>
+  <path d="M350,200 C420,195 480,200 530,210" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1.1" class="af5"/>
+  <path d="M670,190 C720,195 780,200 850,200" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1.1" class="af6"/>
+  <path d="M850,200 C890,180 930,150 970,140" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".9" class="af7"/>
+  <path d="M850,200 C890,230 940,260 990,270" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".9" class="af8"/>
+  <path d="M310,70 C340,100 350,140 350,200" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".9" class="af9"/>
+  <path d="M290,320 C320,290 340,250 350,200" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af10"/>
+  <path d="M890,90 C870,120 860,160 850,200" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".9" class="af11"/>
+  <path d="M910,320 C880,290 860,250 850,200" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af12"/>
 
-  <!-- New inter-neuron axons -->
-  <!-- Upper horizontal chain: far-left-upper → top-left → upper-mid-left → center-upper → upper-mid-right → top-right → far-right-upper -->
-  <path d="M55,75 C95,78 160,80 220,80" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp1"/>
-  <path d="M220,80 C280,72 350,60 420,55" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp3"/>
-  <path d="M420,55 C480,48 540,45 600,45" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp2"/>
-  <path d="M600,45 C660,48 720,50 780,50" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp1"/>
-  <path d="M780,50 C850,58 920,65 980,70" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp3"/>
-  <path d="M980,70 C1035,72 1095,74 1150,75" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp2"/>
+  <!-- Upper horizontal chain axons -->
+  <path d="M55,75 C95,78 160,80 220,80" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".8" class="af13"/>
+  <path d="M220,80 C280,72 350,60 420,55" fill="none" stroke="#a3e635" stroke-opacity=".28" stroke-width=".9" class="af14"/>
+  <path d="M420,55 C480,48 540,45 600,45" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1" class="af15"/>
+  <path d="M600,45 C660,48 720,50 780,50" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1" class="af16"/>
+  <path d="M780,50 C850,58 920,65 980,70" fill="none" stroke="#a3e635" stroke-opacity=".28" stroke-width=".9" class="af17"/>
+  <path d="M980,70 C1035,72 1095,74 1150,75" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".8" class="af18"/>
 
-  <!-- Lower horizontal chain -->
-  <path d="M45,355 C100,348 150,335 200,330" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp2"/>
-  <path d="M200,330 C250,340 315,350 380,355" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp1"/>
-  <path d="M380,355 C440,358 520,358 600,358" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp3"/>
-  <path d="M600,358 C680,358 760,355 820,355" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp2"/>
-  <path d="M820,355 C880,348 940,335 1000,330" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp1"/>
-  <path d="M1000,330 C1060,338 1110,342 1155,345" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp3"/>
+  <!-- Lower horizontal chain axons -->
+  <path d="M45,355 C100,348 150,335 200,330" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".8" class="af8"/>
+  <path d="M200,330 C250,340 315,350 380,355" fill="none" stroke="#a3e635" stroke-opacity=".28" stroke-width=".9" class="af3"/>
+  <path d="M380,355 C440,358 520,358 600,358" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1" class="af11"/>
+  <path d="M600,358 C680,358 760,355 820,355" fill="none" stroke="#a3e635" stroke-opacity=".3" stroke-width="1" class="af6"/>
+  <path d="M820,355 C880,348 940,335 1000,330" fill="none" stroke="#a3e635" stroke-opacity=".28" stroke-width=".9" class="af14"/>
+  <path d="M1000,330 C1060,338 1110,342 1155,345" fill="none" stroke="#a3e635" stroke-opacity=".25" stroke-width=".8" class="af1"/>
 
-  <!-- Vertical bridges: upper → lower through mid-layer -->
-  <path d="M420,55 C425,90 420,130 415,170" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
-  <path d="M780,50 C775,88 780,125 785,165" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
-  <path d="M500,300 C510,328 520,342 525,355" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
-  <path d="M700,100 C695,78 692,62 690,48" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp2"/>
+  <!-- Vertical bridge axons -->
+  <path d="M420,55 C425,90 420,130 415,170" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af9"/>
+  <path d="M780,50 C775,88 780,125 785,165" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af4"/>
+  <path d="M500,300 C510,328 520,342 525,355" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af16"/>
+  <path d="M700,100 C695,78 692,62 690,48" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af12"/>
 
-  <!-- Diagonal cross-connections for density -->
-  <path d="M260,145 C300,130 360,100 420,55" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp1"/>
-  <path d="M940,260 C900,280 860,310 820,355" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
-  <path d="M55,75 C80,110 110,150 130,190" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
-  <path d="M1150,75 C1130,110 1100,155 1070,210" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
-  <path d="M45,355 C70,340 100,318 130,290" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
-  <path d="M1155,345 C1130,330 1100,310 1070,285" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp2"/>
-  <path d="M600,45 C590,70 585,85 580,100" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
-  <path d="M600,358 C610,335 615,318 620,300" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp3"/>
+  <!-- Diagonal cross-connection axons -->
+  <path d="M260,145 C300,130 360,100 420,55" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af7"/>
+  <path d="M940,260 C900,280 860,310 820,355" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af15"/>
+  <path d="M55,75 C80,110 110,150 130,190" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af10"/>
+  <path d="M1150,75 C1130,110 1100,155 1070,210" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af5"/>
+  <path d="M45,355 C70,340 100,318 130,290" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af18"/>
+  <path d="M1155,345 C1130,330 1100,310 1070,285" fill="none" stroke="#a3e635" stroke-opacity=".2" stroke-width=".7" class="af2"/>
+  <path d="M600,45 C590,70 585,85 580,100" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af13"/>
+  <path d="M600,358 C610,335 615,318 620,300" fill="none" stroke="#a3e635" stroke-opacity=".22" stroke-width=".8" class="af17"/>
 
   <!-- Synaptic cleft connections (short gaps between axon terminals and dendrites) -->
   <g opacity=".4">
