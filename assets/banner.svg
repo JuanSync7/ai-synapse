@@ -507,24 +507,24 @@
   <!-- ==================== CENTRAL TITLE ==================== -->
 
   <!-- Hexagonal frame — solid dark background to cover neurons behind text -->
-  <polygon points="600,112 755,145 755,230 600,263 445,230 445,145" fill="#0a0a0f" stroke="#a3e635" stroke-opacity=".12" stroke-width="1"/>
-  <polygon points="600,117 750,148 750,227 600,258 450,227 450,148" fill="#070b07" stroke="#a3e635" stroke-opacity=".06" stroke-width=".5"/>
+  <polygon points="600,100 830,140 830,245 600,285 370,245 370,140" fill="#0a0a0f" stroke="#a3e635" stroke-opacity=".12" stroke-width="1"/>
+  <polygon points="600,106 824,144 824,241 600,279 376,241 376,144" fill="#070b07" stroke="#a3e635" stroke-opacity=".06" stroke-width=".5"/>
 
   <!-- Title -->
   <g filter="url(#tn)" class="title-glow">
-    <text x="600" y="175" fill="url(#tg)" font-family="'Courier New','Fira Code',monospace" font-size="58" font-weight="bold" text-anchor="middle" dominant-baseline="central" letter-spacing="8">AI-SYNAPSE</text>
+    <text x="600" y="172" fill="url(#tg)" font-family="'Courier New','Fira Code',monospace" font-size="58" font-weight="bold" text-anchor="middle" dominant-baseline="central" letter-spacing="8">AI-SYNAPSE</text>
   </g>
 
   <!-- Subtitle -->
-  <text x="600" y="215" fill="#a3e635" font-family="'Courier New',monospace" font-size="12" text-anchor="middle" dominant-baseline="central" letter-spacing="10" class="sub-glow">SKILL ORCHESTRATION FRAMEWORK</text>
+  <text x="600" y="218" fill="#a3e635" font-family="'Courier New',monospace" font-size="12" text-anchor="middle" dominant-baseline="central" letter-spacing="10" class="sub-glow">SKILL ORCHESTRATION FRAMEWORK</text>
 
   <!-- Flanking lines -->
-  <line x1="390" y1="188" x2="450" y2="188" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
-  <line x1="750" y1="188" x2="810" y2="188" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
-  <circle cx="390" cy="188" r="2" fill="#a3e635">
+  <line x1="340" y1="190" x2="376" y2="190" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
+  <line x1="824" y1="190" x2="860" y2="190" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
+  <circle cx="340" cy="190" r="2" fill="#a3e635">
     <animate attributeName="opacity" values=".3;.8;.3" dur="2s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="810" cy="188" r="2" fill="#a3e635">
+  <circle cx="860" cy="190" r="2" fill="#a3e635">
     <animate attributeName="opacity" values=".3;.8;.3" dur="2s" begin="1s" repeatCount="indefinite"/>
   </circle>
 
