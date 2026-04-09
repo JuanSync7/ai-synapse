@@ -57,7 +57,9 @@ Before starting the Planning Stage, read:
 
 1. **Spec** — extract every REQ/FR ID, its priority (MUST/SHOULD/MAY), and acceptance criteria.
 2. **Codebase** — understand existing file structure, patterns, technology stack. What exists today vs what needs to be built from scratch.
-3. **System name and output path** — from `$ARGUMENTS`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_DESIGN.md`.
+3. **System name and output path** — from `$ARGUMENTS`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_DESIGN.md` (or `_DESIGN_P{N}.md` if phased).
+4. **Phase number** — If phased delivery, which phase? What prior phases exist?
+5. **Prior phase artifacts** (P2+ only) — prior phase engineering guide (what was actually built), prior phase source code (real contracts to reference), prior phase design doc (for task numbering continuity).
 
 If no spec is provided, request one before proceeding. Do not invent requirements.
 
@@ -78,7 +80,8 @@ Before writing any section, read all inputs and produce the task decomposition +
 From the spec and codebase analysis:
 
 1. Group related requirements into implementable tasks.
-2. Assign each task a phase based on delivery order:
+2. For phased delivery (P2+): identify which requirements extend prior-phase interfaces. These tasks must list the prior-phase interface as a dependency and reference the real implementation (not stubs). Read [`references/phased-delivery.md`](references/phased-delivery.md) for cross-phase task dependency rules.
+3. Assign each task a phase based on delivery order:
    - Foundation phases first (infrastructure, validation, config)
    - Logic phases next (algorithms, scoring, routing)
    - Quality phases (formatting, conflict detection)
@@ -255,6 +258,22 @@ Before assembling the final document:
 
 ---
 
+## Phased Delivery
+
+When writing a design document for a specific delivery phase (P1, P2, P3...):
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full phasing rules: task numbering continuity, contract references to real code, cross-phase dependency markers, and phase context header.
+
+**Summary:**
+- Output naming: `{SUBSYSTEM}_DESIGN_P{N}.md`
+- P2+ references real code from prior phases, not stubs
+- Task numbering continues from prior phase (globally unique across all phases)
+- Part B contracts for P2+ reference prior-phase real implementations as imports
+- Cross-phase dependencies marked with a "Prior Phase Boundary" in the DAG
+- After writing, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
+
+---
+
 ## Integration
 
 **Upstream (required before this skill):**
@@ -279,6 +298,10 @@ write-spec-docs → write-design-docs → write-implementation-docs
                                write-module-tests
 ```
 
-**Chain handoff:** After saving and completing the quality checklist:
+## README Dashboard
+
+After saving the design document, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the update procedure.
+
+**Chain handoff:** After saving, completing the quality checklist, and updating the README:
 
 > "Design document complete and saved to `[path]`. Next step: invoke `/write-implementation-docs [system] [spec path] [this design doc path]` to create the implementation source-of-truth."

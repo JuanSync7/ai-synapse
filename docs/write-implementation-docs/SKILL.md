@@ -53,7 +53,10 @@ Before starting the Planning Stage, read:
 
 1. **Spec** — extract every FR/REQ ID and its acceptance criteria.
 2. **Design doc** — extract Part A task list (descriptions, FR assignments, dependencies, file targets) and all Part B CONTRACT entries verbatim. Ignore pattern entries — they go directly to `implement-code` task agents, never into this document.
-3. **System name and output path** — from `$ARGUMENTS`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_IMPLEMENTATION_DOCS.md`.
+3. **System name and output path** — from `$ARGUMENTS`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_IMPLEMENTATION_DOCS.md` (or `_IMPLEMENTATION_DOCS_P{N}.md` if phased).
+4. **Phase number** — If phased delivery, which phase?
+5. **Prior phase source code** (P2+ only) — the actual codebase with real implementations of prior-phase contracts.
+6. **Prior phase engineering guide** (P2+ only) — `_ENGINEERING_GUIDE.md` showing what was actually built.
 
 ## Scope Check
 
@@ -192,6 +195,8 @@ Phase 0 is the most important section. Every `implement-code` task agent works a
 
 > **Read [`references/phase0-guide.md`](references/phase0-guide.md)** for how to derive Phase 0 from design doc Part B: contract vs pattern distinction, error taxonomy table format, integration contracts format, and stub rules.
 
+For phased delivery (P2+): Phase 0 splits into Phase 0a (established contracts from prior phases as import references) and Phase 0b (new stubs for this phase). Read [`references/phased-delivery.md`](references/phased-delivery.md) for the full Phase 0 evolution rules.
+
 **Phase 0 review gate:** Phase 0 must be reviewed and approved before any task section agent is dispatched. If Phase 0 has errors, stop and fix — task sections inline these contracts.
 
 ---
@@ -221,6 +226,22 @@ Before assembling the final document:
 
 ---
 
+## Phased Delivery
+
+When writing implementation docs for a specific delivery phase (P1, P2, P3...):
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full phasing rules: Phase 0a/0b split, established vs new contracts, error taxonomy accumulation, and cross-phase traceability.
+
+**Summary:**
+- Output naming: `{SUBSYSTEM}_IMPLEMENTATION_DOCS_P{N}.md`
+- P2+ Phase 0 splits into 0a (prior-phase real code as imports) and 0b (new stubs)
+- Error taxonomy accumulates across phases
+- Task numbering continues from prior phase
+- Traceability covers this phase's FRs only, noting prior-phase extensions
+- After writing, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
+
+---
+
 ## Integration
 
 **Upstream (required before this skill):**
@@ -246,6 +267,10 @@ write-spec-docs → write-design → write-implementation-docs
                             write-module-tests
 ```
 
-**Chain handoff:** After saving and completing the quality checklist:
+## README Dashboard
+
+After saving the implementation docs, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the update procedure.
+
+**Chain handoff:** After saving, completing the quality checklist, and updating the README:
 
 > "Implementation docs complete and saved to `[path]`. Phase 0 contracts are ready for human review — approve Phase 0 before proceeding. After approval, invoke `implement-code [system] [path]` to begin implementation."

@@ -338,7 +338,11 @@ After writing the complete guide, run a review cycle:
    - Path to the source directory
 3. If the reviewer finds issues (**ISSUES FOUND**): fix them and re-dispatch the reviewer.
 4. If the loop exceeds 3 iterations, surface unresolved issues to the user for guidance.
-5. Once the reviewer approves (**APPROVED**): commit the document and inform the user.
+5. Once the reviewer approves (**APPROVED**): update the README dashboard, commit the document, and inform the user.
+
+## README Dashboard
+
+After writing or updating the engineering guide, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the update procedure.
 
 ---
 
@@ -358,6 +362,20 @@ When the code has changed and the guide needs updating:
 4. **Update the "Last updated" date** in the document header.
 
 Do NOT rewrite unchanged sections. Surgical updates preserve review history and reduce diff noise.
+
+### Phased Delivery Updates
+
+When updating for a new delivery phase (P2, P3...):
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full cumulative update rules: what to add, what to update, what to leave alone, and phase provenance marking.
+
+**Summary:**
+- The engineering guide is cumulative — one file, no phase suffix (`_ENGINEERING_GUIDE.md`)
+- Add new module sections for this phase's new modules
+- Update existing module sections only if this phase changed them
+- Add a Phase History row to Section 1
+- Mark new modules with "Introduced in: P{N}" and updated modules with "Updated in P{N}"
+- After updating, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
 
 ---
 

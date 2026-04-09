@@ -46,27 +46,35 @@ Ask "what kind of document is this?" and classify:
 Ask "what do you need to produce?" and route:
 
 ```
-Layer 1 — Platform Spec          (written manually — no skill)
+Layer 0   — Scope                  -> invoke /write-scope-docs
                |
                v
-Layer 2 — Spec Summary            -> invoke /write-spec-summary
+Layer 0.5 — Architecture           -> invoke /write-architecture-docs
                |
                v
-Layer 3 — Authoritative Spec      -> invoke /write-spec-docs
+Layer 1   — Platform Spec          (written manually — no skill)
                |
                v
-Layer 4 — Implementation Plan     -> invoke /write-impl
+Layer 2   — Spec Summary           -> invoke /write-spec-summary
                |
                v
-Layer 5 — Engineering Guide       -> invoke /write-engineering-guide
-           (post-implementation)
+Layer 3   — Authoritative Spec     -> invoke /write-spec-docs
                |
                v
-Layer 6 — Module Tests            -> invoke /write-module-tests or /write-test-docs
+Layer 4   — Implementation Plan    -> invoke /write-impl
+               |
+               v
+Layer 5   — Engineering Guide      -> invoke /write-engineering-guide
+              (post-implementation)
+               |
+               v
+Layer 6   — Module Tests           -> invoke /write-module-tests or /write-test-docs
 ```
 
 | User Intent | Skill to Invoke |
 |-------------|----------------|
+| Define what to build, phase planning, scope decisions | `/write-scope-docs` |
+| Technology choices, component structure, data flow patterns | `/write-architecture-docs` |
 | Summarize an existing spec | `/write-spec-summary` |
 | Sync a summary with an updated spec | `/write-spec-summary` (update mode) |
 | Write requirements / a new spec | `/write-spec-docs` |
@@ -75,12 +83,24 @@ Layer 6 — Module Tests            -> invoke /write-module-tests or /write-test
 | Test team handoff / maintenance reference | `/write-engineering-guide` |
 | Unsure | Ask: "Is the system already built, or are you planning how to build it?" |
 
+### Step 2.5: Determine Phase
+
+If the user mentions a phase ("write spec for phase 2", "P2 design doc", "next phase"):
+
+1. **Identify phase number** — P1, P2, P3...
+2. **Locate the subsystem docs directory** — check for prior phase documents
+3. **Check for README.md dashboard** — if it exists, read it to understand current state (completed phases, in-progress layers, cross-phase dependencies)
+4. **Identify prior phase artifacts** — paths to prior phase documents the dispatched skill will need for carry-forward
+
+If no phase is mentioned and no prior phase documents exist, this is a single-phase (unphased) project — proceed without phase context.
+
 ### Step 3: Pass Structural Context
 
-Once role and layer are determined, pass this context to the write-* skill:
+Once role, layer, and phase are determined, pass this context to the write-* skill:
 
 - **Target directory** — derived from role (see table above)
 - **Document role** — pipeline, integration, platform, or extension
+- **Phase context** (if phased) — phase number, prior phase document paths, README dashboard path
 - **Companion documents** — what to cross-reference (see Cross-Reference Protocol below)
 - **For integration role**: which pipeline spec(s) to read first, which FRs to populate `Implements`/`Modifies` fields for
 
@@ -95,23 +115,21 @@ Generic specs describe stages. Integration specs describe providers. They live i
 ```
 docs/{domain}/
   {stage_a}/                        <- pipeline specs (pure interface)
-    {STAGE_A}_SPEC.md
-    {STAGE_A}_SPEC_SUMMARY.md
-    {STAGE_A}_DESIGN.md
-    {STAGE_A}_IMPLEMENTATION.md
-    {STAGE_A}_ENGINEERING_GUIDE.md
+    README.md                       <- phased delivery dashboard (if multi-phase)
+    {STAGE_A}_SPEC.md               <- unphased
+    {STAGE_A}_SPEC_P1.md            <- phased (split per phase)
+    {STAGE_A}_SPEC_P2.md
+    {STAGE_A}_SPEC_SUMMARY_P1.md
+    {STAGE_A}_DESIGN_P1.md
+    {STAGE_A}_IMPLEMENTATION_DOCS_P1.md
+    {STAGE_A}_ENGINEERING_GUIDE.md  <- cumulative (no phase suffix)
+    {STAGE_A}_TEST_DOCS_P1.md
     {STAGE_A}_MODULE_TESTS.md
   {stage_b}/
     ...
   integrations/                     <- provider implementations
     {provider_x}/
       {PROVIDER_X}_SPEC.md
-      {PROVIDER_X}_SPEC_SUMMARY.md
-      {PROVIDER_X}_DESIGN.md
-      {PROVIDER_X}_IMPLEMENTATION.md
-      {PROVIDER_X}_ENGINEERING_GUIDE.md
-      {PROVIDER_X}_MODULE_TESTS.md
-    {provider_y}/
       ...
     README.md                       <- discovery index: all providers
   {DOMAIN}_PLATFORM_SPEC.md         <- cross-cutting (root level)
@@ -131,11 +149,15 @@ docs/{domain}/
 | Role | Pattern | Example |
 |------|---------|---------|
 | Pipeline | `{STAGE}_{DOC_TYPE}.md` | `DOCUMENT_PROCESSING_SPEC.md` |
+| Pipeline (phased) | `{STAGE}_{DOC_TYPE}_P{N}.md` | `DOCUMENT_PROCESSING_SPEC_P1.md` |
+| Pipeline (cumulative) | `{STAGE}_{DOC_TYPE}.md` | `DOCUMENT_PROCESSING_ENGINEERING_GUIDE.md` |
 | Integration | `{PROVIDER}_{DOC_TYPE}.md` (inside provider dir) | `integrations/docling/DOCLING_SPEC.md` |
 | Platform | `{DOMAIN}_PLATFORM_{DOC_TYPE}.md` | `INGESTION_PLATFORM_SPEC.md` |
 | Extension | `{PARENT}_{FEATURE}_{DOC_TYPE}.md` | `IMPORT_CHECK_ENHANCEMENTS_SPEC.md` |
 
-Doc types: `SPEC`, `SPEC_SUMMARY`, `DESIGN`, `IMPLEMENTATION`, `ENGINEERING_GUIDE`, `MODULE_TESTS`.
+Doc types: `SPEC`, `SPEC_SUMMARY`, `DESIGN`, `IMPLEMENTATION_DOCS`, `ENGINEERING_GUIDE`, `TEST_DOCS`, `MODULE_TESTS`.
+
+**Phased vs cumulative:** Split layers (spec, spec summary, design, impl docs, test docs) get a `_P{N}` suffix. Cumulative layers (engineering guide) have no suffix — one living document updated each phase.
 
 ---
 

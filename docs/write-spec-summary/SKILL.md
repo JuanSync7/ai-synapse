@@ -56,8 +56,10 @@ Mark each `in_progress` when starting, `completed` when done.
 Before writing, you MUST have:
 
 1. **Source spec path** — The companion specification document to summarize. If the user has not provided one, ask.
-2. **Output path** — Where to write the summary. Default: same directory as the spec, with `_SUMMARY` appended to the filename (e.g., `MY_SPEC.md` → `MY_SPEC_SUMMARY.md`).
+2. **Output path** — Where to write the summary. Default: same directory as the spec, with `_SUMMARY` appended to the filename (e.g., `MY_SPEC.md` → `MY_SPEC_SUMMARY.md`; `MY_SPEC_P2.md` → `MY_SPEC_SUMMARY_P2.md`).
 3. **Existing summary** — If a summary already exists at the output path, read it to understand what changed.
+4. **Phase number** — If phased delivery, which phase? The companion spec will have a `_P{N}` suffix.
+5. **Prior phase summaries** — For P2+: read prior summaries to ensure §1 builds on them coherently.
 
 If the user provides `$ARGUMENTS`, treat the first argument as the spec path and the second (if provided) as the output path.
 
@@ -252,6 +254,19 @@ When the user asks to "update" or "sync" a summary:
 - Do NOT include the spec's traceability matrix, glossary, or open questions in the summary. Mention their existence if relevant.
 - If the spec has implementation phasing, mention the phase structure in one sentence but do not reproduce the phase details.
 
+## Phased Delivery
+
+When writing a summary for a phase-specific spec (`_SPEC_P{N}.md`):
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full phasing rules: §1 evolution across phases, phase context section, and scope handling.
+
+**Summary:**
+- Output naming: `{SUBSYSTEM}_SPEC_SUMMARY_P{N}.md`
+- §1 describes the full system after this phase (not just the delta) — grows richer each phase
+- Add a "Phase Context" section between §1 and §2 with prior-phase summaries
+- §2+ sections scope to this phase's spec only
+- After writing, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
+
 ## Integration
 
 **Upstream (required before this skill):**
@@ -260,13 +275,22 @@ When the user asks to "update" or "sync" a summary:
 **Downstream (invoke after this skill):**
 - `write-design` — generate a technical design document with task decomposition and contracts
 
-**Chain handoff:** After saving the summary:
+## README Dashboard
+
+After saving the summary, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the update procedure.
+
+**Chain handoff:** After saving the summary and updating the README:
 
 > "Spec summary complete and saved to `[path]`. Next step: `/write-design` to begin task decomposition, or update the summary later with `/write-spec-summary` when the spec changes."
 
 ## Document Chain
 
 ```
+Unphased:
 write-spec-docs  →  write-spec-summary  →  write-design  →  build-plan
  _SPEC.md            _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
+
+Phased:
+write-spec-docs  →  write-spec-summary  →  write-design  →  write-implementation-docs
+ _SPEC_P1.md         _SPEC_SUMMARY_P1.md    _DESIGN_P1.md    _IMPLEMENTATION_DOCS_P1.md
 ```

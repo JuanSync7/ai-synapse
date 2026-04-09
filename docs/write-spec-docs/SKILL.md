@@ -74,8 +74,9 @@ Before writing, you MUST understand the system being specified. If the user has 
 8. **Design principles** — Cross-cutting concerns that guide multiple requirements (e.g., fail-safe over fail-fast).
 9. **External interfaces** — APIs, message queues, file formats, or protocols that need formal contracts.
 10. **External dependencies** — Services, models, or infrastructure the system depends on. Which are required vs optional?
-11. **Delivery phasing** — Will this be delivered in multiple phases?
-12. **Companion documents** — Related documents that should be cross-referenced.
+11. **Delivery phasing** — Will this be delivered in multiple phases? If so, which phase is being specified?
+12. **Prior phase specs** — For P2+: paths to prior phase spec documents (required for carry-forward)
+13. **Companion documents** — Related documents that should be cross-referenced.
 
 Many of these questions can be inferred from context. Before asking, check whether the user has provided architecture documents, a codebase to read, a conversation history, or an existing improvement list. Ask only for information that cannot be reasonably inferred. When in doubt, state your inference explicitly ("I'm treating the entry point as X — correct me if wrong") rather than asking.
 
@@ -312,6 +313,19 @@ After the user reviews a draft, they may request changes. Common patterns:
 
 Re-run the Before You Submit checklist after revisions.
 
+## Phased Delivery
+
+When writing a spec for a specific delivery phase (P1, P2, P3...) rather than a monolithic spec:
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full phasing rules: FR-ID range allocation, carry-forward requirements, scope boundary conventions, and cross-phase dependency tracking.
+
+**Summary:**
+- Output naming: `{SUBSYSTEM}_SPEC_P{N}.md`
+- FR-ID ranges: P1 gets FR-100–199, P2 gets FR-200–299, etc.
+- P2+ specs must include a "Prior Phase Contracts" section listing interfaces this phase depends on
+- P2+ specs must include a "Cross-Phase Dependencies" appendix
+- After writing, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
+
 ## Conditional and Appendix Sections
 
 The template includes optional sections for Interface Contracts, Error Taxonomy, Data Model, State & Lifecycle, Evaluation Framework, External Dependencies, Feedback loop, Glossary, Document References, Implementation Phasing, and Open Questions.
@@ -353,13 +367,22 @@ Run through this before presenting the draft to the user:
 - `superpowers:brainstorming` — if requirements aren't settled yet, brainstorm first
 - `superpowers:verification-before-completion` — verify the checklist above with evidence before claiming completeness
 
-**Chain handoff:** After saving the spec and completing the verification checklist:
+## README Dashboard
+
+After saving the spec, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the full procedure. If the README does not exist, create it.
+
+**Chain handoff:** After saving the spec, completing the verification checklist, and updating the README:
 
 > "Spec complete and saved to `[path]`. Next steps: `/write-spec-summary` for a concise digest, or `/write-design` to begin task decomposition. Which would you like?"
 
 ## Document Chain
 
 ```
+Unphased:
 write-spec-docs  →  write-spec-summary  →  write-design  →  build-plan
  _SPEC.md            _SPEC_SUMMARY.md       _DESIGN.md       _IMPLEMENTATION.md
+
+Phased:
+write-spec-docs  →  write-spec-summary  →  write-design  →  write-implementation-docs
+ _SPEC_P1.md         _SPEC_SUMMARY_P1.md    _DESIGN_P1.md    _IMPLEMENTATION_DOCS_P1.md
 ```

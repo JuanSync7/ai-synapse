@@ -21,6 +21,18 @@ registry:
       - name: planning
         summary: "Pre-code artifacts that define what to build and how"
         children:
+          - name: scope
+            summary: "Define what to build, what to defer, and how to phase delivery"
+            skills:
+              - name: write-scope-docs
+                description: "Scope document with phase plan, scope boundary, and readiness gate"
+                # Not pipeline-routable: conversational and iterative, not a dispatch stage
+          - name: architecture
+            summary: "System-level technology decisions and component boundaries"
+            skills:
+              - name: write-architecture-docs
+                description: "Architecture doc with technology decisions, component boundaries, and data flow patterns"
+                # Not pipeline-routable: conversational, incremental — not a single-shot dispatch stage
           - name: requirements
             summary: "Capture and formalize what the system must do"
             skills:
@@ -120,6 +132,16 @@ registry:
               context_type: code_review
               requires_all: [test-docs]
               skippable: true
+
+  - name: integration
+    summary: "External tool integrations for project management, communication, and collaboration"
+    children:
+      - name: project-tracking
+        summary: "Project management tool integrations"
+        skills:
+          - name: jira-reporter
+            description: "JIRA updates as observability/HITL layer during agent workflows"
+            # Not pipeline-routable: side-effect reporting, not an artifact-producing stage
 
   - name: meta
     summary: "Skills about skills: create, evaluate, improve, orchestrate, animate"

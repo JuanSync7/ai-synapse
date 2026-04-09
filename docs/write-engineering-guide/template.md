@@ -29,6 +29,14 @@
 
 [1–2 paragraphs: What problem does this system solve? Who uses it? What does it receive as input and produce as output? What are its key responsibilities? Keep this at the WHAT level — do not describe internal mechanisms here.]
 
+### Phase History
+
+<!-- Include this sub-section only for phased delivery projects. Omit for single-phase projects. -->
+
+| Phase | Delivered | Date |
+|-------|-----------|------|
+| P1 | [summary of what P1 built] | YYYY-MM-DD |
+
 ### Architecture at a Glance
 
 ```

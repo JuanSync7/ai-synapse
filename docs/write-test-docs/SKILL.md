@@ -53,7 +53,10 @@ Before writing, you MUST have:
 1. **Engineering guide path** — from `$ARGUMENTS[1]` or ask. Primary source for module behavior, error conditions, and data flow scenarios.
 2. **Phase 0 contracts path** — from write-implementation-docs. For import surface and error taxonomy. Do NOT read source files.
 3. **Spec path** — for FR acceptance criteria (the primary source of WHAT to test).
-4. **System name and output path** — from `$ARGUMENTS[0]` / `$ARGUMENTS[2]`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_TEST_DOCS.md`.
+4. **System name and output path** — from `$ARGUMENTS[0]` / `$ARGUMENTS[2]`, or defaults to `docs/<subsystem>/<SUBSYSTEM>_TEST_DOCS.md` (or `_TEST_DOCS_P{N}.md` if phased).
+5. **Phase number** — If phased delivery, which phase?
+6. **Prior phase test docs** (P2+ only) — `_TEST_DOCS_P{N-1}.md` for regression requirements.
+7. **Engineering guide phase updates** (P2+ only) — check Phase History and "Introduced in" / "Updated in" annotations to identify what changed.
 
 ---
 
@@ -341,6 +344,22 @@ Before finalising:
 
 ---
 
+## Phased Delivery
+
+When writing test docs for a specific delivery phase (P1, P2, P3...):
+
+> **Read [`references/phased-delivery.md`](references/phased-delivery.md)** for the full phasing rules: phase-specific test scoping, regression test requirements, mock evolution, and cross-phase integration tests.
+
+**Summary:**
+- Output naming: `{SUBSYSTEM}_TEST_DOCS_P{N}.md`
+- Test only modules introduced or modified in this phase
+- P2+ includes a "Regression Test Requirements" section assessing risk to prior-phase tests
+- P2+ includes at least one cross-phase integration test scenario
+- P2+ notes mock updates where prior-phase interfaces changed
+- After writing, update the subsystem README dashboard — read [`references/readme-update-contract.md`](references/readme-update-contract.md)
+
+---
+
 ## Integration
 
 **Upstream (required before this skill):**
@@ -360,6 +379,10 @@ write-implementation-docs → implement-code → write-engineering-guide
                                                write-module-tests
 ```
 
-**Chain handoff:** After saving and completing the quality checklist:
+## README Dashboard
+
+After saving the test docs, update the subsystem's `README.md` dashboard. Read [`references/readme-update-contract.md`](references/readme-update-contract.md) for the update procedure.
+
+**Chain handoff:** After saving, completing the quality checklist, and updating the README:
 
 > "Test docs complete and saved to `[path]`. Invoke `write-module-tests [module-name] [path-to-this-doc]` per module section to implement pytest coverage."

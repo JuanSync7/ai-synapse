@@ -7,6 +7,8 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | Domain | Description |
 |--------|-------------|
 | `docs` | Documentation authoring |
+| `docs.scope` | Scope definition and phase planning |
+| `docs.arch` | System-level architecture decisions |
 | `docs.spec` | Specs and summaries |
 | `docs.design` | Design documents |
 | `docs.impl` | Implementation reference docs |
@@ -20,6 +22,8 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | `optimization` | Autonomous iterative improvement |
 | `orchestration` | Multi-agent coordination |
 | `creative` | Standalone creative/visual |
+| `integration` | External tool integrations |
+| `integration.jira` | JIRA project tracking |
 | `frameworks.langgraph` | LangGraph-specific tools |
 
 ## Intents
