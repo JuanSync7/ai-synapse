@@ -507,8 +507,10 @@
   <!-- ==================== CENTRAL TITLE ==================== -->
 
   <!-- Hexagonal frame — solid dark background to cover neurons behind text -->
-  <polygon points="600,100 830,140 830,245 600,285 370,245 370,140" fill="#0a0a0f" stroke="#a3e635" stroke-opacity=".12" stroke-width="1"/>
-  <polygon points="600,106 824,144 824,241 600,279 376,241 376,144" fill="#070b07" stroke="#a3e635" stroke-opacity=".06" stroke-width=".5"/>
+  <!-- Subtitle "SKILL ORCHESTRATION FRAMEWORK" at size 12 + letter-spacing 10 spans ~530px -->
+  <!-- So from center 600: ~335 to ~865. Hex edges need 30px+ padding beyond that. -->
+  <polygon points="600,95 900,135 900,250 600,290 300,250 300,135" fill="#0a0a0f" stroke="#a3e635" stroke-opacity=".12" stroke-width="1"/>
+  <polygon points="600,101 894,139 894,246 600,284 306,246 306,139" fill="#070b07" stroke="#a3e635" stroke-opacity=".06" stroke-width=".5"/>
 
   <!-- Title -->
   <g filter="url(#tn)" class="title-glow">
@@ -516,15 +518,15 @@
   </g>
 
   <!-- Subtitle -->
-  <text x="600" y="218" fill="#a3e635" font-family="'Courier New',monospace" font-size="12" text-anchor="middle" dominant-baseline="central" letter-spacing="10" class="sub-glow">SKILL ORCHESTRATION FRAMEWORK</text>
+  <text x="600" y="220" fill="#a3e635" font-family="'Courier New',monospace" font-size="12" text-anchor="middle" dominant-baseline="central" letter-spacing="10" class="sub-glow">SKILL ORCHESTRATION FRAMEWORK</text>
 
   <!-- Flanking lines -->
-  <line x1="340" y1="190" x2="376" y2="190" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
-  <line x1="824" y1="190" x2="860" y2="190" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
-  <circle cx="340" cy="190" r="2" fill="#a3e635">
+  <line x1="270" y1="192" x2="306" y2="192" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
+  <line x1="894" y1="192" x2="930" y2="192" stroke="#a3e635" stroke-opacity=".3" stroke-width="1"/>
+  <circle cx="270" cy="192" r="2" fill="#a3e635">
     <animate attributeName="opacity" values=".3;.8;.3" dur="2s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="860" cy="190" r="2" fill="#a3e635">
+  <circle cx="930" cy="192" r="2" fill="#a3e635">
     <animate attributeName="opacity" values=".3;.8;.3" dur="2s" begin="1s" repeatCount="indefinite"/>
   </circle>
 
