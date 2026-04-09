@@ -47,9 +47,15 @@ cmd_install() {
             local skill_name
             skill_name="$(basename "$skill_dir")"
 
-            # Skip if already installed
+            # Check for collision
             if [ -L "$TARGET/$skill_name" ]; then
-                echo "  skip  $skill_name (already installed)"
+                local existing
+                existing="$(readlink "$TARGET/$skill_name")"
+                if [ "$existing" = "$skill_dir" ]; then
+                    echo "  skip  $skill_name (already installed)"
+                else
+                    echo "  WARN  $skill_name collision: already points to $existing"
+                fi
                 continue
             fi
 

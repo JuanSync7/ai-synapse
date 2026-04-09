@@ -1,0 +1,70 @@
+name: Skill Review
+
+on:
+  pull_request:
+    paths:
+      - '**/SKILL.md'
+      - '**/EVAL.md'
+      - '**/references/**'
+      - '**/templates/**'
+
+jobs:
+  classify-and-review:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed skill directories
+        id: detect
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+
+          # Find all changed files and map to skill directories
+          changed_dirs=""
+          for file in $(git diff --name-only "$base" "$head"); do
+            dir="$(dirname "$file")"
+            while [ "$dir" != "." ]; do
+              if [ -f "$dir/SKILL.md" ]; then
+                changed_dirs="$changed_dirs $dir"
+                break
+              fi
+              dir="$(dirname "$dir")"
+            done
+          done
+
+          # Deduplicate
+          changed_dirs="$(echo "$changed_dirs" | tr ' ' '\n' | sort -u | tr '\n' ' ')"
+          echo "dirs=$changed_dirs" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$(echo "$changed_dirs" | tr -d ' ')" ]; then
+            echo "No skill directories changed."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changed skill directories: $changed_dirs"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Classify and run evaluation
+        if: steps.detect.outputs.skip == 'false'
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+
+          for skill_dir in ${{ steps.detect.outputs.dirs }}; do
+            skill_name="$(basename "$skill_dir")"
+
+            # Classify: new skill vs modified skill
+            if git cat-file -e "$base:$skill_dir/SKILL.md" 2>/dev/null; then
+              # SKILL.md existed before — this is a modification
+              echo "::group::$skill_name — modified skill, running /improve-skill"
+              claude --print "Run /improve-skill on $skill_dir"
+              echo "::endgroup::"
+            else
+              # SKILL.md is new — run full creation pipeline
+              echo "::group::$skill_name — new skill, running /skill-creator"
+              claude --print "Run /skill-creator to evaluate the skill at $skill_dir"
+              echo "::endgroup::"
+            fi
+          done

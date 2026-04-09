@@ -1,0 +1,147 @@
+#!/bin/bash
+set -euo pipefail
+
+# Pre-commit hook: structural validation for changed skills.
+# Checks frontmatter fields, TAXONOMY.md values, domain README rows, and EVAL.md existence.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+TAXONOMY="$REPO_ROOT/TAXONOMY.md"
+
+errors=()
+
+# Get staged files that are in skill directories (contain a SKILL.md sibling)
+changed_skill_dirs=()
+while IFS= read -r file; do
+    dir="$(dirname "$file")"
+    # Walk up to find the skill directory (the one containing SKILL.md)
+    while [ "$dir" != "." ] && [ "$dir" != "$REPO_ROOT" ]; do
+        if [ -f "$REPO_ROOT/$dir/SKILL.md" ]; then
+            # Deduplicate
+            found=false
+            for d in "${changed_skill_dirs[@]+"${changed_skill_dirs[@]}"}"; do
+                if [ "$d" = "$dir" ]; then
+                    found=true
+                    break
+                fi
+            done
+            if [ "$found" = false ]; then
+                changed_skill_dirs+=("$dir")
+            fi
+            break
+        fi
+        dir="$(dirname "$dir")"
+    done
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+if [ ${#changed_skill_dirs[@]} -eq 0 ]; then
+    exit 0
+fi
+
+# Extract valid domains and intents from TAXONOMY.md
+domains=()
+intents=()
+in_domains=false
+in_intents=false
+
+while IFS= read -r line; do
+    if echo "$line" | grep -q "^## Domains"; then
+        in_domains=true
+        in_intents=false
+        continue
+    fi
+    if echo "$line" | grep -q "^## Intents"; then
+        in_intents=true
+        in_domains=false
+        continue
+    fi
+    if echo "$line" | grep -q "^## "; then
+        in_domains=false
+        in_intents=false
+        continue
+    fi
+
+    if [ "$in_domains" = true ]; then
+        val="$(echo "$line" | grep '^\| `' | sed 's/^| `//;s/`.*//' || true)"
+        if [ -n "$val" ]; then
+            domains+=("$val")
+        fi
+    fi
+    if [ "$in_intents" = true ]; then
+        val="$(echo "$line" | grep '^\| `' | sed 's/^| `//;s/`.*//' || true)"
+        if [ -n "$val" ]; then
+            intents+=("$val")
+        fi
+    fi
+done < "$TAXONOMY"
+
+for skill_dir in "${changed_skill_dirs[@]}"; do
+    skill_md="$REPO_ROOT/$skill_dir/SKILL.md"
+    skill_name="$(basename "$skill_dir")"
+
+    # --- Check 1: Frontmatter fields exist ---
+    frontmatter="$(sed -n '/^---$/,/^---$/p' "$skill_md" | sed '1d;$d')"
+
+    for field in name description domain intent; do
+        if ! echo "$frontmatter" | grep -q "^${field}:"; then
+            errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
+        fi
+    done
+
+    # --- Check 2: domain and intent values are in TAXONOMY.md ---
+    domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    intent_val="$(echo "$frontmatter" | grep '^intent:' | sed 's/^intent: *//' | tr -d '"' | tr -d "'" || true)"
+
+    if [ -n "$domain_val" ]; then
+        found=false
+        for d in "${domains[@]}"; do
+            if [ "$d" = "$domain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$skill_dir: domain '$domain_val' not found in TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$intent_val" ]; then
+        found=false
+        for i in "${intents[@]}"; do
+            if [ "$i" = "$intent_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$skill_dir: intent '$intent_val' not found in TAXONOMY.md")
+        fi
+    fi
+
+    # --- Check 3: Domain README.md has a matching row ---
+    domain_dir="$(echo "$skill_dir" | cut -d/ -f1)"
+    domain_readme="$REPO_ROOT/$domain_dir/README.md"
+
+    if [ -f "$domain_readme" ]; then
+        if ! grep -q "\[$skill_name\]" "$domain_readme"; then
+            errors+=("$skill_dir: no row for '$skill_name' in $domain_dir/README.md")
+        fi
+    else
+        errors+=("$skill_dir: missing $domain_dir/README.md")
+    fi
+
+    # --- Check 4: EVAL.md exists ---
+    if [ ! -f "$REPO_ROOT/$skill_dir/EVAL.md" ]; then
+        errors+=("$skill_dir: missing EVAL.md")
+    fi
+done
+
+if [ ${#errors[@]} -gt 0 ]; then
+    echo "Skill validation failed:"
+    echo ""
+    for err in "${errors[@]}"; do
+        echo "  - $err"
+    done
+    echo ""
+    echo "Fix these issues before committing. See CLAUDE.md 'After Modifying a Skill' for details."
+    exit 1
+fi

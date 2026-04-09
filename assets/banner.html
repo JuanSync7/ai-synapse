@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AI-Synapse Banner Preview</title>
+<style>
+  body { background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+  .container { max-width: 1200px; width: 100%; }
+</style>
+</head>
+<body>
+<div class="container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0d1a0d" />
+      <stop offset="100%" stop-color="#050808" />
+    </radialGradient>
+
+    <!-- Lime green neon glow -->
+    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Line gradient -->
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#a3e635" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0.1" />
+    </linearGradient>
+
+    <!-- Vertical line gradient -->
+    <linearGradient id="lineGradV" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#a3e635" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0.1" />
+    </linearGradient>
+
+    <!-- Title gradient -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d9f99d" />
+      <stop offset="50%" stop-color="#a3e635" />
+      <stop offset="100%" stop-color="#65a30d" />
+    </linearGradient>
+
+    <!-- Central hub glow -->
+    <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a3e635" stop-opacity="0.15" />
+      <stop offset="40%" stop-color="#84cc16" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Scanline pattern -->
+    <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="4" y2="0" stroke="#a3e635" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+
+    <!-- Hex grid pattern -->
+    <pattern id="hexGrid" width="60" height="52" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+      <polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="none" stroke="#a3e635" stroke-opacity="0.04" stroke-width="0.5"/>
+    </pattern>
+
+    <!-- Neon glow filter -->
+    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.64  0 0 0 0 0.8  0 0 0 0 0.09  0 0 0 1 0" result="green"/>
+      <feMerge>
+        <feMergeNode in="green"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Strong neon glow for title -->
+    <filter id="titleNeon" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2"/>
+      <feColorMatrix in="blur1" type="matrix" values="0 0 0 0 0.64  0 0 0 0 0.8  0 0 0 0 0.09  0 0 0 0.5 0" result="green1"/>
+      <feColorMatrix in="blur2" type="matrix" values="0 0 0 0 0.64  0 0 0 0 0.8  0 0 0 0 0.09  0 0 0 0.8 0" result="green2"/>
+      <feMerge>
+        <feMergeNode in="green1"/>
+        <feMergeNode in="green2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle node glow filter -->
+    <filter id="nodeGlowFilter" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.64  0 0 0 0 0.8  0 0 0 0 0.09  0 0 0 0.6 0"/>
+    </filter>
+
+    <!-- Connection pulse gradient -->
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a3e635" stop-opacity="0" />
+      <stop offset="40%" stop-color="#a3e635" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#d9f99d" stop-opacity="1" />
+      <stop offset="100%" stop-color="#a3e635" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Clip for border frame -->
+    <clipPath id="borderClip">
+      <rect x="2" y="2" width="1196" height="396" rx="8"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bgGlow)" rx="8"/>
+
+  <!-- Hex grid overlay -->
+  <rect width="1200" height="400" fill="url(#hexGrid)" rx="8" opacity="0.8"/>
+
+  <!-- Scanlines -->
+  <rect width="1200" height="400" fill="url(#scanlines)" rx="8"/>
+
+  <!-- Border frame - cyberpunk style -->
+  <rect x="2" y="2" width="1196" height="396" rx="8" fill="none" stroke="#a3e635" stroke-opacity="0.15" stroke-width="1"/>
+  <!-- Corner accents -->
+  <line x1="2" y1="30" x2="2" y2="2" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="2" y1="2" x2="30" y2="2" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="1170" y1="2" x2="1198" y2="2" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="1198" y1="2" x2="1198" y2="30" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="2" y1="370" x2="2" y2="398" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="2" y1="398" x2="30" y2="398" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="1170" y1="398" x2="1198" y2="398" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+  <line x1="1198" y1="370" x2="1198" y2="398" stroke="#a3e635" stroke-opacity="0.5" stroke-width="2"/>
+
+  <!-- Central hub glow -->
+  <ellipse cx="600" cy="185" rx="250" ry="120" fill="url(#hubGlow)"/>
+
+  <!-- ==================== NEURAL NETWORK CONNECTIONS ==================== -->
+  <!-- Main pipeline path (horizontal backbone) -->
+  <g opacity="0.4">
+    <!-- Left network connections -->
+    <line x1="120" y1="200" x2="280" y2="160" stroke="#84cc16" stroke-opacity="0.3" stroke-width="1"/>
+    <line x1="120" y1="200" x2="280" y2="240" stroke="#84cc16" stroke-opacity="0.2" stroke-width="0.8"/>
+    <line x1="180" y1="100" x2="280" y2="160" stroke="#84cc16" stroke-opacity="0.25" stroke-width="0.8"/>
+    <line x1="180" y1="100" x2="380" y2="120" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+    <line x1="100" y1="320" x2="280" y2="240" stroke="#84cc16" stroke-opacity="0.2" stroke-width="0.8"/>
+    <line x1="280" y1="160" x2="380" y2="120" stroke="#84cc16" stroke-opacity="0.35" stroke-width="1.2"/>
+    <line x1="280" y1="240" x2="380" y2="260" stroke="#84cc16" stroke-opacity="0.35" stroke-width="1.2"/>
+    <line x1="280" y1="160" x2="380" y2="260" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+
+    <!-- Central connections -->
+    <line x1="380" y1="120" x2="520" y2="160" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="380" y1="260" x2="520" y2="220" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="380" y1="120" x2="520" y2="220" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+    <line x1="520" y1="160" x2="680" y2="160" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="520" y1="220" x2="680" y2="220" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="520" y1="160" x2="680" y2="220" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+    <line x1="520" y1="220" x2="680" y2="160" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+
+    <!-- Right network connections -->
+    <line x1="680" y1="160" x2="820" y2="120" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="680" y1="220" x2="820" y2="260" stroke="#a3e635" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="680" y1="160" x2="820" y2="260" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+    <line x1="820" y1="120" x2="920" y2="160" stroke="#84cc16" stroke-opacity="0.35" stroke-width="1.2"/>
+    <line x1="820" y1="260" x2="920" y2="240" stroke="#84cc16" stroke-opacity="0.35" stroke-width="1.2"/>
+    <line x1="920" y1="160" x2="1080" y2="200" stroke="#84cc16" stroke-opacity="0.3" stroke-width="1"/>
+    <line x1="920" y1="240" x2="1080" y2="200" stroke="#84cc16" stroke-opacity="0.2" stroke-width="0.8"/>
+    <line x1="1020" y1="100" x2="920" y2="160" stroke="#84cc16" stroke-opacity="0.25" stroke-width="0.8"/>
+    <line x1="1100" y1="320" x2="920" y2="240" stroke="#84cc16" stroke-opacity="0.2" stroke-width="0.8"/>
+    <line x1="1020" y1="100" x2="820" y2="120" stroke="#84cc16" stroke-opacity="0.15" stroke-width="0.5"/>
+
+    <!-- Extra cross-connections for density -->
+    <line x1="180" y1="100" x2="120" y2="200" stroke="#84cc16" stroke-opacity="0.12" stroke-width="0.5"/>
+    <line x1="100" y1="320" x2="200" y2="330" stroke="#84cc16" stroke-opacity="0.1" stroke-width="0.5"/>
+    <line x1="200" y1="330" x2="380" y2="260" stroke="#84cc16" stroke-opacity="0.1" stroke-width="0.5"/>
+    <line x1="1000" y1="330" x2="1100" y2="320" stroke="#84cc16" stroke-opacity="0.1" stroke-width="0.5"/>
+    <line x1="820" y1="260" x2="1000" y2="330" stroke="#84cc16" stroke-opacity="0.1" stroke-width="0.5"/>
+    <line x1="1020" y1="100" x2="1080" y2="200" stroke="#84cc16" stroke-opacity="0.12" stroke-width="0.5"/>
+  </g>
+
+  <!-- ==================== NEURAL NODES ==================== -->
+
+  <!-- Outer layer - small dim nodes -->
+  <g filter="url(#nodeGlowFilter)">
+    <circle cx="120" cy="200" r="3" fill="#84cc16" opacity="0.6"/>
+    <circle cx="180" cy="100" r="2.5" fill="#84cc16" opacity="0.4"/>
+    <circle cx="100" cy="320" r="2" fill="#84cc16" opacity="0.35"/>
+    <circle cx="200" cy="330" r="1.5" fill="#84cc16" opacity="0.25"/>
+    <circle cx="1080" cy="200" r="3" fill="#84cc16" opacity="0.6"/>
+    <circle cx="1020" cy="100" r="2.5" fill="#84cc16" opacity="0.4"/>
+    <circle cx="1100" cy="320" r="2" fill="#84cc16" opacity="0.35"/>
+    <circle cx="1000" cy="330" r="1.5" fill="#84cc16" opacity="0.25"/>
+  </g>
+
+  <!-- Middle layer nodes -->
+  <g filter="url(#nodeGlowFilter)">
+    <circle cx="280" cy="160" r="4" fill="#a3e635" opacity="0.7"/>
+    <circle cx="280" cy="240" r="4" fill="#a3e635" opacity="0.7"/>
+    <circle cx="920" cy="160" r="4" fill="#a3e635" opacity="0.7"/>
+    <circle cx="920" cy="240" r="4" fill="#a3e635" opacity="0.7"/>
+  </g>
+
+  <!-- Inner layer - pipeline nodes (larger, brighter) -->
+  <!-- Scope -->
+  <g filter="url(#neonGlow)">
+    <circle cx="380" cy="120" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="380" cy="120" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Design -->
+  <g filter="url(#neonGlow)">
+    <circle cx="380" cy="260" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="380" cy="260" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Spec -->
+  <g filter="url(#neonGlow)">
+    <circle cx="520" cy="160" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="520" cy="160" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Impl -->
+  <g filter="url(#neonGlow)">
+    <circle cx="520" cy="220" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="520" cy="220" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Eng Guide -->
+  <g filter="url(#neonGlow)">
+    <circle cx="680" cy="160" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="680" cy="160" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Tests -->
+  <g filter="url(#neonGlow)">
+    <circle cx="680" cy="220" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="680" cy="220" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Code -->
+  <g filter="url(#neonGlow)">
+    <circle cx="820" cy="120" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="820" cy="120" r="2.5" fill="#a3e635"/>
+  </g>
+  <!-- Deploy -->
+  <g filter="url(#neonGlow)">
+    <circle cx="820" cy="260" r="6" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
+    <circle cx="820" cy="260" r="2.5" fill="#a3e635"/>
+  </g>
+
+  <!-- ==================== ICON NODES (skill types) ==================== -->
+
+  <!-- Database icon - left side -->
+  <g transform="translate(155, 280)" opacity="0.5">
+    <ellipse cx="0" cy="0" rx="8" ry="3" fill="none" stroke="#a3e635" stroke-width="0.8"/>
+    <line x1="-8" y1="0" x2="-8" y2="10" stroke="#a3e635" stroke-width="0.8"/>
+    <line x1="8" y1="0" x2="8" y2="10" stroke="#a3e635" stroke-width="0.8"/>
+    <ellipse cx="0" cy="10" rx="8" ry="3" fill="none" stroke="#a3e635" stroke-width="0.8"/>
+  </g>
+
+  <!-- Document icon - right side -->
+  <g transform="translate(1040, 280)" opacity="0.5">
+    <rect x="-6" y="-8" width="12" height="16" fill="none" stroke="#a3e635" stroke-width="0.8" rx="1"/>
+    <line x1="-3" y1="-3" x2="3" y2="-3" stroke="#a3e635" stroke-width="0.6"/>
+    <line x1="-3" y1="0" x2="3" y2="0" stroke="#a3e635" stroke-width="0.6"/>
+    <line x1="-3" y1="3" x2="1" y2="3" stroke="#a3e635" stroke-width="0.6"/>
+  </g>
+
+  <!-- Server icon - top left -->
+  <g transform="translate(70, 130)" opacity="0.4">
+    <rect x="-8" y="-10" width="16" height="7" fill="none" stroke="#84cc16" stroke-width="0.7" rx="1"/>
+    <rect x="-8" y="-1" width="16" height="7" fill="none" stroke="#84cc16" stroke-width="0.7" rx="1"/>
+    <circle cx="4" cy="-6.5" r="1.2" fill="#84cc16" opacity="0.6"/>
+    <circle cx="4" cy="2.5" r="1.2" fill="#84cc16" opacity="0.6"/>
+  </g>
+
+  <!-- Code bracket icon - top right -->
+  <g transform="translate(1130, 130)" opacity="0.4">
+    <text x="0" y="0" fill="#84cc16" font-family="monospace" font-size="16" text-anchor="middle" dominant-baseline="central">&lt;/&gt;</text>
+  </g>
+
+  <!-- Neural brain icon - bottom center-left -->
+  <g transform="translate(320, 340)" opacity="0.35">
+    <circle cx="0" cy="0" r="9" fill="none" stroke="#84cc16" stroke-width="0.7"/>
+    <path d="M-4,-4 Q0,-8 4,-4 M-5,0 Q0,4 5,0 M-3,4 Q0,2 3,4" fill="none" stroke="#84cc16" stroke-width="0.6"/>
+  </g>
+
+  <!-- Gear icon - bottom center-right -->
+  <g transform="translate(880, 340)" opacity="0.35">
+    <circle cx="0" cy="0" r="4" fill="none" stroke="#84cc16" stroke-width="0.7"/>
+    <circle cx="0" cy="0" r="8" fill="none" stroke="#84cc16" stroke-width="0.5" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- ==================== CYBERPUNK DECORATIONS ==================== -->
+
+  <!-- Top data stream -->
+  <g opacity="0.25">
+    <text x="50" y="25" fill="#a3e635" font-family="monospace" font-size="8" opacity="0.4">0x7F3A :: SYNAPSE_CORE</text>
+    <text x="900" y="25" fill="#a3e635" font-family="monospace" font-size="8" opacity="0.4">SKILL_REGISTRY v4.2.1</text>
+  </g>
+
+  <!-- Bottom data stream -->
+  <g opacity="0.25">
+    <text x="50" y="388" fill="#a3e635" font-family="monospace" font-size="8" opacity="0.4">PIPELINE::ACTIVE</text>
+    <text x="880" y="388" fill="#a3e635" font-family="monospace" font-size="8" opacity="0.4">NODES: 24 :: CONNECTIONS: 47</text>
+  </g>
+
+  <!-- Horizontal decorative lines -->
+  <line x1="40" y1="38" x2="300" y2="38" stroke="#a3e635" stroke-opacity="0.08" stroke-width="0.5"/>
+  <line x1="900" y1="38" x2="1160" y2="38" stroke="#a3e635" stroke-opacity="0.08" stroke-width="0.5"/>
+  <line x1="40" y1="375" x2="300" y2="375" stroke="#a3e635" stroke-opacity="0.08" stroke-width="0.5"/>
+  <line x1="900" y1="375" x2="1160" y2="375" stroke="#a3e635" stroke-opacity="0.08" stroke-width="0.5"/>
+
+  <!-- Small tick marks on decorative lines -->
+  <g stroke="#a3e635" stroke-opacity="0.15" stroke-width="0.5">
+    <line x1="40" y1="35" x2="40" y2="41"/>
+    <line x1="100" y1="36" x2="100" y2="40"/>
+    <line x1="160" y1="35" x2="160" y2="41"/>
+    <line x1="220" y1="36" x2="220" y2="40"/>
+    <line x1="300" y1="35" x2="300" y2="41"/>
+    <line x1="1160" y1="35" x2="1160" y2="41"/>
+    <line x1="1100" y1="36" x2="1100" y2="40"/>
+    <line x1="1040" y1="35" x2="1040" y2="41"/>
+    <line x1="980" y1="36" x2="980" y2="40"/>
+    <line x1="900" y1="35" x2="900" y2="41"/>
+  </g>
+
+  <!-- ==================== CENTRAL TITLE ==================== -->
+
+  <!-- Hexagonal frame behind title -->
+  <polygon points="600,130 720,155 720,215 600,240 480,215 480,155"
+           fill="none" stroke="#a3e635" stroke-opacity="0.12" stroke-width="1"/>
+  <polygon points="600,135 715,158 715,212 600,235 485,212 485,158"
+           fill="#0a0a0f" fill-opacity="0.7" stroke="#a3e635" stroke-opacity="0.06" stroke-width="0.5"/>
+
+  <!-- Main title -->
+  <g filter="url(#titleNeon)">
+    <text x="600" y="178"
+          fill="url(#titleGrad)"
+          font-family="'Courier New', 'Fira Code', monospace"
+          font-size="42"
+          font-weight="bold"
+          text-anchor="middle"
+          dominant-baseline="central"
+          letter-spacing="6">AI-SYNAPSE</text>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="600" y="208"
+        fill="#a3e635"
+        font-family="'Courier New', monospace"
+        font-size="11"
+        text-anchor="middle"
+        dominant-baseline="central"
+        letter-spacing="8"
+        opacity="0.6">SKILL ORCHESTRATION FRAMEWORK</text>
+
+  <!-- Decorative lines flanking title -->
+  <line x1="430" y1="185" x2="485" y2="185" stroke="#a3e635" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="715" y1="185" x2="770" y2="185" stroke="#a3e635" stroke-opacity="0.3" stroke-width="1"/>
+  <circle cx="430" cy="185" r="2" fill="#a3e635" opacity="0.4"/>
+  <circle cx="770" cy="185" r="2" fill="#a3e635" opacity="0.4"/>
+
+  <!-- ==================== PIPELINE LABELS ==================== -->
+  <g font-family="'Courier New', monospace" font-size="7" fill="#a3e635" opacity="0.45" text-anchor="middle">
+    <text x="380" y="100">SCOPE</text>
+    <text x="380" y="282">DESIGN</text>
+    <text x="520" y="145">SPEC</text>
+    <text x="520" y="242">IMPL</text>
+    <text x="680" y="145">GUIDE</text>
+    <text x="680" y="242">TEST</text>
+    <text x="820" y="100">BUILD</text>
+    <text x="820" y="282">DEPLOY</text>
+  </g>
+
+  <!-- ==================== FLOATING DATA PARTICLES ==================== -->
+  <g opacity="0.3">
+    <circle cx="450" cy="90" r="1" fill="#d9f99d"/>
+    <circle cx="750" cy="95" r="1.2" fill="#d9f99d"/>
+    <circle cx="350" cy="310" r="0.8" fill="#d9f99d"/>
+    <circle cx="650" cy="300" r="1" fill="#d9f99d"/>
+    <circle cx="850" cy="310" r="0.8" fill="#d9f99d"/>
+    <circle cx="550" cy="85" r="0.8" fill="#d9f99d"/>
+    <circle cx="950" cy="95" r="0.7" fill="#d9f99d"/>
+    <circle cx="250" cy="95" r="0.7" fill="#d9f99d"/>
+    <circle cx="480" cy="305" r="0.9" fill="#d9f99d"/>
+    <circle cx="720" cy="305" r="0.7" fill="#d9f99d"/>
+  </g>
+
+  <!-- ==================== VERTICAL CYBERPUNK ACCENTS ==================== -->
+  <!-- Left accent bar -->
+  <rect x="18" y="60" width="2" height="280" fill="url(#lineGradV)" opacity="0.15" rx="1"/>
+  <rect x="24" y="100" width="1" height="200" fill="url(#lineGradV)" opacity="0.08" rx="0.5"/>
+
+  <!-- Right accent bar -->
+  <rect x="1180" y="60" width="2" height="280" fill="url(#lineGradV)" opacity="0.15" rx="1"/>
+  <rect x="1175" y="100" width="1" height="200" fill="url(#lineGradV)" opacity="0.08" rx="0.5"/>
+
+  <!-- Small diamond markers on accent bars -->
+  <polygon points="19,60 22,55 25,60 22,65" fill="#a3e635" opacity="0.3"/>
+  <polygon points="19,340 22,335 25,340 22,345" fill="#a3e635" opacity="0.3"/>
+  <polygon points="1177,60 1180,55 1183,60 1180,65" fill="#a3e635" opacity="0.3"/>
+  <polygon points="1177,340 1180,335 1183,340 1180,345" fill="#a3e635" opacity="0.3"/>
+
+</svg>
+</div>
+</body>
+</html>
