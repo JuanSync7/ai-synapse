@@ -108,6 +108,13 @@
     <path id="p6" d="M1000,340 C940,320 880,350 820,330 C760,310 700,280 660,250 C640,235 620,220 610,200" fill="none"/>
     <path id="p7" d="M100,240 C160,220 220,260 280,230 C340,200 400,220 460,190" fill="none"/>
     <path id="p8" d="M1100,160 C1040,180 980,140 920,170 C860,200 800,180 740,210" fill="none"/>
+    <!-- New signal paths along the expanded network -->
+    <path id="p9" d="M55,75 C120,78 220,80 320,72 C420,55 520,45 600,45" fill="none"/>
+    <path id="p10" d="M600,45 C680,48 780,50 870,60 C960,70 1060,72 1150,75" fill="none"/>
+    <path id="p11" d="M45,355 C120,348 200,330 300,340 C380,355 480,358 600,358" fill="none"/>
+    <path id="p12" d="M600,358 C720,355 820,355 920,340 C1000,330 1080,342 1155,345" fill="none"/>
+    <path id="p13" d="M55,75 C80,130 130,190 220,180 C310,170 350,200 420,195" fill="none"/>
+    <path id="p14" d="M1150,75 C1120,130 1070,210 980,220 C890,230 850,200 780,205" fill="none"/>
   </defs>
 
   <!-- Background layers -->
@@ -291,8 +298,131 @@
     <path d="M700,100 C715,85 725,70 740,55" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".8"/>
   </g>
 
+  <!-- ==================== ADDITIONAL NEURONS ==================== -->
+
+  <!-- UPPER-MID-LEFT — soma at ~420,55 -->
+  <g class="dp3">
+    <path d="M420,55 C390,40 360,35 330,25" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.2"/>
+    <path d="M420,55 C440,35 455,20 470,8" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M420,55 C450,58 480,52 510,42" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M420,55 C415,75 420,95 425,115" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M420,55 C395,60 370,70 345,80" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+  <g class="dp6">
+    <path d="M330,25 C315,18 300,15 285,10" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
+    <path d="M510,42 C530,35 548,30 565,22" fill="none" stroke="#84cc16" stroke-opacity=".05" stroke-width=".6"/>
+    <path d="M470,8 C480,3 488,0 495,0" fill="none" stroke="#84cc16" stroke-opacity=".03" stroke-width=".4"/>
+  </g>
+
+  <!-- UPPER-MID-RIGHT — soma at ~780,50 -->
+  <g class="dp1">
+    <path d="M780,50 C810,35 840,30 870,22" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.2"/>
+    <path d="M780,50 C760,32 745,18 730,5" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M780,50 C750,55 720,52 690,48" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M780,50 C785,72 780,92 775,112" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M780,50 C805,58 830,65 855,72" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+  <g class="dp4">
+    <path d="M870,22 C885,15 900,10 918,5" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
+    <path d="M690,48 C670,42 652,38 635,30" fill="none" stroke="#84cc16" stroke-opacity=".05" stroke-width=".6"/>
+  </g>
+
+  <!-- LOWER-MID-LEFT — soma at ~380,355 -->
+  <g class="dp2">
+    <path d="M380,355 C350,365 320,370 290,380" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.2"/>
+    <path d="M380,355 C400,375 415,385 430,395" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M380,355 C410,350 440,355 470,348" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M380,355 C375,335 380,315 385,295" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M380,355 C355,350 330,345 305,340" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+  <g class="dp5">
+    <path d="M290,380 C275,388 260,392 245,398" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
+    <path d="M470,348 C490,342 508,340 525,335" fill="none" stroke="#84cc16" stroke-opacity=".05" stroke-width=".6"/>
+  </g>
+
+  <!-- LOWER-MID-RIGHT — soma at ~820,355 -->
+  <g class="dp3">
+    <path d="M820,355 C850,365 880,370 910,382" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.2"/>
+    <path d="M820,355 C800,375 785,388 770,398" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M820,355 C790,350 760,355 730,348" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M820,355 C825,335 820,315 815,295" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M820,355 C845,350 870,342 895,338" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+  <g class="dp6">
+    <path d="M910,382 C925,388 940,395 955,398" fill="none" stroke="#84cc16" stroke-opacity=".04" stroke-width=".5"/>
+    <path d="M730,348 C710,342 692,338 675,332" fill="none" stroke="#84cc16" stroke-opacity=".05" stroke-width=".6"/>
+  </g>
+
+  <!-- FAR-LEFT-UPPER — soma at ~55,75 -->
+  <g class="dp1">
+    <path d="M55,75 C35,58 20,48 8,35" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M55,75 C40,85 25,95 12,108" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M55,75 C70,60 82,48 95,35" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M55,75 C75,80 95,82 115,88" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M55,75 C50,95 55,112 60,130" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
+  <!-- FAR-LEFT-LOWER — soma at ~45,355 -->
+  <g class="dp3">
+    <path d="M45,355 C25,365 15,378 8,392" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M45,355 C30,342 18,332 8,318" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M45,355 C65,350 85,348 105,342" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M45,355 C50,335 48,318 52,300" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
+  <!-- FAR-RIGHT-UPPER — soma at ~1150,75 -->
+  <g class="dp2">
+    <path d="M1150,75 C1168,58 1178,48 1190,35" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M1150,75 C1165,88 1175,98 1188,112" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M1150,75 C1132,62 1118,50 1105,38" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M1150,75 C1128,80 1108,85 1088,92" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M1150,75 C1148,98 1152,115 1148,135" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
+  <!-- FAR-RIGHT-LOWER — soma at ~1155,345 -->
+  <g class="dp1">
+    <path d="M1155,345 C1172,358 1182,370 1192,385" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M1155,345 C1170,332 1180,320 1192,308" fill="none" stroke="#84cc16" stroke-opacity=".06" stroke-width=".9"/>
+    <path d="M1155,345 C1135,348 1115,345 1095,342" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M1155,345 C1150,325 1152,308 1148,290" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
+  <!-- CENTER-UPPER — soma at ~600,45 -->
+  <g class="dp2">
+    <path d="M600,45 C575,28 555,18 535,8" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M600,45 C625,28 645,18 665,8" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M600,45 C580,50 560,58 540,65" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M600,45 C620,50 640,58 660,65" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M600,45 C598,65 600,82 605,100" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.1"/>
+  </g>
+
+  <!-- CENTER-LOWER — soma at ~600,358 -->
+  <g class="dp1">
+    <path d="M600,358 C575,375 555,385 535,395" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M600,358 C625,375 645,385 665,395" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1.1"/>
+    <path d="M600,358 C580,352 558,350 538,345" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M600,358 C620,352 642,350 662,345" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width="1"/>
+    <path d="M600,358 C602,338 600,318 595,300" fill="none" stroke="#84cc16" stroke-opacity=".09" stroke-width="1.1"/>
+  </g>
+
+  <!-- MID-LEFT-BRIDGE — soma at ~260,145 (between left main + top-left) -->
+  <g class="dp3">
+    <path d="M260,145 C240,130 225,118 210,108" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M260,145 C245,155 230,168 215,178" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+    <path d="M260,145 C280,135 298,128 318,118" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M260,145 C265,165 262,182 258,200" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
+  <!-- MID-RIGHT-BRIDGE — soma at ~940,260 (between right main + bottom-right) -->
+  <g class="dp2">
+    <path d="M940,260 C960,248 975,238 990,228" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M940,260 C955,272 968,282 980,295" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+    <path d="M940,260 C920,268 902,275 882,282" fill="none" stroke="#84cc16" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M940,260 C935,240 938,222 942,202" fill="none" stroke="#84cc16" stroke-opacity=".07" stroke-width=".9"/>
+  </g>
+
   <!-- ==================== INTER-NEURON AXON CONNECTIONS ==================== -->
-  <!-- Long-range connections between neuron clusters -->
+  <!-- Long-range connections between neuron clusters (original) -->
   <path d="M230,140 C280,170 320,190 350,200" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp1"/>
   <path d="M210,270 C260,250 310,230 350,200" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp2"/>
   <path d="M350,200 C420,195 480,200 530,210" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width="1.1" class="dp3"/>
@@ -304,14 +434,65 @@
   <path d="M890,90 C870,120 860,160 850,200" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".9" class="dp1"/>
   <path d="M910,320 C880,290 860,250 850,200" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
 
+  <!-- New inter-neuron axons -->
+  <!-- Upper horizontal chain: far-left-upper → top-left → upper-mid-left → center-upper → upper-mid-right → top-right → far-right-upper -->
+  <path d="M55,75 C95,78 160,80 220,80" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp1"/>
+  <path d="M220,80 C280,72 350,60 420,55" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp3"/>
+  <path d="M420,55 C480,48 540,45 600,45" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp2"/>
+  <path d="M600,45 C660,48 720,50 780,50" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp1"/>
+  <path d="M780,50 C850,58 920,65 980,70" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp3"/>
+  <path d="M980,70 C1035,72 1095,74 1150,75" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp2"/>
+
+  <!-- Lower horizontal chain -->
+  <path d="M45,355 C100,348 150,335 200,330" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp2"/>
+  <path d="M200,330 C250,340 315,350 380,355" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp1"/>
+  <path d="M380,355 C440,358 520,358 600,358" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp3"/>
+  <path d="M600,358 C680,358 760,355 820,355" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width="1" class="dp2"/>
+  <path d="M820,355 C880,348 940,335 1000,330" fill="none" stroke="#a3e635" stroke-opacity=".09" stroke-width=".9" class="dp1"/>
+  <path d="M1000,330 C1060,338 1110,342 1155,345" fill="none" stroke="#a3e635" stroke-opacity=".08" stroke-width=".8" class="dp3"/>
+
+  <!-- Vertical bridges: upper → lower through mid-layer -->
+  <path d="M420,55 C425,90 420,130 415,170" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
+  <path d="M780,50 C775,88 780,125 785,165" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
+  <path d="M500,300 C510,328 520,342 525,355" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
+  <path d="M700,100 C695,78 692,62 690,48" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp2"/>
+
+  <!-- Diagonal cross-connections for density -->
+  <path d="M260,145 C300,130 360,100 420,55" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp1"/>
+  <path d="M940,260 C900,280 860,310 820,355" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
+  <path d="M55,75 C80,110 110,150 130,190" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp2"/>
+  <path d="M1150,75 C1130,110 1100,155 1070,210" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
+  <path d="M45,355 C70,340 100,318 130,290" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp3"/>
+  <path d="M1155,345 C1130,330 1100,310 1070,285" fill="none" stroke="#a3e635" stroke-opacity=".06" stroke-width=".7" class="dp2"/>
+  <path d="M600,45 C590,70 585,85 580,100" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp1"/>
+  <path d="M600,358 C610,335 615,318 620,300" fill="none" stroke="#a3e635" stroke-opacity=".07" stroke-width=".8" class="dp3"/>
+
   <!-- Synaptic cleft connections (short gaps between axon terminals and dendrites) -->
   <g opacity=".4">
+    <!-- Original clefts -->
     <path d="M445,155 C455,150 465,148 475,150" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
     <path d="M450,178 C460,178 470,180 480,182" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
     <path d="M442,198 C452,200 462,205 472,210" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
     <path d="M755,202 C745,198 735,195 725,192" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
     <path d="M750,228 C740,228 730,225 720,222" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
     <path d="M758,248 C748,250 738,252 728,250" fill="none" stroke="#a3e635" stroke-opacity=".15" stroke-width=".5" stroke-dasharray="2,3"/>
+    <!-- New clefts — upper chain junctions -->
+    <path d="M310,70 C318,68 326,66 334,65" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M425,115 C430,120 435,125 440,130" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M510,42 C520,40 530,38 540,38" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M690,48 C680,46 670,44 660,42" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M775,112 C772,120 768,128 765,135" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M890,90 C880,92 872,96 862,100" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <!-- Lower chain junctions -->
+    <path d="M290,320 C285,325 280,330 275,335" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M385,295 C388,288 390,280 392,272" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M525,335 C532,332 540,330 548,328" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M675,332 C668,328 660,326 652,322" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M815,295 C812,288 810,280 808,272" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M910,320 C915,325 920,332 925,338" fill="none" stroke="#a3e635" stroke-opacity=".12" stroke-width=".4" stroke-dasharray="2,3"/>
+    <!-- Vertical bridge clefts -->
+    <path d="M258,200 C256,208 255,215 253,222" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
+    <path d="M942,202 C944,210 945,218 946,225" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
   </g>
 
   <!-- ==================== SOMA (cell bodies) with glow ==================== -->
@@ -374,7 +555,7 @@
     </circle>
   </g>
 
-  <!-- Interneuron somas (smaller) -->
+  <!-- Interneuron somas (smaller) — original -->
   <g filter="url(#ng)" class="sg3">
     <circle cx="350" cy="200" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
     <circle cx="350" cy="200" r="1.5" fill="#a3e635"/>
@@ -392,7 +573,93 @@
     <circle cx="700" cy="100" r="1.2" fill="#a3e635"/>
   </g>
 
-  <!-- Tiny peripheral nodes -->
+  <!-- NEW somas for additional neurons -->
+  <!-- Upper-mid-left -->
+  <g filter="url(#ng)" class="sg3">
+    <circle cx="420" cy="55" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
+    <circle cx="420" cy="55" r="1.8" fill="#a3e635"/>
+    <circle cx="420" cy="55" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin=".5s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin=".5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Upper-mid-right -->
+  <g filter="url(#ng)" class="sg1">
+    <circle cx="780" cy="50" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
+    <circle cx="780" cy="50" r="1.8" fill="#a3e635"/>
+    <circle cx="780" cy="50" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="2.2s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="2.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Lower-mid-left -->
+  <g filter="url(#ng)" class="sg2">
+    <circle cx="380" cy="355" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
+    <circle cx="380" cy="355" r="1.8" fill="#a3e635"/>
+    <circle cx="380" cy="355" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="1.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Lower-mid-right -->
+  <g filter="url(#ng)" class="sg4">
+    <circle cx="820" cy="355" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
+    <circle cx="820" cy="355" r="1.8" fill="#a3e635"/>
+    <circle cx="820" cy="355" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="2.8s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="2.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Far-left-upper -->
+  <g filter="url(#ng)" class="sg4">
+    <circle cx="55" cy="75" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
+    <circle cx="55" cy="75" r="1.3" fill="#a3e635"/>
+  </g>
+  <!-- Far-left-lower -->
+  <g filter="url(#ng)" class="sg2">
+    <circle cx="45" cy="355" r="3" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
+    <circle cx="45" cy="355" r="1.1" fill="#a3e635"/>
+  </g>
+  <!-- Far-right-upper -->
+  <g filter="url(#ng)" class="sg1">
+    <circle cx="1150" cy="75" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
+    <circle cx="1150" cy="75" r="1.3" fill="#a3e635"/>
+  </g>
+  <!-- Far-right-lower -->
+  <g filter="url(#ng)" class="sg3">
+    <circle cx="1155" cy="345" r="3" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
+    <circle cx="1155" cy="345" r="1.1" fill="#a3e635"/>
+  </g>
+  <!-- Center-upper -->
+  <g filter="url(#ng)" class="sg2">
+    <circle cx="600" cy="45" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
+    <circle cx="600" cy="45" r="1.5" fill="#a3e635"/>
+    <circle cx="600" cy="45" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4;9;4" dur="3.5s" begin="1.8s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="1.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Center-lower -->
+  <g filter="url(#ng)" class="sg4">
+    <circle cx="600" cy="358" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
+    <circle cx="600" cy="358" r="1.5" fill="#a3e635"/>
+    <circle cx="600" cy="358" fill="none" stroke="#a3e635" stroke-width=".3">
+      <animate attributeName="r" values="4;9;4" dur="3.5s" begin="3.2s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="3.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Mid-left-bridge -->
+  <g filter="url(#ng)" class="sg1">
+    <circle cx="260" cy="145" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
+    <circle cx="260" cy="145" r="1.3" fill="#a3e635"/>
+  </g>
+  <!-- Mid-right-bridge -->
+  <g filter="url(#ng)" class="sg3">
+    <circle cx="940" cy="260" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
+    <circle cx="940" cy="260" r="1.3" fill="#a3e635"/>
+  </g>
+
+  <!-- Tiny peripheral nodes — expanded -->
   <g filter="url(#ngf)">
     <circle cx="50" cy="160" r="1.5" fill="#84cc16" class="bs1"/>
     <circle cx="30" cy="250" r="1" fill="#84cc16" class="bs2"/>
@@ -404,16 +671,50 @@
     <circle cx="830" cy="108" r="1.2" fill="#84cc16" class="bs3"/>
     <circle cx="350" cy="300" r="1" fill="#84cc16" class="bs4"/>
     <circle cx="850" cy="300" r="1" fill="#84cc16" class="bs2"/>
+    <!-- New peripheral nodes -->
+    <circle cx="285" cy="10" r=".8" fill="#84cc16" class="bs1"/>
+    <circle cx="565" cy="22" r=".9" fill="#84cc16" class="bs3"/>
+    <circle cx="635" cy="30" r=".8" fill="#84cc16" class="bs2"/>
+    <circle cx="918" cy="5" r=".7" fill="#84cc16" class="bs4"/>
+    <circle cx="245" cy="398" r=".8" fill="#84cc16" class="bs2"/>
+    <circle cx="525" cy="335" r=".9" fill="#84cc16" class="bs1"/>
+    <circle cx="675" cy="332" r=".8" fill="#84cc16" class="bs3"/>
+    <circle cx="955" cy="398" r=".7" fill="#84cc16" class="bs4"/>
+    <circle cx="8" cy="35" r=".6" fill="#84cc16" class="bs3"/>
+    <circle cx="12" cy="108" r=".7" fill="#84cc16" class="bs1"/>
+    <circle cx="8" cy="318" r=".6" fill="#84cc16" class="bs4"/>
+    <circle cx="1190" cy="35" r=".6" fill="#84cc16" class="bs2"/>
+    <circle cx="1188" cy="112" r=".7" fill="#84cc16" class="bs3"/>
+    <circle cx="1192" cy="308" r=".6" fill="#84cc16" class="bs1"/>
+    <circle cx="130" cy="290" r=".8" fill="#84cc16" class="bs2"/>
+    <circle cx="1070" cy="285" r=".8" fill="#84cc16" class="bs4"/>
+    <circle cx="415" cy="170" r=".7" fill="#84cc16" class="bs3"/>
+    <circle cx="785" cy="165" r=".7" fill="#84cc16" class="bs1"/>
+    <circle cx="580" cy="100" r=".8" fill="#84cc16" class="bs2"/>
+    <circle cx="620" cy="300" r=".8" fill="#84cc16" class="bs4"/>
   </g>
 
   <!-- ==================== SYNAPTIC FIRING FLASHES ==================== -->
-  <!-- Brief bright flashes at synaptic junctions -->
+  <!-- Brief bright flashes at synaptic junctions — original -->
   <circle cx="445" cy="155" r="8" fill="#a3e635" class="ff1" filter="url(#ngf)"/>
   <circle cx="450" cy="178" r="8" fill="#a3e635" class="ff2" filter="url(#ngf)"/>
   <circle cx="442" cy="198" r="8" fill="#a3e635" class="ff3" filter="url(#ngf)"/>
   <circle cx="755" cy="202" r="8" fill="#a3e635" class="ff4" filter="url(#ngf)"/>
   <circle cx="750" cy="228" r="8" fill="#a3e635" class="ff5" filter="url(#ngf)"/>
   <circle cx="758" cy="248" r="8" fill="#a3e635" class="ff6" filter="url(#ngf)"/>
+  <!-- New firing flashes at new junctions -->
+  <circle cx="334" cy="65" r="6" fill="#a3e635" class="ff4" filter="url(#ngf)"/>
+  <circle cx="540" cy="38" r="6" fill="#a3e635" class="ff1" filter="url(#ngf)"/>
+  <circle cx="660" cy="42" r="6" fill="#a3e635" class="ff5" filter="url(#ngf)"/>
+  <circle cx="862" cy="100" r="6" fill="#a3e635" class="ff2" filter="url(#ngf)"/>
+  <circle cx="275" cy="335" r="6" fill="#a3e635" class="ff3" filter="url(#ngf)"/>
+  <circle cx="548" cy="328" r="6" fill="#a3e635" class="ff6" filter="url(#ngf)"/>
+  <circle cx="652" cy="322" r="6" fill="#a3e635" class="ff1" filter="url(#ngf)"/>
+  <circle cx="925" cy="338" r="6" fill="#a3e635" class="ff4" filter="url(#ngf)"/>
+  <circle cx="253" cy="222" r="5" fill="#a3e635" class="ff5" filter="url(#ngf)"/>
+  <circle cx="946" cy="225" r="5" fill="#a3e635" class="ff2" filter="url(#ngf)"/>
+  <circle cx="415" cy="170" r="5" fill="#a3e635" class="ff3" filter="url(#ngf)"/>
+  <circle cx="785" cy="165" r="5" fill="#a3e635" class="ff6" filter="url(#ngf)"/>
 
   <!-- ==================== TRAVELING SIGNALS ==================== -->
   <circle r="4" fill="url(#sg)" opacity="0">
@@ -449,6 +750,34 @@
   <circle r="2.5" fill="url(#sg)" opacity="0">
     <animateMotion dur="4s" begin="1s" repeatCount="indefinite"><mpath href="#p8"/></animateMotion>
     <animate attributeName="opacity" values="0;.6;.6;.6;0" dur="4s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- New traveling signals -->
+  <circle r="3" fill="url(#sg)" opacity="0">
+    <animateMotion dur="6s" begin="1.5s" repeatCount="indefinite"><mpath href="#p9"/></animateMotion>
+    <animate attributeName="opacity" values="0;.7;.7;.7;0" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3" fill="url(#sg)" opacity="0">
+    <animateMotion dur="6s" begin="4.5s" repeatCount="indefinite"><mpath href="#p10"/></animateMotion>
+    <animate attributeName="opacity" values="0;.7;.7;.7;0" dur="6s" begin="4.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.5" fill="url(#sg)" opacity="0">
+    <animateMotion dur="7s" begin="2s" repeatCount="indefinite"><mpath href="#p11"/></animateMotion>
+    <animate attributeName="opacity" values="0;.6;.6;.6;0" dur="7s" begin="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.5" fill="url(#sg)" opacity="0">
+    <animateMotion dur="7s" begin="5.5s" repeatCount="indefinite"><mpath href="#p12"/></animateMotion>
+    <animate attributeName="opacity" values="0;.6;.6;.6;0" dur="7s" begin="5.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.5" fill="url(#sg)" opacity="0">
+    <animateMotion dur="5s" begin="3s" repeatCount="indefinite"><mpath href="#p13"/></animateMotion>
+    <animate attributeName="opacity" values="0;.8;.8;.8;0" dur="5s" begin="3s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.5;4;2.5" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.5" fill="url(#sg)" opacity="0">
+    <animateMotion dur="5s" begin="0.8s" repeatCount="indefinite"><mpath href="#p14"/></animateMotion>
+    <animate attributeName="opacity" values="0;.8;.8;.8;0" dur="5s" begin="0.8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.5;4;2.5" dur="2.5s" repeatCount="indefinite"/>
   </circle>
 
   <!-- ==================== FLOATING PARTICLES ==================== -->
@@ -488,7 +817,7 @@
     <text x="50" y="388" fill="#a3e635" font-family="monospace" font-size="8" opacity=".4">PIPELINE::ACTIVE</text>
   </g>
   <g class="hf1">
-    <text x="880" y="388" fill="#a3e635" font-family="monospace" font-size="8" opacity=".4">NEURONS: 12 :: SYNAPSES: 86</text>
+    <text x="880" y="388" fill="#a3e635" font-family="monospace" font-size="8" opacity=".4">NEURONS: 24 :: SYNAPSES: 142</text>
   </g>
 
   <!-- Decorative lines + ticks -->
