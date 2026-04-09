@@ -17,7 +17,13 @@
       @keyframes axonFire4 { 0%,20%{stroke-opacity:0} 25%{stroke-opacity:.32} 30%{stroke-opacity:.22} 38%{stroke-opacity:0} 100%{stroke-opacity:0} }
       @keyframes axonFire5 { 0%,50%{stroke-opacity:0} 55%{stroke-opacity:.3} 62%{stroke-opacity:.15} 68%{stroke-opacity:0} 100%{stroke-opacity:0} }
       @keyframes axonFire6 { 0%,75%{stroke-opacity:0} 80%{stroke-opacity:.35} 85%{stroke-opacity:.2} 92%{stroke-opacity:0} 100%{stroke-opacity:0} }
-      @keyframes somaGlow { 0%,100%{opacity:.5} 50%{opacity:.9} }
+      /* Soma fire: mostly dark, briefly flares bright, then fades */
+      @keyframes somaFire1 { 0%,100%{opacity:.08} 10%{opacity:.9} 18%{opacity:.6} 28%{opacity:.08} }
+      @keyframes somaFire2 { 0%,100%{opacity:.08} 35%{opacity:.08} 42%{opacity:.85} 50%{opacity:.55} 60%{opacity:.08} }
+      @keyframes somaFire3 { 0%,100%{opacity:.08} 60%{opacity:.08} 68%{opacity:.8} 76%{opacity:.5} 85%{opacity:.08} }
+      @keyframes somaFire4 { 0%,22%{opacity:.08} 28%{opacity:.88} 35%{opacity:.6} 45%{opacity:.08} 100%{opacity:.08} }
+      @keyframes somaFire5 { 0%,48%{opacity:.08} 55%{opacity:.82} 63%{opacity:.5} 72%{opacity:.08} 100%{opacity:.08} }
+      @keyframes somaFire6 { 0%,72%{opacity:.08} 78%{opacity:.9} 84%{opacity:.55} 92%{opacity:.08} 100%{opacity:.08} }
       @keyframes fireFlash { 0%,15%,100%{opacity:0} 5%,10%{opacity:.7} }
 
       .b1{animation:breathe 3s ease-in-out infinite}
@@ -57,10 +63,18 @@
       .af16{animation:axonFire4 5.9s ease-in-out .7s infinite}
       .af17{animation:axonFire5 6.2s ease-in-out 2.9s infinite}
       .af18{animation:axonFire6 4.9s ease-in-out 1.3s infinite}
-      .sg1{animation:somaGlow 4s ease-in-out infinite}
-      .sg2{animation:somaGlow 4s ease-in-out 1s infinite}
-      .sg3{animation:somaGlow 4s ease-in-out 2s infinite}
-      .sg4{animation:somaGlow 4s ease-in-out 3s infinite}
+      .sg1{animation:somaFire1 5.2s ease-in-out infinite}
+      .sg2{animation:somaFire2 4.8s ease-in-out .6s infinite}
+      .sg3{animation:somaFire3 5.6s ease-in-out 1.4s infinite}
+      .sg4{animation:somaFire4 4.5s ease-in-out 2.2s infinite}
+      .sg5{animation:somaFire5 5.9s ease-in-out .9s infinite}
+      .sg6{animation:somaFire6 6.3s ease-in-out 3.1s infinite}
+      .sg7{animation:somaFire1 4.3s ease-in-out 1.8s infinite}
+      .sg8{animation:somaFire2 5.4s ease-in-out 2.8s infinite}
+      .sg9{animation:somaFire3 4.7s ease-in-out .3s infinite}
+      .sg10{animation:somaFire4 6.1s ease-in-out 3.6s infinite}
+      .sg11{animation:somaFire5 5.1s ease-in-out 1.1s infinite}
+      .sg12{animation:somaFire6 4.6s ease-in-out 2.5s infinite}
       .ff1{animation:fireFlash 5s ease-in-out infinite}
       .ff2{animation:fireFlash 5s ease-in-out 1.5s infinite}
       .ff3{animation:fireFlash 5s ease-in-out 3s infinite}
@@ -520,166 +534,102 @@
     <path d="M942,202 C944,210 945,218 946,225" fill="none" stroke="#a3e635" stroke-opacity=".1" stroke-width=".4" stroke-dasharray="2,3"/>
   </g>
 
-  <!-- ==================== SOMA (cell bodies) with glow ==================== -->
-  <!-- Main somas -->
-  <circle cx="130" cy="190" r="20" fill="none" filter="url(#somaF)" class="sg1">
-    <animate attributeName="r" values="18;22;18" dur="4s" repeatCount="indefinite"/>
-  </circle>
+  <!-- ==================== SOMA (cell bodies) — randomly fire on/off ==================== -->
+  <!-- Main somas (large) -->
+  <circle cx="130" cy="190" r="20" fill="none" filter="url(#somaF)" class="sg1"/>
   <g filter="url(#ng)" class="sg1">
     <circle cx="130" cy="190" r="7" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
     <circle cx="130" cy="190" r="3" fill="#a3e635"/>
-    <circle cx="130" cy="190" fill="none" stroke="#a3e635" stroke-width=".4">
-      <animate attributeName="r" values="7;16;7" dur="4s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".4;0;.4" dur="4s" repeatCount="indefinite"/>
-    </circle>
   </g>
 
-  <circle cx="1070" cy="210" r="20" fill="none" filter="url(#somaF)" class="sg2">
-    <animate attributeName="r" values="18;22;18" dur="4s" begin="1s" repeatCount="indefinite"/>
-  </circle>
+  <circle cx="1070" cy="210" r="20" fill="none" filter="url(#somaF)" class="sg2"/>
   <g filter="url(#ng)" class="sg2">
     <circle cx="1070" cy="210" r="7" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.5"/>
     <circle cx="1070" cy="210" r="3" fill="#a3e635"/>
-    <circle cx="1070" cy="210" fill="none" stroke="#a3e635" stroke-width=".4">
-      <animate attributeName="r" values="7;16;7" dur="4s" begin="1s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".4;0;.4" dur="4s" begin="1s" repeatCount="indefinite"/>
-    </circle>
   </g>
 
-  <!-- Secondary somas -->
+  <!-- Secondary somas (medium) -->
   <g filter="url(#ng)" class="sg3">
     <circle cx="220" cy="80" r="5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.2"/>
     <circle cx="220" cy="80" r="2" fill="#a3e635"/>
-    <circle cx="220" cy="80" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="5;11;5" dur="3.5s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" repeatCount="indefinite"/>
-    </circle>
   </g>
   <g filter="url(#ng)" class="sg4">
     <circle cx="200" cy="330" r="5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.2"/>
     <circle cx="200" cy="330" r="2" fill="#a3e635"/>
-    <circle cx="200" cy="330" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="5;11;5" dur="3.5s" begin=".8s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin=".8s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <g filter="url(#ng)" class="sg1">
+  <g filter="url(#ng)" class="sg5">
     <circle cx="980" cy="70" r="5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.2"/>
     <circle cx="980" cy="70" r="2" fill="#a3e635"/>
-    <circle cx="980" cy="70" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="5;11;5" dur="3.5s" begin="1.6s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="1.6s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <g filter="url(#ng)" class="sg2">
+  <g filter="url(#ng)" class="sg6">
     <circle cx="1000" cy="330" r="5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.2"/>
     <circle cx="1000" cy="330" r="2" fill="#a3e635"/>
-    <circle cx="1000" cy="330" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="5;11;5" dur="3.5s" begin="2.4s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="2.4s" repeatCount="indefinite"/>
-    </circle>
   </g>
 
-  <!-- Interneuron somas (smaller) — original -->
-  <g filter="url(#ng)" class="sg3">
+  <!-- Interneuron somas (small) -->
+  <g filter="url(#ng)" class="sg7">
     <circle cx="350" cy="200" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
     <circle cx="350" cy="200" r="1.5" fill="#a3e635"/>
   </g>
-  <g filter="url(#ng)" class="sg4">
+  <g filter="url(#ng)" class="sg8">
     <circle cx="850" cy="200" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
     <circle cx="850" cy="200" r="1.5" fill="#a3e635"/>
   </g>
-  <g filter="url(#ng)" class="sg1">
+  <g filter="url(#ng)" class="sg9">
     <circle cx="500" cy="300" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
     <circle cx="500" cy="300" r="1.2" fill="#a3e635"/>
   </g>
-  <g filter="url(#ng)" class="sg2">
+  <g filter="url(#ng)" class="sg10">
     <circle cx="700" cy="100" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
     <circle cx="700" cy="100" r="1.2" fill="#a3e635"/>
   </g>
 
-  <!-- NEW somas for additional neurons -->
-  <!-- Upper-mid-left -->
-  <g filter="url(#ng)" class="sg3">
+  <!-- Additional neuron somas -->
+  <g filter="url(#ng)" class="sg11">
     <circle cx="420" cy="55" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
     <circle cx="420" cy="55" r="1.8" fill="#a3e635"/>
-    <circle cx="420" cy="55" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin=".5s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin=".5s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Upper-mid-right -->
-  <g filter="url(#ng)" class="sg1">
+  <g filter="url(#ng)" class="sg12">
     <circle cx="780" cy="50" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
     <circle cx="780" cy="50" r="1.8" fill="#a3e635"/>
-    <circle cx="780" cy="50" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="2.2s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="2.2s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Lower-mid-left -->
-  <g filter="url(#ng)" class="sg2">
+  <g filter="url(#ng)" class="sg6">
     <circle cx="380" cy="355" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
     <circle cx="380" cy="355" r="1.8" fill="#a3e635"/>
-    <circle cx="380" cy="355" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="1.2s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="1.2s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Lower-mid-right -->
-  <g filter="url(#ng)" class="sg4">
+  <g filter="url(#ng)" class="sg9">
     <circle cx="820" cy="355" r="4.5" fill="#0a0a0f" stroke="#a3e635" stroke-width="1.1"/>
     <circle cx="820" cy="355" r="1.8" fill="#a3e635"/>
-    <circle cx="820" cy="355" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4.5;10;4.5" dur="3.8s" begin="2.8s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.8s" begin="2.8s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Far-left-upper -->
   <g filter="url(#ng)" class="sg4">
     <circle cx="55" cy="75" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
     <circle cx="55" cy="75" r="1.3" fill="#a3e635"/>
   </g>
-  <!-- Far-left-lower -->
-  <g filter="url(#ng)" class="sg2">
+  <g filter="url(#ng)" class="sg10">
     <circle cx="45" cy="355" r="3" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
     <circle cx="45" cy="355" r="1.1" fill="#a3e635"/>
   </g>
-  <!-- Far-right-upper -->
-  <g filter="url(#ng)" class="sg1">
+  <g filter="url(#ng)" class="sg7">
     <circle cx="1150" cy="75" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
     <circle cx="1150" cy="75" r="1.3" fill="#a3e635"/>
   </g>
-  <!-- Far-right-lower -->
   <g filter="url(#ng)" class="sg3">
     <circle cx="1155" cy="345" r="3" fill="#0a0a0f" stroke="#a3e635" stroke-width=".8"/>
     <circle cx="1155" cy="345" r="1.1" fill="#a3e635"/>
   </g>
-  <!-- Center-upper -->
-  <g filter="url(#ng)" class="sg2">
+  <g filter="url(#ng)" class="sg8">
     <circle cx="600" cy="45" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
     <circle cx="600" cy="45" r="1.5" fill="#a3e635"/>
-    <circle cx="600" cy="45" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4;9;4" dur="3.5s" begin="1.8s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="1.8s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Center-lower -->
-  <g filter="url(#ng)" class="sg4">
+  <g filter="url(#ng)" class="sg5">
     <circle cx="600" cy="358" r="4" fill="#0a0a0f" stroke="#a3e635" stroke-width="1"/>
     <circle cx="600" cy="358" r="1.5" fill="#a3e635"/>
-    <circle cx="600" cy="358" fill="none" stroke="#a3e635" stroke-width=".3">
-      <animate attributeName="r" values="4;9;4" dur="3.5s" begin="3.2s" repeatCount="indefinite"/>
-      <animate attributeName="stroke-opacity" values=".3;0;.3" dur="3.5s" begin="3.2s" repeatCount="indefinite"/>
-    </circle>
   </g>
-  <!-- Mid-left-bridge -->
-  <g filter="url(#ng)" class="sg1">
+  <g filter="url(#ng)" class="sg11">
     <circle cx="260" cy="145" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
     <circle cx="260" cy="145" r="1.3" fill="#a3e635"/>
   </g>
-  <!-- Mid-right-bridge -->
-  <g filter="url(#ng)" class="sg3">
+  <g filter="url(#ng)" class="sg12">
     <circle cx="940" cy="260" r="3.5" fill="#0a0a0f" stroke="#a3e635" stroke-width=".9"/>
     <circle cx="940" cy="260" r="1.3" fill="#a3e635"/>
   </g>
