@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="AI-Synapse Banner" width="100%"/>
+  <picture>
+    <img src="https://raw.githubusercontent.com/JuanSync7/ai-synapse/main/assets/banner.svg" alt="AI-Synapse Banner" width="100%"/>
+  </picture>
 </p>
 
 <p align="center">
