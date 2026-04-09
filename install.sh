@@ -14,8 +14,8 @@ usage() {
     echo "  clean               Remove all installed skill symlinks"
     echo ""
     echo "Examples:"
-    echo "  ai-skills install docs code/build-plan"
-    echo "  ai-skills install docs/spec orchestration"
+    echo "  ai-skills install src/docs src/code/build-plan"
+    echo "  ai-skills install src/docs/spec src/orchestration"
     echo "  ai-skills install all"
 }
 

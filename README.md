@@ -13,141 +13,153 @@
 
 ## What is AI-Synapse?
 
-A **central library** for [Claude Code](https://claude.ai/code) skills — standalone skills and submoduled skill suites, organized by domain, installed as symlinks into `~/.claude/skills/`.
+AI-Synapse is a central library of [Claude Code](https://claude.ai/code) skills — reusable, composable units of agent behavior that can be invoked by name from any conversation. Skills are installed as symlinks into `~/.claude/skills/` and discovered automatically by Claude Code. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
 
-Skills range from single-file utilities to full autonomous pipelines that chain scope -> spec -> design -> implementation -> engineering guide -> test docs -> test code, with multi-agent orchestration at every stage.
+The repo serves two roles: a **home for standalone skills** (self-contained, no shared infrastructure) and a **registry that submodules skill suites** from external repos (multi-skill projects with shared config and their own CI). Both are installed the same way via `install.sh`.
+
+---
+
+## Repository Structure
+
+```
+ai-synapse/
+│
+├── src/                            # All skills, organized by domain
+│   ├── docs/                       # Documentation authoring pipeline
+│   ├── code/                       # Code generation and test execution
+│   ├── orchestration/              # Multi-agent coordination
+│   ├── meta/                       # Skill creation, evaluation, improvement
+│   ├── optimization/               # Iterative improvement loops
+│   ├── frameworks/                 # Technology-specific skills
+│   ├── creative/                   # Visual and interactive output
+│   └── integration/                # External service integrations (submodules)
+│
+├── skill-creator  ->  src/meta/skill-creator/       # root symlink — framework tool
+├── improve-skill  ->  src/meta/improve-skill/       # root symlink — framework tool
+├── auto-research  ->  src/optimization/auto-research/ # root symlink — framework tool
+│
+├── SKILLS_REGISTRY.yaml            # Pipeline metadata and stage dependency graph
+├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
+├── GOVERNANCE.md                   # Cross-skill rules for the doc-authoring suite
+├── CLAUDE.md                       # Claude Code instructions for this repo
+├── install.sh                      # CLI for installing and managing skill symlinks
+├── Makefile                        # Setup shortcuts (init, install, list, clean)
+└── .githooks/pre-commit            # Structural validation on every commit
+```
+
+---
+
+## Root Files
+
+### [`SKILLS_REGISTRY.yaml`](SKILLS_REGISTRY.yaml)
+The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines. Named presets (`full`, `feature`, `bugfix`, `docs-only`) are defined here as trusted stage sequences that bypass dependency resolution.
+
+### [`TAXONOMY.md`](TAXONOMY.md)
+Controlled vocabulary for the `domain` and `intent` frontmatter fields in every `SKILL.md`. Enforced by the pre-commit hook — committing a skill with a value not listed here will fail. When nothing in the taxonomy fits a new skill, the convention is to propose an addition here rather than invent ad hoc values. This keeps skill metadata consistent and makes routing and filtering predictable.
+
+### [`GOVERNANCE.md`](GOVERNANCE.md)
+Authoritative rules for the doc-authoring skill suite — layer hierarchy, cross-skill coherence gates, and propagation rules for when specs change. Not loaded at runtime; it is the human-readable source from which rules are inlined into each doc skill's `SKILL.md`. When a rule changes, update `GOVERNANCE.md` first, then propagate to each affected skill. This separation keeps skills self-contained (no runtime file dependency) while providing a single place to reason about suite-level consistency.
+
+### [`CLAUDE.md`](CLAUDE.md)
+Project-level instructions for Claude Code. Explains the repo structure, submodule architecture, skill anatomy, and the two-layer validation model (pre-commit structural checks + PR-time quality evaluation). Claude reads this automatically when working in this repo. Changes here affect how Claude interprets tasks and structures contributions.
+
+### [`.githooks/pre-commit`](.githooks/pre-commit)
+Runs automatically on every commit touching a skill directory. Checks: required frontmatter fields present, `domain` and `intent` values exist in `TAXONOMY.md`, the domain `README.md` has a row for the skill, and `EVAL.md` exists alongside every `SKILL.md`. Fails loudly with actionable errors. Activated via `make init`.
+
+---
+
+## Architecture
+
+### Skill anatomy
+
+Every skill lives at `src/<domain>/<skill-name>/` and follows this layout:
+
+```
+src/<domain>/<skill-name>/
+  SKILL.md        # (required) YAML frontmatter + behavior body — the skill definition
+  EVAL.md         # (required) Test prompts and pass/fail output criteria for quality evaluation
+  references/     # Companion files loaded on-demand during specific phases
+  templates/      # Output templates referenced by the skill
+```
+
+`SKILL.md` is the install discovery marker — `install.sh` walks `src/` looking for files with that name, so any directory without one is invisible to the installer. The file must exist; contents are not validated at install time (that happens at commit via the pre-commit hook). `EVAL.md` is also required by the pre-commit hook, which will reject a skill directory missing it. `references/` and `templates/` are optional.
+
+`SKILL.md` frontmatter carries routing metadata:
+
+```yaml
+---
+name: skill-name
+description: "Trigger conditions — when this skill fires (not a workflow summary)"
+domain: docs.spec       # from TAXONOMY.md
+intent: write           # from TAXONOMY.md
+tags: [lowercase, hyphenated]
+user-invocable: true
+argument-hint: "[args]"
+---
+```
+
+The `description` field is a **routing contract**: it specifies when the skill fires, not what it does. Claude Code matches user intent against this field to select the right skill.
+
+### Two kinds of skills
+
+- **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/<domain>/`.
+- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/<domain>/`. `install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
+
+Submoduled suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to a submoduled skill are made in the skill's own repo; this repo only tracks the submodule pointer.
+
+### Registration is intentional, not automatic
+
+Skills land in ai-synapse only after review — via `/skill-creator` or `/improve-skill` — with an `EVAL.md`, via a PR that adds the submodule (or local directory) and a `SKILLS_REGISTRY.yaml` entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
+
+### Framework tools
+
+Three root-level symlinks point at skills for working **on the framework itself**, not skills in the library. They are aliased at the root for quick access:
+
+| Tool | Path | Description |
+|------|------|-------------|
+| `/skill-creator` | [`src/meta/skill-creator/`](src/meta/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and a `SKILLS_REGISTRY.yaml` entry. |
+| `/improve-skill` | [`src/meta/improve-skill/`](src/meta/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
+| `/auto-research` | [`src/optimization/auto-research/`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
+
+### Two-layer validation
+
+Every commit touching a skill directory runs two layers of checks:
+
+1. **Pre-commit (structural)** — frontmatter fields, taxonomy values, domain README entry, EVAL.md presence. Fast, no LLM.
+2. **PR-time (quality)** — new skills run `/skill-creator`; modified skills run `/improve-skill`. Trivial changes (typos, formatting) need only layer 1.
+
+---
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/JuanSync7/ai-synapse.git
 cd ai-synapse
-make init                                    # configure git hooks
-./install.sh install all                     # install all skills
-./install.sh install docs code/build-plan    # or pick specific domains/skills
+make init            # configure git hooks + initialize submodules (first-time only)
+make install         # install all skills to ~/.claude/skills/
 ```
-
-## Skills
-
-### docs — Document Authoring Pipeline
-
-| Skill | Description |
-|-------|-------------|
-| `write-scope-docs` | Scope definition, phase planning, open questions tracking |
-| `write-architecture-docs` | System-level architecture decisions, component boundaries |
-| `write-spec-docs` | Full FR/NFR specification with acceptance criteria |
-| `write-spec-summary` | Concise spec digest with tech-agnostic system overview |
-| `write-design-docs` | Task decomposition, code contracts, dependency graph |
-| `write-implementation-docs` | Implementation source-of-truth with Phase 0 contracts |
-| `write-engineering-guide` | Post-build module reference and data flow documentation |
-| `write-test-docs` | Test planning document derived from engineering guide |
-| `doc-authoring` | Router — detects doc intent and dispatches to the right skill |
-
-### code — Code Generation & Testing
-
-| Skill | Description |
-|-------|-------------|
-| `build-plan` | Implementation planning with dependency graph |
-| `write-module-tests` | pytest implementation from test doc specifications |
-| `test-runner` | Automated test execution and failure analysis |
-
-### orchestration — Multi-Agent Coordination
-
-| Skill | Description |
-|-------|-------------|
-| `autonomous-orchestrator` | End-to-end pipeline execution with review gates |
-| `parallel-agents-dispatch` | Fan-out/fan-in agent coordination |
-| `stakeholder-reviewer` | Human-in-the-loop review gate |
-
-### meta — Skill Development
-
-| Skill | Description |
-|-------|-------------|
-| `skill-creator` | Create new skills with eval criteria |
-| `improve-skill` | Score-fix loop against EVAL.md |
-| `write-skill-eval` | Generate EVAL.md for a skill |
-| `skill-router` | Route user intent to the right skill |
-| `generate-test-prompts` | Generate behavioral test prompts |
-| `generate-output-criteria` | Generate output quality criteria |
-
-### optimization — Research & Improvement
-
-| Skill | Description |
-|-------|-------------|
-| `auto-research` | Karpathy-style modify-measure-keep loop |
-
-### frameworks — Technology-Specific
-
-| Skill | Description |
-|-------|-------------|
-| `langgraph-architect` | LangGraph application architecture |
-
-### creative — Visual & Interactive
-
-| Skill | Description |
-|-------|-------------|
-| `create-animation-page` | Animated HTML/CSS/JS pages |
-
-### integration — External Services
-
-| Skill | Description |
-|-------|-------------|
-| `jira-reporter` | Jira issue reporting and management |
 
 ---
 
-## The Doc Pipeline
+## Install
 
-```
-write-scope-docs -> write-architecture-docs -> write-spec-docs -> write-spec-summary
-                                                     |
-                                               write-design-docs
-                                                     |
-                                           write-implementation-docs
-                                                     |
-                                              implement-code
-                                                     |
-                                           write-engineering-guide
-                                                     |
-                                              write-test-docs
-                                                     |
-                                            write-module-tests
-```
-
-Each stage produces a document that the next stage consumes. The `autonomous-orchestrator` can drive this end-to-end with stakeholder review gates between stages.
-
-## Architecture
-
-```
-<domain>/
-  <skill-name>/
-    SKILL.md                # Skill definition (frontmatter + body)
-    EVAL.md                 # Test prompts + output criteria
-    references/             # Companion files loaded on-demand
-    templates/              # Output templates
-```
-
-**Two kinds of skills:**
-- **Standalone** — self-contained SKILL.md + EVAL.md, no shared infra. Live directly in this repo.
-- **Submoduled suites** — multi-skill projects with shared config and CI. Live in their own repos, wired in as git submodules.
-
-**Root files:**
-- `SKILLS_REGISTRY.yaml` — pipeline metadata and stage dependencies
-- `TAXONOMY.md` — controlled vocabulary for `domain` and `intent` fields
-- `GOVERNANCE.md` — cross-skill rules for the doc-authoring suite
-- `install.sh` — CLI for installing/managing skill symlinks
-
-## CLI
+`install.sh` is the full CLI. `make` provides shortcuts for the common cases.
 
 ```bash
-./install.sh install all                  # install everything
-./install.sh install docs code/build-plan # install specific domains or skills
-./install.sh list                         # show installed skills
-./install.sh available                    # show all available skills
-./install.sh clean                        # remove all symlinks
+make install                       # install all skills
+make install docs                  # install src/docs domain only
+make install docs code             # install multiple domains
+make install meta/skill-creator    # install a single skill
+make list                          # show installed skills
+make available                     # show all available skills
+make clean                         # remove all installed symlinks
 ```
 
-Target directory: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
+`make` with no args prints a help message. Discovery is automatic — any directory under `src/` containing a `SKILL.md` is a valid install target. No config needed when adding new skills or domains.
+
+Install target: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
+
+→ See **[src/README.md](src/README.md)** for the full skill catalog with per-domain tables.
 
 ---
 

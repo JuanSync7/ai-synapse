@@ -13,12 +13,13 @@ Two kinds of skills live here:
 ## Repository Layout
 
 ```
-<domain>/
-  <skill-name>/             # git submodule OR local skill directory
-    SKILL.md                # The skill definition (frontmatter + body)
-    EVAL.md                 # Test prompts + output criteria (optional)
-    references/             # Companion files loaded on-demand during specific phases
-    templates/              # Output templates
+src/
+  <domain>/
+    <skill-name>/           # git submodule OR local skill directory
+      SKILL.md              # The skill definition (frontmatter + body)
+      EVAL.md               # Test prompts + output criteria (optional)
+      references/           # Companion files loaded on-demand during specific phases
+      templates/            # Output templates
 ```
 
 **Root files:**
@@ -56,11 +57,11 @@ After cloning, run `make init` to configure git hooks.
 ## Install Commands
 
 ```bash
-./install.sh install all                  # install everything
-./install.sh install docs code/build-plan # install specific domains or skills
-./install.sh list                         # show installed skills
-./install.sh available                    # show all available skills
-./install.sh clean                        # remove all symlinks
+./install.sh install all                          # install everything
+./install.sh install src/docs src/code/build-plan # install specific domains or skills
+./install.sh list                                 # show installed skills
+./install.sh available                            # show all available skills
+./install.sh clean                                # remove all symlinks
 ```
 
 Target directory: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
