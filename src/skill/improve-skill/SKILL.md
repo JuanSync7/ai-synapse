@@ -1,7 +1,7 @@
 ---
 name: improve-skill
 description: "Use when a skill needs quality improvement — check it against best practices, test it on sample prompts, and fix what fails. Triggered by 'improve this skill', 'fix the skill', 'review skill quality', 'make the skill better'."
-domain: meta.create
+domain: skill.create
 intent: improve
 tags: [skill, quality, score-fix loop]
 user-invocable: true

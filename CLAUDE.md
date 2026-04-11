@@ -25,7 +25,7 @@ src/
 **Root files:**
 - `SKILLS_REGISTRY.yaml` — single source of truth for pipeline metadata and stage dependencies
 - `TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
-- `GOVERNANCE.md` — authoritative cross-skill rules for the doc-authoring suite (not loaded at runtime)
+- `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
 - `install.sh` — CLI for installing/managing skill symlinks
 - `Makefile` — repo setup (`make init` configures git hooks)
 - `.githooks/` — git hooks for structural validation on commit
@@ -90,7 +90,7 @@ The autonomous orchestrator drives end-to-end pipelines using stages defined in 
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `meta/skill-creator/references/skill-design-principles.md`):
+These are the core principles for writing and modifying skills (full reference: `skill/skill-creator/references/skill-design-principles.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.

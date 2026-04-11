@@ -1,7 +1,7 @@
 ---
 name: write-skill-eval
 description: Router for the skill evaluation suite. Generates EVAL.md files containing structural criteria, output criteria, and test prompts for any Claude Code skill. Routes to generate-test-prompts (blind prompt generation) and generate-output-criteria (judge-based criteria writing). Triggered by "write eval for skill", "create skill evaluation", "generate EVAL.md", "evaluate this skill".
-domain: meta.eval
+domain: skill.eval
 intent: route
 tags: [EVAL.md, criteria, test prompts]
 user-invocable: true

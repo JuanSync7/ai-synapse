@@ -66,15 +66,26 @@ write-module-tests
 
 ---
 
-## meta — Skill Development
+## skill — Skill Development Lifecycle
+
+End-to-end lifecycle for building, evaluating, improving, and certifying Claude Code skills.
 
 | Skill | Intent | Description |
 |-------|--------|-------------|
-| [`skill-creator`](meta/skill-creator/) | write | Scaffolds new skills — baseline test, design principles, EVAL.md, improvement loop |
-| [`improve-skill`](meta/improve-skill/) | improve | Score-fix-rescore loop against an existing EVAL.md |
-| [`write-skill-eval`](meta/write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |
-| [`generate-output-criteria`](meta/generate-output-criteria/) | generate | Binary pass/fail output criteria as impartial judge |
-| [`generate-test-prompts`](meta/generate-test-prompts/) | generate | Diverse test prompts blind to SKILL.md body |
+| [`skill-brainstorm`](skill/skill-brainstorm/) | plan | Coaching brainstorm to shape skill ideas before /skill-creator |
+| [`skill-creator`](skill/skill-creator/) | write | Scaffolds new skills — baseline test, design principles, EVAL.md, improvement loop |
+| [`improve-skill`](skill/improve-skill/) | improve | Score-fix-rescore loop against an existing EVAL.md |
+| [`write-skill-eval`](skill/write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |
+| [`generate-output-criteria`](skill/generate-output-criteria/) | generate | Binary pass/fail output criteria as impartial judge |
+| [`generate-test-prompts`](skill/generate-test-prompts/) | generate | Diverse test prompts blind to SKILL.md body |
+| [`synapse-gatekeeper`](skill/synapse-gatekeeper/) | validate | Certifies promotion readiness — APPROVE / REVISE / REJECT verdict |
+
+---
+
+## meta — Framework Utilities
+
+| Skill | Intent | Description |
+|-------|--------|-------------|
 | [`skill-router`](meta/skill-router/) | route | Routes user intent to the right skill |
 
 ---

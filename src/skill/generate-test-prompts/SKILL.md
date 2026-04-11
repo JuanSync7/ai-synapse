@@ -1,7 +1,7 @@
 ---
 name: generate-test-prompts
 description: Generates diverse, unbiased test prompts for evaluating a Claude Code skill. Operates blind — sees only the skill's name and one-line description, never the SKILL.md body. Produces prompts across naive, experienced, adversarial, and wrong-tool personas. Triggered by "generate test prompts", "write test cases for skill", "create eval prompts".
-domain: meta.eval
+domain: skill.eval
 intent: generate
 tags: [test prompts, personas, blind]
 user-invocable: true
