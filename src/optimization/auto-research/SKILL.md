@@ -3,14 +3,14 @@ name: auto-research
 description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'auto-research', 'optimize this overnight', 'run autonomous improvement'."
 domain: optimization
 intent: improve
-tags: [auto-research, karpathy, experiment-loop, optimization]
+tags: [auto-research, experiment-loop, optimization]
 user-invocable: true
 argument-hint: "setup [target path] | run [path to PROGRAM.md]"
 ---
 
 # Auto-Research
 
-Runs autonomous iterative improvement on any target — skills, code, prompts, configs — following the [Karpathy AutoResearch](https://github.com/karpathy/autoresearch) pattern. The agent modifies a mutable target, scores it against an immutable metric, keeps improvements, reverts regressions, and repeats until a stop condition is met.
+Runs autonomous iterative improvement on any target — skills, code, prompts, configs. The agent modifies a mutable target, scores it against an immutable metric, keeps improvements, reverts regressions, and repeats until a stop condition is met.
 
 This is the generic version of what `/improve-skill` does for skills specifically. Auto-research works on anything with a mutable target and a scorable metric.
 
