@@ -199,7 +199,7 @@ Ask:
 
 - "I need at least 2–3 concrete directions to explore. What do you think is causing the current score to be low?"
 
-Do not suggest strategies. Do not add strategies the user did not provide. The PROGRAM.md exploration directions must contain only what the user stated — no "bonus" ideas, no "combine best results" steps, no inferred strategies. The user knows their domain — draw it out of them. If run mode exhausts all user-provided strategies, the subagent may invent variations at that point — but setup mode never invents.
+Do not suggest strategies. Do not add strategies the user did not provide. The PROGRAM.md exploration directions must contain only what the user stated — no "bonus" ideas, no "combine best results" steps, no inferred strategies, **and no "if exhausted, try X" fallback variations**. Fallback variations are a run-mode subagent decision made when the user-provided directions are exhausted; they do not belong in the PROGRAM.md exploration directions section, not even as bracketed suggestions. The user knows their domain — draw it out of them. Setup mode never invents — not as primary directions, not as fallbacks, not as parenthetical hints.
 
 ### Step 6: Define stop conditions
 
@@ -222,6 +222,8 @@ Default stop conditions if the user doesn't specify:
 > **Read [`references/program-format.md`](references/program-format.md)** for the PROGRAM.md golden references (skill and non-skill) and the format specification including partial-file immutability, loop-attached requirements, and scorer-validates-correctness.
 
 Assemble the user's answers into PROGRAM.md format. Show it to the user for review before writing. The user must approve — PROGRAM.md is their research brief, not the agent's.
+
+**Self-check before showing the draft:** scan the assembled exploration directions section. Every bullet must trace verbatim (or near-verbatim) to something the user said in Step 5. If any bullet says "if exhausted, try X" or "consider also Y" or otherwise contains a strategy the user did not state, delete it before showing the draft. Setup mode is structuring user input, not augmenting it.
 
 Write PROGRAM.md to the target directory. Do not create `research/` — run mode creates it on first iteration.
 

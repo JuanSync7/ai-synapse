@@ -87,6 +87,11 @@ Human-readable narrative of what improved and why. Written by the agent at stop 
 ### What didn't work
 - [Change that was tried and reverted, and why it failed]
 
+### Hypothesis mispredictions
+- [Iterations where the ex-ante hypothesis (column 3 of iterations.tsv) and the actual outcome systematically diverged]
+- [Patterns: classes of change the agent kept predicting would help but that regressed every time, or vice versa]
+- [Leave empty only if hypotheses tracked outcomes cleanly across the run]
+
 ### Remaining gaps
 - [Criteria still failing, if any, and hypotheses for why]
 ```
@@ -108,8 +113,10 @@ Human-readable narrative of what improved and why. Written by the agent at stop 
 ### What didn't work
 - [Change that was rejected and which dimensions it lost on]
 
-### Remaining gaps
-- [Dimensions that proved hard to improve and hypotheses for why]
+### Hypothesis mispredictions
+- [Iterations where the ex-ante hypothesis (column 3 of iterations.tsv) and the actual A/B verdict systematically diverged]
+- [Patterns: dimensions the agent kept predicting wins on but that lost, or dimensions the agent dismissed but that won]
+- [Leave empty only if hypotheses tracked verdicts cleanly across the run]
 ```
 
 ### Filled example — Numerical
@@ -131,6 +138,9 @@ Human-readable narrative of what improved and why. Written by the agent at stop 
 ### What didn't work
 - Adding a gold example without removing other instructions (iteration 003) — token budget was already full, example added noise instead of signal
 - Removing the mental model paragraph entirely (iteration 004) — the agent lost the conceptual framing and fell back to mechanical rule-following
+
+### Hypothesis mispredictions
+- Iteration 003 hypothesis predicted the gold example would anchor the opinionated-language criterion; actual outcome was no score change. Pattern: adding content without removing other content rarely helps when the token budget is already full — future runs should pair "add" experiments with "remove" experiments rather than running them separately.
 
 ### Remaining gaps
 - None — all 6 criteria pass. Next run should target model migration (test on mid-tier).
@@ -154,6 +164,9 @@ Human-readable narrative of what improved and why. Written by the agent at stop 
 ### What didn't work
 - Blanket verbose logging (iteration 003) — improved coverage but degraded specificity and level correctness
 - Restructuring log format (iteration 004) — lateral move, no clear winner across dimensions
+
+### Hypothesis mispredictions
+- Iteration 003 hypothesis predicted blanket verbose logging would help coverage at acceptable cost; actual verdict was rejected because the cost on specificity was not acceptable. Pattern: the agent kept underweighting specificity in its hypotheses despite specificity being the priority-1 dimension. Future hypotheses should explicitly check the priority-1 dimension before predicting a win on any lower-priority dimension.
 
 ### Remaining gaps
 - Coverage dimension proved hard to improve without regressing specificity — may need a structural refactor to separate error paths from info logging
