@@ -1,1 +1,1 @@
-/home/juansync7/ai-skills/meta/skill-creator/references/research-format.md
+../../../skill/skill-creator/references/research-format.md
