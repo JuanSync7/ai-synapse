@@ -78,7 +78,7 @@ registry:
               - name: build-plan
                 description: "Legacy implementation plan skill — superseded by write-implementation-docs for pipeline use; retained for direct invocation"
                 # No pipeline block — not router-selectable
-          - name: write-commit
+              - name: write-commit
                 description: "Writes or improves a git commit message from a diff or change description"
                 # No pipeline block — terminal on-demand helper; output does not feed any pipeline stage
 
@@ -143,12 +143,22 @@ registry:
             description: "JIRA updates as observability/HITL layer during agent workflows"
             # Not pipeline-routable: side-effect reporting, not an artifact-producing stage
 
-  - name: meta
-    summary: "Skills about skills: create, evaluate, improve, orchestrate, animate"
+  - name: optimization
+    summary: "Autonomous iterative improvement loops with scorable metrics"
+    skills:
+      - name: auto-research
+        description: "Autonomous iterative improvement loop with subagent-per-iteration execution, for any target with a scorable metric"
+        # Not pipeline-routable: on-demand autonomous loop, not a dev-pipeline stage
+
+  - name: skill
+    summary: "Skill development lifecycle: brainstorm, create, evaluate, improve, certify"
     children:
       - name: skill-lifecycle
         summary: "Build and maintain skills"
         skills:
+          - name: skill-brainstorm
+            description: "Coaching brainstorm to shape skill ideas before /skill-creator"
+            # Not pipeline-routable: conversational coaching session, not a dispatch stage
           - name: skill-creator
             description: "Creates new skills with EVAL.md and registry entry"
           - name: improve-skill
@@ -159,6 +169,19 @@ registry:
             description: "Generates binary pass/fail output criteria as impartial judge"
           - name: generate-test-prompts
             description: "Generates diverse test prompts blind to SKILL.md body"
+          - name: synapse-gatekeeper
+            description: "Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria"
+            # Not pipeline-routable: terminal certification gate, no downstream skill depends on its output
+
+  - name: meta
+    summary: "Meta-level tools: routing, framework utilities, orchestration, creative"
+    children:
+      - name: routing
+        summary: "Intent routing and skill discovery"
+        skills:
+          - name: skill-router
+            description: "Routes user intent to the right skill based on domain matching"
+            # Not pipeline-routable: runtime routing, not an artifact-producing stage
           - name: doc-authoring
             description: "Router: directs to write-spec-summary, write-spec-docs, or write-engineering-guide"
             # Not pipeline-routable: function subsumed by the v2 router for pipeline use.
