@@ -16,9 +16,10 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | `code` | Code generation and execution |
 | `code.test` | Test code authoring and execution |
 | `code.plan` | Execution planning |
-| `meta` | Skills about skills |
-| `meta.eval` | Skill evaluation |
-| `meta.create` | Skill creation and improvement |
+| `skill` | Skill development lifecycle |
+| `skill.eval` | Skill evaluation and certification |
+| `skill.create` | Skill creation and improvement |
+| `meta` | Meta-level tools: routing, framework utilities |
 | `optimization` | Autonomous iterative improvement |
 | `orchestration` | Multi-agent coordination |
 | `creative` | Standalone creative/visual |

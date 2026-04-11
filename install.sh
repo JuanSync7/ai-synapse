@@ -113,8 +113,8 @@ cmd_clean() {
         if [ -L "$link" ]; then
             local real
             real="$(readlink "$link")"
-            # Only remove symlinks pointing into ai-skills
-            if [[ "$real" == "$SKILLS_DIR"* ]]; then
+            # Remove symlinks pointing into this repo OR dangling symlinks (stale from a renamed/moved repo)
+            if [[ "$real" == "$SKILLS_DIR"* ]] || [ ! -e "$link" ]; then
                 rm "$link"
                 echo "  rm  $(basename "$link")"
                 count=$((count + 1))

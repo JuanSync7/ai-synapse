@@ -17,6 +17,21 @@ AI-Synapse is a central library of [Claude Code](https://claude.ai/code) skills 
 
 The repo serves two roles: a **home for standalone skills** (self-contained, no shared infrastructure) and a **registry that submodules skill suites** from external repos (multi-skill projects with shared config and their own CI). Both are installed the same way via `install.sh`.
 
+### End-to-End Skill Development
+
+AI-Synapse includes a complete lifecycle for building skills themselves — from initial idea to production-ready, certified skill:
+
+| Stage | Skill | What it does |
+|-------|-------|-------------|
+| **Brainstorm** | [`/skill-brainstorm`](src/skill/skill-brainstorm/) | Coaching session to shape a vague idea into a concrete skill spec — decides if it's a skill, config, or not needed |
+| **Create** | [`/skill-creator`](src/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
+| **Evaluate** | [`/write-skill-eval`](src/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
+| **Improve** | [`/improve-skill`](src/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
+| **Research** | [`/auto-research`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
+| **Certify** | [`/synapse-gatekeeper`](src/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
+
+The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
+
 ---
 
 ## Repository Structure
@@ -28,19 +43,20 @@ ai-synapse/
 │   ├── docs/                       # Documentation authoring pipeline
 │   ├── code/                       # Code generation and test execution
 │   ├── orchestration/              # Multi-agent coordination
-│   ├── meta/                       # Skill creation, evaluation, improvement
+│   ├── skill/                      # Skill lifecycle: brainstorm, create, evaluate, improve, certify
+│   ├── meta/                       # Framework utilities: routing, discovery
 │   ├── optimization/               # Iterative improvement loops
 │   ├── frameworks/                 # Technology-specific skills
 │   ├── creative/                   # Visual and interactive output
 │   └── integration/                # External service integrations (submodules)
 │
-├── skill-creator  ->  src/meta/skill-creator/       # root symlink — framework tool
-├── improve-skill  ->  src/meta/improve-skill/       # root symlink — framework tool
+├── skill-creator  ->  src/skill/skill-creator/       # root symlink — framework tool
+├── improve-skill  ->  src/skill/improve-skill/       # root symlink — framework tool
 ├── auto-research  ->  src/optimization/auto-research/ # root symlink — framework tool
 │
 ├── SKILLS_REGISTRY.yaml            # Pipeline metadata and stage dependency graph
 ├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
-├── GOVERNANCE.md                   # Cross-skill rules for the doc-authoring suite
+├── GOVERNANCE.md                   # Promotion criteria, contribution workflow, naming conventions
 ├── CLAUDE.md                       # Claude Code instructions for this repo
 ├── install.sh                      # CLI for installing and managing skill symlinks
 ├── Makefile                        # Setup shortcuts (init, install, list, clean)
@@ -117,8 +133,8 @@ Three root-level symlinks point at skills for working **on the framework itself*
 
 | Tool | Path | Description |
 |------|------|-------------|
-| `/skill-creator` | [`src/meta/skill-creator/`](src/meta/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and a `SKILLS_REGISTRY.yaml` entry. |
-| `/improve-skill` | [`src/meta/improve-skill/`](src/meta/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
+| `/skill-creator` | [`src/skill/skill-creator/`](src/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and a `SKILLS_REGISTRY.yaml` entry. |
+| `/improve-skill` | [`src/skill/improve-skill/`](src/skill/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
 | `/auto-research` | [`src/optimization/auto-research/`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
 
 ### Two-layer validation

@@ -1,7 +1,7 @@
 ---
 name: skill-creator
 description: Use when asked to create a new skill, build a skill for X, or write a skill.
-domain: meta.create
+domain: skill.create
 intent: write
 tags: [skill, SKILL.md, scaffold]
 user-invocable: true
@@ -88,6 +88,8 @@ The build loop's output (the skill) is the eval loop's input (the thing to test)
 ### Loop 1: Build
 
 ### Phase 1: Understand
+
+**Decision memo check:** If the user provides a decision memo from `/skill-brainstorm`, read it first. Evaluate the memo against the Phase 1 gate conditions below. Fill any gaps the memo doesn't cover. If all gate conditions are already met by the memo, proceed directly to Phase 1.5 (Baseline Test). If the memo is incomplete, use it as a starting point and complete the remaining steps.
 
 1. **Capture intent** — What should this skill enable Claude to do?
 2. **Identify triggers** — What user phrases/contexts should invoke it?
