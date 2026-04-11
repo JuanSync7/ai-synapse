@@ -258,8 +258,12 @@ LOOP (orchestrator):
   3. Determine the current checkpoint reference (baseline commit, or the
      most recent checkpoint commit if one has been taken)
   4. Compute git_diff_since_checkpoint = `git diff <checkpoint>..HEAD`
-  5. Dispatch an iteration subagent with the prompt template from
-     references/subagent-protocol.md, filling slots:
+  5. Dispatch an iteration subagent via the Task tool with the prompt
+     template from references/subagent-protocol.md. Set `model:` explicitly
+     on every dispatch — default to `sonnet` for iteration subagents (the
+     per-iteration work is well-scoped and sonnet is the right cost/quality
+     point; escalate to `opus` only if the target's edits require deep
+     architectural judgment). Fill slots:
        - {{PROGRAM.md}}            = full file contents
        - {{baseline_or_checkpoint_snapshot}} = cached snapshot from step 10
        - {{git_diff_since_checkpoint}}       = computed in step 4
@@ -344,6 +348,7 @@ When a stop condition is met:
 ### Rules (orchestrator)
 
 - **Orchestrator never edits mutable files directly.** Only dispatched subagents modify the target. The orchestrator reads, records, dispatches, and decides.
+- **Always set `model:` explicitly on subagent dispatches.** Do not rely on inheritance. Default to `sonnet` for iteration subagents; escalate to `opus` only when the target's edits require deep architectural judgment.
 - **Never modify immutable files or immutable sections** — PROGRAM.md, scoring mechanism, test inputs, references, and any partial-file-immutable regions
 - **One change per iteration** — enforced by the subagent protocol; the orchestrator does not batch
 - **Git is the experiment tracker** — every attempt is a commit, every revert is a git reset, every checkpoint is a commit. The full history is recoverable.
