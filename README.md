@@ -175,6 +175,22 @@ make clean                         # remove all installed symlinks
 
 Install target: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
 
+### Claude Desktop (ZIP packaging)
+
+For team members using Claude Desktop instead of Claude Code CLI, skills can be packaged as `.zip` files and uploaded via Claude Desktop's skill upload:
+
+```bash
+# Mac / Linux
+make zip                           # package all skills
+make zip docs/patch-docs           # package one skill
+
+# Windows (PowerShell)
+.\zip-skills.ps1                   # package all skills
+.\zip-skills.ps1 patch-docs       # package one skill
+```
+
+Zips are output to `dist/` (gitignored). Each skill gets its own `.zip` containing only execution files — EVAL.md and research artifacts are excluded.
+
 → See **[src/README.md](src/README.md)** for the full skill catalog with per-domain tables.
 
 ---
