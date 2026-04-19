@@ -107,6 +107,15 @@ registry:
               context_type: doc_review
               requires_any: [code, spec-summary]   # code in normal flow; spec-summary in docs-only
               skippable: true
+          - name: patch-docs
+            description: "Diff-driven incremental doc patcher — targeted section updates from git diffs"
+            pipeline:
+              stage_name: patch-docs
+              input_type: source_code | review_output
+              output_type: patched_docs
+              context_type: doc_review
+              requires_any: [code]
+              skippable: true
 
   - name: quality
     summary: "Verify correctness: test planning, test implementation"
@@ -174,7 +183,7 @@ registry:
             # Not pipeline-routable: terminal certification gate, no downstream skill depends on its output
 
   - name: meta
-    summary: "Meta-level tools: routing, framework utilities, orchestration, creative"
+    summary: "Meta-level tools: routing, reasoning, framework utilities, orchestration, creative"
     children:
       - name: routing
         summary: "Intent routing and skill discovery"
@@ -186,6 +195,13 @@ registry:
             description: "Router: directs to write-spec-summary, write-spec-docs, or write-engineering-guide"
             # Not pipeline-routable: function subsumed by the v2 router for pipeline use.
             # Retained as a direct-invocation skill for single-artifact documentation requests.
+      - name: reasoning
+        summary: "Structured thinking-through protocols"
+        skills:
+          - name: brainstorm
+            description: "Generic brainstorm protocol with indexed notepad, phase gates, lens rotation, and mentor circuit breaker"
+            # Not pipeline-routable: interactive coaching session; coexists with built-in `brainstorm` stage
+            # (the built-in is orchestrator-internal; this skill is user-invocable and separate).
       - name: orchestration
         summary: "Coordinate multi-skill workflows"
         skills:

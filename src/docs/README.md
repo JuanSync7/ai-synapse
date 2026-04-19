@@ -15,9 +15,13 @@ Documentation authoring skills. Produces scope docs, architecture docs, specs, s
 | [write-implementation-docs](write-implementation-docs/) | write | Implementation source-of-truth before touching code |
 | [write-engineering-guide](write-engineering-guide/) | write | Post-implementation engineering guide |
 | [write-test-docs](write-test-docs/) | write | Test planning document for module test specs |
+| [write-test-coverage](write-test-coverage/) | write | Living test coverage register — maps acceptance criteria to test scenarios |
+| [patch-docs](patch-docs/) | improve | Diff-driven incremental doc patcher — targeted section updates from git diffs |
 
 ## Layer Chain
 
 ```
 write-scope-docs → write-architecture-docs → write-spec-docs → write-spec-summary → write-design-docs → write-implementation-docs → (code/build-plan) → write-engineering-guide → write-test-docs
 ```
+
+`patch-docs` operates cross-cutting: updates any layer incrementally from a git diff.
