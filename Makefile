@@ -1,4 +1,4 @@
-.PHONY: all init install list available clean
+.PHONY: all init install list available clean zip
 
 all:
 	@echo "Usage: make <command> [args...]"
@@ -10,6 +10,8 @@ all:
 	@echo "  make list                 show installed skills"
 	@echo "  make available            show all available skills"
 	@echo "  make clean                remove all installed symlinks"
+	@echo "  make zip                  package all skills as .zip for Claude Desktop"
+	@echo "  make zip docs/patch-docs  package one skill"
 	@echo "  make init                 configure git hooks + submodules (first-time)"
 
 init:
@@ -36,6 +38,16 @@ available:
 
 clean:
 	./install.sh clean
+
+# make zip                  → zip all skills
+# make zip docs/patch-docs  → zip one skill
+_ZIP_TARGETS := $(filter-out zip, $(MAKECMDGOALS))
+zip:
+	@if [ -z "$(_ZIP_TARGETS)" ]; then \
+		./install.sh zip all; \
+	else \
+		./install.sh zip $(addprefix src/,$(_ZIP_TARGETS)); \
+	fi
 
 # Prevent Make from erroring on unknown targets passed as install args (e.g. "docs", "code")
 %:
