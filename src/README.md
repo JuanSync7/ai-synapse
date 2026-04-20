@@ -1,6 +1,6 @@
 # Skills
 
-All skills live under `src/skills/<domain>/`. Each domain groups skills by concern. See the tables below for what's available, then use `./install.sh` or `make install` to install.
+All skills live under `src/skills/<domain>/`. Each domain groups skills by concern. See the tables below for what's available, then use `./scripts/install.sh` or `make install` to install.
 
 ---
 

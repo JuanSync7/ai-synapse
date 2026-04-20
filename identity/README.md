@@ -9,6 +9,7 @@ Personal identity files consumed by AI agents across all tools. These define **w
 | `SOUL.md` | Personal identity: background, worldview, opinions, thinking style, blind spots, tensions, boundaries | `~/.claude/SOUL.md` |
 | `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — repo reference only)* |
 | `STAKEHOLDER.md` | Decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers | `~/.claude/stakeholder.md` |
+| `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — repo reference only)* |
 
 ## Two Consumption Modes
 
@@ -22,7 +23,7 @@ The soul is descriptive (neutral facts about who you are). The consuming agent o
 ## Installation
 
 ```bash
-./install.sh identity
+./scripts/install.sh identity
 ```
 
 This creates symlinks:
@@ -36,7 +37,7 @@ If `~/.claude/stakeholder.md` already exists as a regular file, back it up and r
 1. Copy `SOUL.template.md` to `SOUL.md`
 2. Fill in each section following the guidance comments
 3. Run through the quality checklist at the bottom
-4. Run `./install.sh identity` to symlink it
+4. Run `./scripts/install.sh identity` to symlink it
 
 **Quality bar:** An agent reading your SOUL.md should be able to predict your stance on a new topic you haven't explicitly covered.
 

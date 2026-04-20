@@ -4,7 +4,7 @@
 
 param([string]$SkillName = "")
 
-$Root = $PSScriptRoot
+$Root = Split-Path $PSScriptRoot -Parent
 $Dist = Join-Path $Root "dist"
 $Exclude = @("research", "test-inputs", "EVAL.md", "PROGRAM.md", "SCOPE.md", "__pycache__")
 

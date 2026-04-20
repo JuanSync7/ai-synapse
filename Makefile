@@ -26,31 +26,31 @@ init:
 _INSTALL_TARGETS := $(filter-out install, $(MAKECMDGOALS))
 install:
 	@if [ -z "$(_INSTALL_TARGETS)" ]; then \
-		./install.sh install all; \
+		./scripts/install.sh install all; \
 	else \
-		./install.sh install $(addprefix src/skills/,$(_INSTALL_TARGETS)); \
+		./scripts/install.sh install $(addprefix src/skills/,$(_INSTALL_TARGETS)); \
 	fi
 
 agents:
-	./install.sh agents
+	./scripts/install.sh agents
 
 list:
-	./install.sh list
+	./scripts/install.sh list
 
 available:
-	./install.sh available
+	./scripts/install.sh available
 
 clean:
-	./install.sh clean
+	./scripts/install.sh clean
 
 # make zip                  → zip all skills
 # make zip docs/patch-docs  → zip one skill
 _ZIP_TARGETS := $(filter-out zip, $(MAKECMDGOALS))
 zip:
 	@if [ -z "$(_ZIP_TARGETS)" ]; then \
-		./install.sh zip all; \
+		./scripts/install.sh zip all; \
 	else \
-		./install.sh zip $(addprefix src/skills/,$(_ZIP_TARGETS)); \
+		./scripts/install.sh zip $(addprefix src/skills/,$(_ZIP_TARGETS)); \
 	fi
 
 # Prevent Make from erroring on unknown targets passed as install args (e.g. "docs", "code")

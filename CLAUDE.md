@@ -37,7 +37,7 @@ src/
 - `AGENTS_REGISTRY.md` — human-readable agent discovery table
 - `TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
-- `install.sh` — CLI for installing/managing skill symlinks
+- `scripts/install.sh` — CLI for installing/managing skill symlinks
 - `Makefile` — repo setup (`make init` configures git hooks)
 - `.githooks/` — git hooks for structural validation on commit
 
@@ -53,7 +53,7 @@ Skill suites with shared infrastructure (multiple related skills, shared templat
 1. Create a standalone repo with the skill(s), shared config, and its own CI
 2. Add it as a git submodule under the appropriate domain directory in this repo
 3. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and domain `README.md` as usual
-4. `install.sh` works the same — it follows symlinks regardless of whether the source is a submodule or local directory
+4. `scripts/install.sh` works the same — it follows symlinks regardless of whether the source is a submodule or local directory
 
 **Modifying a submoduled skill:**
 - Make changes in the skill's own repo, not here
@@ -68,13 +68,13 @@ After cloning, run `make init` to configure git hooks.
 ## Install Commands
 
 ```bash
-./install.sh install all                          # install everything
-./install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
-./install.sh agents                               # install agent definitions
-./install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
-./install.sh list                                 # show installed skills
-./install.sh available                            # show all available skills
-./install.sh clean                                # remove all symlinks
+./scripts/install.sh install all                          # install everything
+./scripts/install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
+./scripts/install.sh agents                               # install agent definitions
+./scripts/install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
+./scripts/install.sh list                                 # show installed skills
+./scripts/install.sh available                            # show all available skills
+./scripts/install.sh clean                                # remove all symlinks
 ```
 
 Target directory: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
@@ -135,7 +135,7 @@ The evaluation tier depends on the type of change:
 
 ## Conventions
 
-- **Skill names must be globally unique.** Claude discovers skills from a flat `~/.claude/skills/` directory — no namespacing is possible. Use domain-prefixed names (e.g., `jira-reporter`, `jira-planner`) to avoid collisions across repos. `install.sh` warns on name collisions.
+- **Skill names must be globally unique.** Claude discovers skills from a flat `~/.claude/skills/` directory — no namespacing is possible. Use domain-prefixed names (e.g., `jira-reporter`, `jira-planner`) to avoid collisions across repos. `scripts/install.sh` warns on name collisions.
 - Skills with 3+ phases include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when the user's intent doesn't match.
 - EVAL.md files are generated artifacts containing structural criteria, output criteria, and test prompts.

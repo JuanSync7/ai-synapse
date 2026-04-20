@@ -15,7 +15,7 @@
 
 AI-Synapse is a central library of [Claude Code](https://claude.ai/code) skills — reusable, composable units of agent behavior that can be invoked by name from any conversation. Skills are installed as symlinks into `~/.claude/skills/` and discovered automatically by Claude Code. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
 
-The repo serves two roles: a **home for standalone skills** (self-contained, no shared infrastructure) and a **registry that submodules skill suites** from external repos (multi-skill projects with shared config and their own CI). Both are installed the same way via `install.sh`.
+The repo serves two roles: a **home for standalone skills** (self-contained, no shared infrastructure) and a **registry that submodules skill suites** from external repos (multi-skill projects with shared config and their own CI). Both are installed the same way via `scripts/install.sh`.
 
 ### End-to-End Skill Development
 
@@ -51,7 +51,9 @@ ai-synapse/
 ├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
 ├── GOVERNANCE.md                   # Promotion criteria, contribution workflow
 ├── CLAUDE.md                       # Claude Code instructions for this repo
-├── install.sh                      # CLI for installing and managing skill symlinks
+├── scripts/
+│   ├── install.sh                  # CLI for installing and managing skill/agent symlinks
+│   └── zip-skills.ps1              # PowerShell ZIP packaging for Claude Desktop (Windows)
 ├── Makefile                        # Setup shortcuts (init, install, list, clean)
 └── .githooks/pre-commit            # Structural validation on every commit
 ```
@@ -94,7 +96,7 @@ src/skills/<domain>/<skill-name>/
   templates/      # Output templates referenced by the skill
 ```
 
-`SKILL.md` is the install discovery marker — `install.sh` walks `src/` looking for files with that name, so any directory without one is invisible to the installer. The file must exist; contents are not validated at install time (that happens at commit via the pre-commit hook). `EVAL.md` is also required by the pre-commit hook, which will reject a skill directory missing it. `references/` and `templates/` are optional.
+`SKILL.md` is the install discovery marker — `scripts/install.sh` walks `src/` looking for files with that name, so any directory without one is invisible to the installer. The file must exist; contents are not validated at install time (that happens at commit via the pre-commit hook). `EVAL.md` is also required by the pre-commit hook, which will reject a skill directory missing it. `references/` and `templates/` are optional.
 
 `SKILL.md` frontmatter carries routing metadata:
 
@@ -122,23 +124,13 @@ Beyond skills, two supporting concepts live under `src/`:
 ### Two kinds of skills
 
 - **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/skills/<domain>/`.
-- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/skills/<domain>/`. `install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
+- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/skills/<domain>/`. `scripts/install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
 
 Submoduled suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to a submoduled skill are made in the skill's own repo; this repo only tracks the submodule pointer.
 
 ### Registration is intentional, not automatic
 
 Skills land in ai-synapse only after review — via `/skill-creator` or `/improve-skill` — with an `EVAL.md`, via a PR that adds the submodule (or local directory) and a `src/SKILLS_REGISTRY.yaml` entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
-
-### Framework tools
-
-Three root-level symlinks point at skills for working **on the framework itself**, not skills in the library. They are aliased at the root for quick access:
-
-| Tool | Path | Description |
-|------|------|-------------|
-| `/skill-creator` | [`src/skill/skill-creator/`](src/skills/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and registry entry. |
-| `/improve-skill` | [`src/skill/improve-skill/`](src/skills/skill/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
-| `/auto-research` | [`src/optimization/auto-research/`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
 
 ### Two-layer validation
 
@@ -162,7 +154,7 @@ make install         # install all skills to ~/.claude/skills/
 
 ## Install
 
-`install.sh` is the full CLI. `make` provides shortcuts for the common cases.
+`scripts/install.sh` is the full CLI. `make` provides shortcuts for the common cases.
 
 ```bash
 make install                       # install all skills
@@ -188,8 +180,8 @@ make zip                           # package all skills
 make zip docs/patch-docs           # package one skill
 
 # Windows (PowerShell)
-.\zip-skills.ps1                   # package all skills
-.\zip-skills.ps1 patch-docs       # package one skill
+.\scripts\zip-skills.ps1                   # package all skills
+.\scripts\zip-skills.ps1 patch-docs       # package one skill
 ```
 
 Zips are output to `dist/` (gitignored). Each skill gets its own `.zip` containing only execution files — EVAL.md and research artifacts are excluded.

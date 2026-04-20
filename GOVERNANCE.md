@@ -110,7 +110,7 @@ A PR without an APPROVE verdict in the description will not be merged.
    ```
 3. Run `make init` to configure git hooks.
 4. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and the domain `README.md`.
-5. `install.sh` works unchanged — it follows symlinks regardless of submodule vs. local source.
+5. `scripts/install.sh` works unchanged — it follows symlinks regardless of submodule vs. local source.
 
 ### Updating a submodule
 
@@ -127,7 +127,7 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 ### Removing a submodule
 
 1. Add a `# DEPRECATED:` comment to the skill's entry in `src/SKILLS_REGISTRY.yaml` and `README.md`.
-2. Uninstall the symlink: `./install.sh clean` (or remove the specific symlink).
+2. Uninstall the symlink: `./scripts/install.sh clean` (or remove the specific symlink).
 3. After one full release cycle with no active use:
    ```bash
    git submodule deinit src/skills/<domain>/<suite-name>
@@ -143,4 +143,4 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 - **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory. No namespacing is possible at runtime.
 - **Lowercase hyphenated** — `write-spec-docs`, not `WriteSpecDocs` or `write_spec_docs`.
 - **Domain-prefixed when collision risk** — if the skill name is generic (e.g., `reporter`, `planner`), prefix with the domain (`jira-reporter`, `jira-planner`).
-- `install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.
+- `scripts/install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.

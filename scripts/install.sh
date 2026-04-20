@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-SKILLS_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SKILLS_DIR="$REPO_ROOT"
 TARGET="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 
 AGENTS_SOURCE="$SKILLS_DIR/src/agents"

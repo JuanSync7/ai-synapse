@@ -26,7 +26,7 @@ real path → <repo>/meta/skill-router/SKILL.md
 repo root → <repo>/
 ```
 
-If the symlink is broken or the repo is missing, tell the user: "ai-skills repo not found — run `install.sh install meta/skill-router` from the repo root."
+If the symlink is broken or the repo is missing, tell the user: "ai-skills repo not found — run `scripts/install.sh install meta/skill-router` from the repo root."
 
 ## Wrong-Tool Detection
 
@@ -83,7 +83,7 @@ Read the first 10 lines of `<repo>/<directory>/<skill-name>/SKILL.md` to confirm
 
 Read the full SKILL.md. Before executing, tell the user:
 
-> Using **`<skill-name>`** from ai-skills. To install permanently for `/slash-command` access: `./install.sh install <domain>/<skill-name>`
+> Using **`<skill-name>`** from ai-skills. To install permanently for `/slash-command` access: `./scripts/install.sh install <domain>/<skill-name>`
 
 Then follow the skill's instructions as if it were installed directly. Load any companion files it references (templates/, references/, rules/, examples/) using paths relative to the skill's directory.
 
