@@ -36,17 +36,17 @@ src/agents/                                    # SSOT
   generate-test-prompts.md
   generate-execution-criteria.md
 
-src/skill/skill-creator/agents/                # consumer declares dependencies
+src/skills/skill/skill-creator/agents/                # consumer declares dependencies
   generate-output-criteria.md → ../../agents/generate-output-criteria.md
   generate-test-prompts.md    → ../../agents/generate-test-prompts.md
   generate-execution-criteria.md → ../../agents/generate-execution-criteria.md
 
-src/skill/write-skill-eval/agents/
+src/skills/skill/write-skill-eval/agents/
   generate-output-criteria.md → ../../agents/generate-output-criteria.md
   generate-test-prompts.md    → ../../agents/generate-test-prompts.md
   generate-execution-criteria.md → ../../agents/generate-execution-criteria.md
 
-src/skill/improve-skill/agents/
+src/skills/skill/improve-skill/agents/
   generate-output-criteria.md → ../../agents/generate-output-criteria.md
 ```
 
@@ -141,8 +141,8 @@ Currently only grades EVAL-S (structural, static analysis) and EVAL-O (output, b
 
 | Action | Notes |
 |--------|-------|
-| Remove or archive `src/skill/generate-output-criteria/` | Agent definition replaces it |
-| Remove or archive `src/skill/generate-test-prompts/` | Agent definition replaces it |
+| Remove or archive `src/skills/skill/generate-output-criteria/` | Agent definition replaces it |
+| Remove or archive `src/skills/skill/generate-test-prompts/` | Agent definition replaces it |
 | Update `SKILLS_REGISTRY.yaml` | Remove entries for demoted skills |
 
 ## Open questions

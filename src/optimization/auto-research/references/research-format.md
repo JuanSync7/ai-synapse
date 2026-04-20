@@ -1,1 +1,0 @@
-../../../skill/skill-creator/references/research-format.md

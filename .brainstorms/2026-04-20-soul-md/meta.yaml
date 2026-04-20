@@ -1,0 +1,20 @@
+schema_version: 1
+
+status: done
+topic: "Creating a global SOUL.md — purpose, guidelines, and structure"
+slug: "soul-md"
+
+type: "exploratory"
+shape: "Spec"
+
+scope: project
+
+created: "2026-04-20"
+last_updated: "2026-04-20"
+
+related_sessions: []
+related_skills: []
+follow_ups: []
+
+pause_reason: ""
+open_threads_at_pause: []

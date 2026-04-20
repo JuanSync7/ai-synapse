@@ -14,16 +14,17 @@ Two kinds of skills live here:
 
 ```
 src/
-  <domain>/
-    <skill-name>/           # git submodule OR local skill directory
-      SKILL.md              # The skill definition (frontmatter + body)
-      EVAL.md               # Test prompts + output criteria (optional)
-      references/           # Companion files loaded on-demand during specific phases
-      templates/            # Output templates
-      agents/               # Symlinks to src/agents/ definitions used by this skill
-  agents/                   # Internal recipes dispatched by skills (not user-invocable)
-  protocols/                # Shared conventions/schemas injected into agents by observers
-  SKILLS_REGISTRY.yaml      # Pipeline metadata and stage dependencies
+  skills/
+    <domain>/
+      <skill-name>/           # git submodule OR local skill directory
+        SKILL.md              # The skill definition (frontmatter + body)
+        EVAL.md               # Test prompts + output criteria (optional)
+        references/           # Companion files loaded on-demand during specific phases
+        templates/            # Output templates
+        agents/               # Symlinks to src/agents/ definitions used by this skill
+  agents/                     # Internal recipes dispatched by skills (not user-invocable)
+  protocols/                  # Shared conventions/schemas injected into agents by observers
+  SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
 ```
 
 **Root files:**
@@ -62,7 +63,7 @@ After cloning, run `make init` to configure git hooks.
 
 ```bash
 ./install.sh install all                          # install everything
-./install.sh install src/docs src/code/build-plan # install specific domains or skills
+./install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
 ./install.sh list                                 # show installed skills
 ./install.sh available                            # show all available skills
 ./install.sh clean                                # remove all symlinks
@@ -94,7 +95,7 @@ The autonomous orchestrator drives end-to-end pipelines using stages defined in 
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `src/skill/skill-creator/references/skill-design-principles.md`):
+These are the core principles for writing and modifying skills (full reference: `src/skills/skill/skill-creator/references/skill-design-principles.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.

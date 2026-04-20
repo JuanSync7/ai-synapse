@@ -23,12 +23,12 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/skill-brainstorm`](src/skill/skill-brainstorm/) | Coaching session to shape a vague idea into a concrete skill spec — decides if it's a skill, config, or not needed |
-| **Create** | [`/skill-creator`](src/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
-| **Evaluate** | [`/write-skill-eval`](src/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
-| **Improve** | [`/improve-skill`](src/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
-| **Research** | [`/auto-research`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
-| **Certify** | [`/synapse-gatekeeper`](src/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
+| **Brainstorm** | [`/skill-brainstorm`](src/skills/skill/skill-brainstorm/) | Coaching session to shape a vague idea into a concrete skill spec — decides if it's a skill, config, or not needed |
+| **Create** | [`/skill-creator`](src/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
+| **Evaluate** | [`/write-skill-eval`](src/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
+| **Improve** | [`/improve-skill`](src/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
+| **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
+| **Certify** | [`/synapse-gatekeeper`](src/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
 
@@ -40,8 +40,9 @@ The flow is: **brainstorm → create → improve → certify → PR**. Each stag
 ai-synapse/
 │
 ├── src/
-│   ├── <domain>/                   # Skills organized by domain (docs, code, orchestration, etc.)
-│   │   └── <skill-name>/           # Each skill: SKILL.md + EVAL.md + companions
+│   ├── skills/
+│   │   └── <domain>/               # Skills organized by domain (docs, code, orchestration, etc.)
+│   │       └── <skill-name>/       # Each skill: SKILL.md + EVAL.md + companions
 │   ├── agents/                     # Internal recipes dispatched by skills (not user-invocable)
 │   ├── protocols/                  # Shared conventions/schemas (e.g., execution traces)
 │   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
@@ -83,10 +84,10 @@ Runs automatically on every commit touching a skill directory. Checks: required 
 
 ### Skill anatomy
 
-Every skill lives at `src/<domain>/<skill-name>/` and follows this layout:
+Every skill lives at `src/skills/<domain>/<skill-name>/` and follows this layout:
 
 ```
-src/<domain>/<skill-name>/
+src/skills/<domain>/<skill-name>/
   SKILL.md        # (required) YAML frontmatter + behavior body — the skill definition
   EVAL.md         # (required) Test prompts and pass/fail output criteria for quality evaluation
   references/     # Companion files loaded on-demand during specific phases
@@ -120,8 +121,8 @@ Beyond skills, two supporting concepts live under `src/`:
 
 ### Two kinds of skills
 
-- **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/<domain>/`.
-- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/<domain>/`. `install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
+- **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/skills/<domain>/`.
+- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/skills/<domain>/`. `install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
 
 Submoduled suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to a submoduled skill are made in the skill's own repo; this repo only tracks the submodule pointer.
 
@@ -135,9 +136,9 @@ Three root-level symlinks point at skills for working **on the framework itself*
 
 | Tool | Path | Description |
 |------|------|-------------|
-| `/skill-creator` | [`src/skill/skill-creator/`](src/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and registry entry. |
-| `/improve-skill` | [`src/skill/improve-skill/`](src/skill/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
-| `/auto-research` | [`src/optimization/auto-research/`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
+| `/skill-creator` | [`src/skill/skill-creator/`](src/skills/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and registry entry. |
+| `/improve-skill` | [`src/skill/improve-skill/`](src/skills/skill/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
+| `/auto-research` | [`src/optimization/auto-research/`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
 
 ### Two-layer validation
 

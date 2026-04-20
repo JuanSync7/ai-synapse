@@ -10,16 +10,17 @@ A central library of reusable agent skills — composable units of behavior for 
 
 ```
 src/
-  <domain>/
-    <skill-name>/           # Each skill directory
-      SKILL.md              # The skill definition (YAML frontmatter + behavior body)
-      EVAL.md               # Test prompts + pass/fail output criteria
-      references/           # Companion files loaded on-demand during specific phases
-      templates/            # Output templates
-      agents/               # Symlinks to src/agents/ definitions used by this skill
-  agents/                   # Internal recipes dispatched by skills (not user-invocable)
-  protocols/                # Shared conventions/schemas (e.g., execution traces)
-  SKILLS_REGISTRY.yaml      # Pipeline metadata and stage dependencies
+  skills/
+    <domain>/
+      <skill-name>/           # Each skill directory
+        SKILL.md              # The skill definition (YAML frontmatter + behavior body)
+        EVAL.md               # Test prompts + pass/fail output criteria
+        references/           # Companion files loaded on-demand during specific phases
+        templates/            # Output templates
+        agents/               # Symlinks to src/agents/ definitions used by this skill
+  agents/                     # Internal recipes dispatched by skills (not user-invocable)
+  protocols/                  # Shared conventions/schemas (e.g., execution traces)
+  SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
 ```
 
 Root files: `AGENTS_REGISTRY.md` (agent discovery), `TAXONOMY.md` (domain/intent vocabulary), `GOVERNANCE.md` (promotion criteria).
@@ -46,7 +47,7 @@ The `description` field is a routing contract: it specifies when the skill fires
 
 | Concept | Location | Purpose |
 |---------|----------|---------|
-| **Skills** | `src/<domain>/<skill-name>/SKILL.md` | User-facing recipes — invoked by name |
+| **Skills** | `src/skills/<domain>/<skill-name>/SKILL.md` | User-facing recipes — invoked by name |
 | **Agents** | `src/agents/*.md` | Internal recipes dispatched by skills — not user-invocable |
 | **Protocols** | `src/protocols/` | Shared conventions injected into agents by observers |
 
@@ -54,7 +55,7 @@ Skills declare agent dependencies via symlinks in their `agents/` folder pointin
 
 ## Pipeline System
 
-The autonomous orchestrator (`src/orchestration/autonomous-orchestrator/`) drives end-to-end pipelines using stages defined in `src/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences.
+The autonomous orchestrator (`src/skills/orchestration/autonomous-orchestrator/`) drives end-to-end pipelines using stages defined in `src/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences.
 
 ## Skill Design Principles
 

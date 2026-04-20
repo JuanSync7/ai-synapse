@@ -1,1 +1,0 @@
-../../skill-creator/references/skill-design-principles.md

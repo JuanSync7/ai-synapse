@@ -18,7 +18,7 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 
 | Type | Description | Lives in |
 |------|-------------|----------|
-| Standalone | One SKILL.md + EVAL.md, no shared config, no multi-skill coordination | Directly in `src/<domain>/<skill-name>/` |
+| Standalone | One SKILL.md + EVAL.md, no shared config, no multi-skill coordination | Directly in `src/skills/<domain>/<skill-name>/` |
 | Submodule suite | Multiple related skills with shared templates, config, or CI | Own repo, wired in as a git submodule |
 
 **Keep standalone** when the skill has no infrastructure dependencies and doesn't need its own CI.
@@ -106,7 +106,7 @@ A PR without an APPROVE verdict in the description will not be merged.
 1. Create the external repo with the skill(s), shared config, and CI.
 2. Add it as a git submodule in this repo:
    ```bash
-   git submodule add <repo-url> src/<domain>/<suite-name>
+   git submodule add <repo-url> src/skills/<domain>/<suite-name>
    ```
 3. Run `make init` to configure git hooks.
 4. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and the domain `README.md`.
@@ -117,8 +117,8 @@ A PR without an APPROVE verdict in the description will not be merged.
 Changes to a submoduled skill must land in the external repo first. Then update the pointer here:
 
 ```bash
-git submodule update --remote src/<domain>/<suite-name>
-git add src/<domain>/<suite-name>
+git submodule update --remote src/skills/<domain>/<suite-name>
+git add src/skills/<domain>/<suite-name>
 git commit -m "chore: update <suite-name> submodule pointer"
 ```
 
@@ -130,9 +130,9 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 2. Uninstall the symlink: `./install.sh clean` (or remove the specific symlink).
 3. After one full release cycle with no active use:
    ```bash
-   git submodule deinit src/<domain>/<suite-name>
-   git rm src/<domain>/<suite-name>
-   rm -rf .git/modules/src/<domain>/<suite-name>
+   git submodule deinit src/skills/<domain>/<suite-name>
+   git rm src/skills/<domain>/<suite-name>
+   rm -rf .git/modules/src/skills/<domain>/<suite-name>
    git commit -m "chore: remove deprecated <suite-name> submodule"
    ```
 

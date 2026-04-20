@@ -17,11 +17,11 @@ usage() {
     echo "  zip <path...>       Package skills as .zip for Claude Desktop"
     echo ""
     echo "Examples:"
-    echo "  ai-skills install src/docs src/code/build-plan"
-    echo "  ai-skills install src/docs/spec src/orchestration"
+    echo "  ai-skills install src/skills/docs src/skills/code/build-plan"
+    echo "  ai-skills install src/skills/docs/spec src/skills/orchestration"
     echo "  ai-skills install all"
     echo "  ai-skills zip all"
-    echo "  ai-skills zip src/docs/patch-docs"
+    echo "  ai-skills zip src/skills/docs/patch-docs"
 }
 
 cmd_install() {
