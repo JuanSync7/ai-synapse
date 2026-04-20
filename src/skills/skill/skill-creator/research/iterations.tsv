@@ -1,3 +1,0 @@
-iteration	commit	score	status	change_summary
-001	27fd6b5	19/25	keep	baseline — pre-improvement state
-002	1b9644b	25/25	keep	added three-loop workflow, improvement artifacts, execution fence, scope boundaries, progress tracking, good/bad contrasts, concrete examples
