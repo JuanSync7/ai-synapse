@@ -1,4 +1,4 @@
-.PHONY: all init install list available clean zip
+.PHONY: all init install agents list available clean zip
 
 all:
 	@echo "Usage: make <command> [args...]"
@@ -9,6 +9,7 @@ all:
 	@echo "  make install meta/skill-creator  install one skill"
 	@echo "  make list                 show installed skills"
 	@echo "  make available            show all available skills"
+	@echo "  make agents               install agent definitions"
 	@echo "  make clean                remove all installed symlinks"
 	@echo "  make zip                  package all skills as .zip for Claude Desktop"
 	@echo "  make zip docs/patch-docs  package one skill (from src/skills/)"
@@ -29,6 +30,9 @@ install:
 	else \
 		./install.sh install $(addprefix src/skills/,$(_INSTALL_TARGETS)); \
 	fi
+
+agents:
+	./install.sh agents
 
 list:
 	./install.sh list

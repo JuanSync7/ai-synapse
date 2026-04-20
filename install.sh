@@ -4,6 +4,9 @@ set -euo pipefail
 SKILLS_DIR="$(cd "$(dirname "$0")" && pwd)"
 TARGET="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 
+AGENTS_SOURCE="$SKILLS_DIR/src/agents"
+AGENTS_TARGET="${CLAUDE_AGENTS_DIR:-$HOME/.claude/agents}"
+
 DIST_DIR="$SKILLS_DIR/dist"
 
 usage() {
@@ -14,6 +17,7 @@ usage() {
     echo "  list                List currently installed skills"
     echo "  available           List all available skills in the repo"
     echo "  clean               Remove all installed skill symlinks"
+    echo "  agents              Install agent definitions from src/agents/"
     echo "  zip <path...>       Package skills as .zip for Claude Desktop"
     echo "  identity            Install identity files (SOUL.md, stakeholder.md)"
     echo ""
@@ -128,6 +132,21 @@ cmd_clean() {
         fi
     done
 
+    # Also clean agent symlinks in ~/.claude/agents/
+    if [ -d "$AGENTS_TARGET" ]; then
+        for link in "$AGENTS_TARGET"/*; do
+            if [ -L "$link" ]; then
+                local real
+                real="$(readlink "$link")"
+                if [[ "$real" == "$SKILLS_DIR"* ]] || [ ! -e "$link" ]; then
+                    rm "$link"
+                    echo "  rm  $(basename "$link") (agent)"
+                    count=$((count + 1))
+                fi
+            fi
+        done
+    fi
+
     # Also clean identity symlinks in ~/.claude/
     local CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
     for identity_file in "SOUL.md" "stakeholder.md"; do
@@ -198,6 +217,42 @@ cmd_install_identity() {
     echo "Installed $count identity file(s) -> $CLAUDE_DIR"
 }
 
+cmd_install_agents() {
+    if [ ! -d "$AGENTS_SOURCE" ]; then
+        echo "Error: src/agents/ directory not found"
+        exit 1
+    fi
+
+    mkdir -p "$AGENTS_TARGET"
+
+    local count=0
+
+    for src in "$AGENTS_SOURCE"/*.md; do
+        [ -f "$src" ] || continue
+        local name
+        name="$(basename "$src")"
+        local target="$AGENTS_TARGET/$name"
+
+        if [ -L "$target" ]; then
+            local existing
+            existing="$(readlink "$target")"
+            if [ "$existing" = "$src" ]; then
+                echo "  skip  $name (already installed)"
+            else
+                echo "  WARN  $name collision: already points to $existing"
+            fi
+            continue
+        fi
+
+        ln -s "$src" "$target"
+        echo "  add   $name"
+        count=$((count + 1))
+    done
+
+    echo ""
+    echo "Installed $count agent(s) → $AGENTS_TARGET"
+}
+
 cmd_zip() {
     if [ $# -eq 0 ]; then
         echo "Error: specify at least one path (or 'all')"
@@ -256,6 +311,7 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
 # Main
 case "${1:-}" in
     install)  shift; cmd_install "$@" ;;
+    agents)   cmd_install_agents ;;
     identity) cmd_install_identity ;;
     list)     cmd_list ;;
     available) cmd_available ;;

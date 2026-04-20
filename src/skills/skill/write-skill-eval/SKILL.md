@@ -36,15 +36,15 @@ Mark each `in_progress` when starting, `completed` when done. When dispatching s
 ```
 write-skill-eval (you are here)
         │
-        ├── agents/generate-test-prompts.md
+        ├── ~/.claude/agents/skill-eval-prompter.md
         │     sees: skill name + description ONLY
         │     produces: diverse test prompts across personas
         │
-        ├── agents/generate-output-criteria.md
+        ├── ~/.claude/agents/skill-eval-judge.md
         │     sees: full SKILL.md (as impartial judge)
         │     produces: binary output quality criteria
         │
-        └── agents/generate-execution-criteria.md
+        └── ~/.claude/agents/skill-eval-auditor.md
               sees: full SKILL.md
               produces: EVAL-E criteria (if orchestration patterns exist)
 ```
@@ -58,9 +58,9 @@ write-skill-eval (you are here)
 
 | User Intent | Route To |
 |-------------|----------|
-| Generate test prompts for a skill | Read `agents/generate-test-prompts.md` and dispatch as Agent |
-| Write output quality criteria | Read `agents/generate-output-criteria.md` and dispatch as Agent |
-| Generate execution criteria | Read `agents/generate-execution-criteria.md` and dispatch as Agent |
+| Generate test prompts for a skill | Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent |
+| Write output quality criteria | Read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent |
+| Generate execution criteria | Read `~/.claude/agents/skill-eval-auditor.md` and dispatch as Agent |
 | Create a full EVAL.md | Run both in sequence (criteria first, then prompts) |
 | Improve an existing EVAL.md | Identify which section needs work, route accordingly |
 
@@ -76,9 +76,9 @@ Every EVAL.md follows the template in [templates/eval.md](templates/eval.md) wit
 ## Workflow: Generating a Full EVAL.md
 
 1. Read the target skill's name and description from its SKILL.md frontmatter
-2. Read `agents/generate-output-criteria.md` and dispatch as Agent (model: sonnet) with the skill directory path
-3. Read `agents/generate-test-prompts.md` and dispatch as Agent (model: sonnet) with only the skill name and description (blind constraint)
-4. Read `agents/generate-execution-criteria.md` and dispatch as Agent (model: sonnet) with the skill directory path. If the agent returns no criteria (no orchestration patterns), omit the Execution Criteria section.
+2. Read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent (model: sonnet) with the skill directory path
+3. Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent (model: sonnet) with only the skill name and description (blind constraint)
+4. Read `~/.claude/agents/skill-eval-auditor.md` and dispatch as Agent (model: sonnet) with the skill directory path. If the agent returns no criteria (no orchestration patterns), omit the Execution Criteria section.
 5. Structural criteria come from improve-skill's baseline checklist (not generated here)
 6. Assemble into EVAL.md using the template and write to the skill's directory
 

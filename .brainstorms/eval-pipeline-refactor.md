@@ -9,7 +9,7 @@ Outcome: pending (multi-skill architecture refactor + new concepts: agents, prot
 - **EVAL.md has 4 sections:** Structural, Execution, Output, Test Prompts. Complete.
 - **Execution criteria are a real tier (EVAL-E).** Added E01-E05 to write-test-coverage as proof of concept.
 - **Agent vs Skill boundary:** User-invocable = skill. Internal recipe dispatched by skills = agent definition in `src/agents/`. Symlinked into consumer skills.
-- **Demote to agent definitions:** generate-output-criteria, generate-test-prompts. New: generate-execution-criteria.
+- **Demote to agent definitions:** skill-eval-judge, skill-eval-prompter. New: skill-eval-auditor.
 - **Metaphor:** Skill = recipe (user-facing). Agent definition = recipe (internal). LLM instance = cook. Subagent = cook delegated by another cook.
 - **Execution trace is NOT an agent.** It's a protocol — a form the cook fills out when asked. Lives in `src/protocols/`, not `src/agents/`.
 - **Trace is a toggle/switch.** Not baked into every execution. Observer (improve-skill, user, auto-research) injects it when needed. Like turning on a security camera.
@@ -41,7 +41,7 @@ Outcome: pending (multi-skill architecture refactor + new concepts: agents, prot
 
 ## Discarded
 
-- **Expand generate-output-criteria for execution criteria.** Persona conflict.
+- **Expand skill-eval-judge for execution criteria.** Persona conflict.
 - **New standalone skill for execution criteria.** Overhead for always-dispatched workload.
 - **Absorb improve-skill into skill-creator.** Different lifecycles.
 - **skill-creator as argument router.** Already too complex.

@@ -1,4 +1,4 @@
-# Generate Output Criteria
+# Skill Eval Judge
 
 Generates binary pass/fail criteria for evaluating what a skill **produces** when run on a test prompt. You operate as an **impartial judge**.
 

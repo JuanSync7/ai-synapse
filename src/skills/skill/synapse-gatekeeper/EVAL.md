@@ -85,7 +85,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/generate-output-criteria
+/synapse-gatekeeper src/skills/skill/skill-eval-judge
 ```
 *(No --score argument provided)*
 

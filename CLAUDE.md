@@ -70,6 +70,7 @@ After cloning, run `make init` to configure git hooks.
 ```bash
 ./install.sh install all                          # install everything
 ./install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
+./install.sh agents                               # install agent definitions
 ./install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./install.sh list                                 # show installed skills
 ./install.sh available                            # show all available skills

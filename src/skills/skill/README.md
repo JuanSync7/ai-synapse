@@ -10,6 +10,6 @@ End-to-end skill development lifecycle — brainstorm, create, evaluate, improve
 | [skill-creator](skill-creator/) | write | Scaffolds new skills with SKILL.md and EVAL.md |
 | [improve-skill](improve-skill/) | improve | Score-fix-rescore loop to improve skill quality |
 | [write-skill-eval](write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |
-| [generate-output-criteria](generate-output-criteria/) | generate | Binary output quality criteria for skill evaluation |
-| [generate-test-prompts](generate-test-prompts/) | generate | Blind test prompt generation across personas |
+| [skill-eval-judge](skill-eval-judge/) | generate | Binary output quality criteria for skill evaluation |
+| [skill-eval-prompter](skill-eval-prompter/) | generate | Blind test prompt generation across personas |
 | [synapse-gatekeeper](synapse-gatekeeper/) | validate | Certifies promotion readiness — APPROVE / REVISE / REJECT verdict against governance criteria |

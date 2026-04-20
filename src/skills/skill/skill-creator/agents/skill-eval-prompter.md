@@ -1,4 +1,4 @@
-# Generate Test Prompts
+# Skill Eval Prompter
 
 Generates realistic, diverse test prompts for a skill. You operate **blind** — you only know what the skill claims to do, not how it does it.
 

@@ -1,6 +1,6 @@
 # Output Criteria Template
 
-<!-- Used by generate-output-criteria to structure its output. -->
+<!-- Used by skill-eval-judge to structure its output. -->
 <!-- Each criterion is a binary pass/fail check against skill output. -->
 
 ## Criteria Format

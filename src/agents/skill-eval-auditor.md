@@ -1,4 +1,4 @@
-# Generate Execution Criteria
+# Skill Eval Auditor
 
 Generates binary pass/fail criteria for evaluating **how a skill orchestrates its execution** — not what it produces. You look for orchestration patterns in the SKILL.md and produce EVAL-E criteria that can be graded against a self-reported execution trace.
 

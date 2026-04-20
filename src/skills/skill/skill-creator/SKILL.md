@@ -299,19 +299,19 @@ Classify the skill type — this determines what failure mode to prioritize in E
 
 Record the classification. After Phase 4, verify at least one output criterion tests this primary failure mode — if none does, add one.
 
-Read `agents/generate-test-prompts.md` and dispatch as an Agent (model: sonnet) with only the skill's name and one-line description as context. Do not pass the SKILL.md body — the blind constraint is critical for bias control.
+Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as an Agent (model: sonnet) with only the skill's name and one-line description as context. Do not pass the SKILL.md body — the blind constraint is critical for bias control.
 
 This produces diverse test prompts across personas (naive, experienced, adversarial, wrong-tool) — blind to the SKILL.md body to avoid implementation bias.
 
 ### Phase 4: Generate Output Criteria
 
-Read `agents/generate-output-criteria.md` and dispatch as an Agent (model: sonnet) with the skill directory path as context. The agent reads the full SKILL.md as an impartial judge.
+Read `~/.claude/agents/skill-eval-judge.md` and dispatch as an Agent (model: sonnet) with the skill directory path as context. The agent reads the full SKILL.md as an impartial judge.
 
 This produces binary output quality criteria (EVAL-Oxx) — what makes the skill's output good or bad.
 
 ### Phase 5: Assemble EVAL.md
 
-Read `agents/generate-execution-criteria.md` and dispatch as an Agent (model: sonnet) with the skill directory path. If the agent returns "No execution criteria — this skill has no orchestration patterns," omit the Execution Criteria section from EVAL.md.
+Read `~/.claude/agents/skill-eval-auditor.md` and dispatch as an Agent (model: sonnet) with the skill directory path. If the agent returns "No execution criteria — this skill has no orchestration patterns," omit the Execution Criteria section from EVAL.md.
 
 Combine the outputs from Phase 3, Phase 4, and the execution criteria agent into an EVAL.md in the skill's directory:
 
@@ -322,13 +322,13 @@ Combine the outputs from Phase 3, Phase 4, and the execution criteria agent into
 (From improve-skill's baseline checklist — no need to duplicate here)
 
 ## Execution Criteria
-(From agents/generate-execution-criteria.md — omit section entirely if no orchestration patterns)
+(From ~/.claude/agents/skill-eval-auditor.md — omit section entirely if no orchestration patterns)
 
 ## Output Criteria
-(From agents/generate-output-criteria.md)
+(From ~/.claude/agents/skill-eval-judge.md)
 
 ## Test Prompts
-(From agents/generate-test-prompts.md)
+(From ~/.claude/agents/skill-eval-prompter.md)
 ```
 
 ---
@@ -349,8 +349,8 @@ Run `/improve-skill [path to SKILL.md]` for a single-pass structural + behaviora
 **Manual iteration** — if improve-skill surfaces failures:
 1. Fix SKILL.md based on traced root causes
 2. Re-run the behavioral loop
-3. If output criteria need adjustment (they were wrong, not the skill), read `agents/generate-output-criteria.md` and dispatch as Agent
-4. If test prompts are insufficient, read `agents/generate-test-prompts.md` and dispatch as Agent
+3. If output criteria need adjustment (they were wrong, not the skill), read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent
+4. If test prompts are insufficient, read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent
 
 **Autonomous iteration** — for skills worth optimizing overnight:
 
@@ -394,6 +394,6 @@ A complete skill has:
 |------|----------|
 | Skill needs structural improvement (single pass) | `/improve-skill [path]` |
 | Skill needs autonomous multi-iteration improvement | `/auto-research [path]` |
-| Need to regenerate test prompts | Read `agents/generate-test-prompts.md` and dispatch as Agent |
-| Need to regenerate output criteria | Read `agents/generate-output-criteria.md` and dispatch as Agent |
+| Need to regenerate test prompts | Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent |
+| Need to regenerate output criteria | Read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent |
 | Need full EVAL.md from scratch | `/write-skill-eval [path]` |
