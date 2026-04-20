@@ -36,23 +36,23 @@ src/
 
 ## Submodule Architecture
 
-Skill suites with shared infrastructure (multiple related skills, shared templates, suite-specific CI) live in their own repos and are wired in as git submodules. This makes them portable — a team can adopt `jira-suite` without pulling all of ai-skills.
+Skill suites with shared infrastructure (multiple related skills, shared templates, suite-specific CI) live in their own repos and are wired in as git submodules. This makes them portable — a team can adopt `jira-suite` without pulling all of ai-synapse.
 
-**When to keep a skill in ai-skills:** It's standalone — one SKILL.md + EVAL.md, no shared config, no multi-skill coordination.
+**When to keep a skill in ai-synapse:** It's standalone — one SKILL.md + EVAL.md, no shared config, no multi-skill coordination.
 
 **When to extract to its own repo:** The skill is part of a suite with shared infrastructure, needs its own CI, or is meant to be adopted independently by other teams.
 
 **Adding a submoduled suite:**
 1. Create a standalone repo with the skill(s), shared config, and its own CI
 2. Add it as a git submodule under the appropriate domain directory in this repo
-3. Register the skill(s) in `SKILLS_REGISTRY.yaml` and domain `README.md` as usual
+3. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and domain `README.md` as usual
 4. `install.sh` works the same — it follows symlinks regardless of whether the source is a submodule or local directory
 
 **Modifying a submoduled skill:**
 - Make changes in the skill's own repo, not here
 - Update the submodule pointer in this repo after the external change lands
 
-**Registration is intentional, not automatic.** Skills land in ai-skills only after review (`/skill-creator` or `/improve-skill`), with an EVAL.md, via a PR that adds the submodule + registry entry. Standalone repos are where free iteration happens; ai-skills is where you promote to. Anything in this repo is trusted quality.
+**Registration is intentional, not automatic.** Skills land in ai-synapse only after review (`/skill-creator` or `/improve-skill`), with an EVAL.md, via a PR that adds the submodule + registry entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
 
 ## Setup
 
@@ -90,11 +90,11 @@ The `description` field is a **routing contract**: it specifies when the skill f
 
 ## Pipeline System
 
-The autonomous orchestrator drives end-to-end pipelines using stages defined in `SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (e.g., `full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. A stakeholder-reviewer gates stage transitions.
+The autonomous orchestrator drives end-to-end pipelines using stages defined in `src/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (e.g., `full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. A stakeholder-reviewer gates stage transitions.
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `skill/skill-creator/references/skill-design-principles.md`):
+These are the core principles for writing and modifying skills (full reference: `src/skill/skill-creator/references/skill-design-principles.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
@@ -130,5 +130,5 @@ The evaluation tier depends on the type of change:
 - Skills with 3+ phases include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when the user's intent doesn't match.
 - EVAL.md files are generated artifacts containing structural criteria, output criteria, and test prompts.
-- Pipeline-routable skills must be registered in `SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
+- Pipeline-routable skills must be registered in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
 - Domain and intent values must come from `TAXONOMY.md`. If nothing fits, propose an addition there — don't invent ad hoc values.
