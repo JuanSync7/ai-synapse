@@ -44,7 +44,7 @@ Checked automatically by the pre-commit hook. No LLM required.
 - [ ] `user-invocable` field is present
 - [ ] `argument-hint` is present when `user-invocable: true`
 - [ ] Domain `README.md` has a row for this skill
-- [ ] Skill name is globally unique (no collision in `SKILLS_REGISTRY.yaml` or `~/.claude/skills/`)
+- [ ] Skill name is globally unique (no collision in `src/SKILLS_REGISTRY.yaml` or `~/.claude/skills/`)
 
 ### Tier 2 — Quality
 
@@ -59,7 +59,7 @@ Evaluated by `synapse-gatekeeper` against skill design principles.
 
 ### Tier 3 — Registry
 
-- [ ] Pipeline-routable skills have a `pipeline:` block in `SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_all`/`requires_any`
+- [ ] Pipeline-routable skills have a `pipeline:` block in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_all`/`requires_any`
 - [ ] Non-pipeline-routable skills are listed in the registry for inventory (no `pipeline:` block, with a comment explaining why)
 - [ ] If registered: `stage_name` is unique across the registry
 - [ ] If registered: `requires_all`/`requires_any` entries resolve to real stage names
@@ -109,7 +109,7 @@ A PR without an APPROVE verdict in the description will not be merged.
    git submodule add <repo-url> src/<domain>/<suite-name>
    ```
 3. Run `make init` to configure git hooks.
-4. Register the skill(s) in `SKILLS_REGISTRY.yaml` and the domain `README.md`.
+4. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and the domain `README.md`.
 5. `install.sh` works unchanged — it follows symlinks regardless of submodule vs. local source.
 
 ### Updating a submodule
@@ -126,7 +126,7 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 
 ### Removing a submodule
 
-1. Add a `# DEPRECATED:` comment to the skill's entry in `SKILLS_REGISTRY.yaml` and `README.md`.
+1. Add a `# DEPRECATED:` comment to the skill's entry in `src/SKILLS_REGISTRY.yaml` and `README.md`.
 2. Uninstall the symlink: `./install.sh clean` (or remove the specific symlink).
 3. After one full release cycle with no active use:
    ```bash

@@ -85,7 +85,7 @@ Accept either free text or a structured brief file.
 
 ### Phase 0: Initialize
 
-1. **Load registry** — Read `.claude/skills/SKILLS_REGISTRY.yaml`. Reject if `version` is missing or not `2`. Scan plugin directories for `REGISTRY_ENTRY.yaml` files; merge into the in-memory tree (in-memory only — never written back). On `stage_name` collision between plugins or with core registry, reject the colliding plugin entry and surface the conflict to the user.
+1. **Load registry** — Read `src/SKILLS_REGISTRY.yaml` (or `.claude/skills/SKILLS_REGISTRY.yaml` if installed). Reject if `version` is missing or not `2`. Scan plugin directories for `REGISTRY_ENTRY.yaml` files; merge into the in-memory tree (in-memory only — never written back). On `stage_name` collision between plugins or with core registry, reject the colliding plugin entry and surface the conflict to the user.
 2. **Assemble pipeline** — Run the Router Algorithm (see below) to determine the stage sequence for this run.
 3. **Parse input** — goal + `--from` if present.
 4. **Generate run-id** — `<YYYY-MM-DD>-<topic-slug>` where topic-slug is 2-4 lowercase hyphenated words derived from the goal.

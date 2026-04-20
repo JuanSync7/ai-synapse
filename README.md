@@ -54,7 +54,8 @@ ai-synapse/
 ├── improve-skill  ->  src/skill/improve-skill/       # root symlink — framework tool
 ├── auto-research  ->  src/optimization/auto-research/ # root symlink — framework tool
 │
-├── SKILLS_REGISTRY.yaml            # Pipeline metadata and stage dependency graph
+├── src/SKILLS_REGISTRY.yaml         # Pipeline metadata and stage dependency graph
+├── src/AGENTS_REGISTRY.md           # Human-readable agent discovery table
 ├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
 ├── GOVERNANCE.md                   # Promotion criteria, contribution workflow, naming conventions
 ├── CLAUDE.md                       # Claude Code instructions for this repo
@@ -67,8 +68,11 @@ ai-synapse/
 
 ## Root Files
 
-### [`SKILLS_REGISTRY.yaml`](SKILLS_REGISTRY.yaml)
+### [`src/SKILLS_REGISTRY.yaml`](src/SKILLS_REGISTRY.yaml)
 The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines. Named presets (`full`, `feature`, `bugfix`, `docs-only`) are defined here as trusted stage sequences that bypass dependency resolution.
+
+### [`src/AGENTS_REGISTRY.md`](src/AGENTS_REGISTRY.md)
+Human-readable discovery table for agent definitions — internal recipes dispatched by skills, not user-invocable. Check here before creating a new agent to see if one already covers the capability you need.
 
 ### [`TAXONOMY.md`](TAXONOMY.md)
 Controlled vocabulary for the `domain` and `intent` frontmatter fields in every `SKILL.md`. Enforced by the pre-commit hook — committing a skill with a value not listed here will fail. When nothing in the taxonomy fits a new skill, the convention is to propose an addition here rather than invent ad hoc values. This keeps skill metadata consistent and makes routing and filtering predictable.

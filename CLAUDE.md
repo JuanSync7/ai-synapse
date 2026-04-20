@@ -23,7 +23,8 @@ src/
 ```
 
 **Root files:**
-- `SKILLS_REGISTRY.yaml` — single source of truth for pipeline metadata and stage dependencies
+- `src/SKILLS_REGISTRY.yaml` — single source of truth for pipeline metadata and stage dependencies
+- `src/AGENTS_REGISTRY.md` — human-readable agent discovery table
 - `TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
 - `install.sh` — CLI for installing/managing skill symlinks
