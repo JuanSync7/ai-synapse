@@ -125,13 +125,15 @@ These run automatically on every commit — no LLM needed:
 - Domain README.md has a row matching the skill
 - EVAL.md exists alongside SKILL.md
 
-### Layer 2: Quality evaluation (enforced by GitHub Action on PR)
+### Layer 2: Quality evaluation
 
 The evaluation tier depends on the type of change:
 
-- **New skill or external import** → run `/skill-creator` (full pipeline: baseline test, design principles, eval generation, improvement loop)
+- **New skill or external import** → run `/skill-creator` (full pipeline: baseline test, design principles, eval generation, improvement loop), then `/synapse-gatekeeper` for certification
 - **Modified existing skill** (SKILL.md, references/, templates/) → run `/improve-skill` (score-fix loop against existing EVAL.md)
 - **Trivial changes** (typos, formatting-only) → Layer 1 is sufficient
+
+**New skills must be certified before merging.** Run `/synapse-gatekeeper <skill-path> --score <score>` and include the APPROVE verdict in the PR description. If the skill is not ready for certification, mark it `status: draft` in `SKILLS_REGISTRY.yaml` — this is tracked and must be resolved before the skill is considered production-ready. See `GOVERNANCE.md` for full promotion criteria.
 
 ## Conventions
 

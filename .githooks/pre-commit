@@ -133,6 +133,12 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
     if [ ! -f "$REPO_ROOT/$skill_dir/EVAL.md" ]; then
         errors+=("$skill_dir: missing EVAL.md")
     fi
+
+    # --- Check 5: New skill without gatekeeper certification ---
+    # Warn (non-blocking) if this is a new SKILL.md not previously tracked by git
+    if git diff --cached --name-only --diff-filter=A | grep -q "^${skill_dir}/SKILL.md$"; then
+        echo "  WARN  $skill_dir: new skill — run /synapse-gatekeeper before merging (or mark status: draft in SKILLS_REGISTRY.yaml)"
+    fi
 done
 
 if [ ${#errors[@]} -gt 0 ]; then
