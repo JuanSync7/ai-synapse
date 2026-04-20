@@ -39,25 +39,16 @@ The flow is: **brainstorm → create → improve → certify → PR**. Each stag
 ```
 ai-synapse/
 │
-├── src/                            # All skills, organized by domain
-│   ├── docs/                       # Documentation authoring pipeline
-│   ├── code/                       # Code generation and test execution
-│   ├── orchestration/              # Multi-agent coordination
-│   ├── skill/                      # Skill lifecycle: brainstorm, create, evaluate, improve, certify
-│   ├── meta/                       # Framework utilities: routing, discovery
-│   ├── optimization/               # Iterative improvement loops
-│   ├── frameworks/                 # Technology-specific skills
-│   ├── creative/                   # Visual and interactive output
-│   └── integration/                # External service integrations (submodules)
+├── src/
+│   ├── <domain>/                   # Skills organized by domain (docs, code, orchestration, etc.)
+│   │   └── <skill-name>/           # Each skill: SKILL.md + EVAL.md + companions
+│   ├── agents/                     # Internal recipes dispatched by skills (not user-invocable)
+│   ├── protocols/                  # Shared conventions/schemas (e.g., execution traces)
+│   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
 │
-├── skill-creator  ->  src/skill/skill-creator/       # root symlink — framework tool
-├── improve-skill  ->  src/skill/improve-skill/       # root symlink — framework tool
-├── auto-research  ->  src/optimization/auto-research/ # root symlink — framework tool
-│
-├── src/SKILLS_REGISTRY.yaml         # Pipeline metadata and stage dependency graph
-├── src/AGENTS_REGISTRY.md           # Human-readable agent discovery table
+├── AGENTS_REGISTRY.md              # Agent discovery table
 ├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
-├── GOVERNANCE.md                   # Promotion criteria, contribution workflow, naming conventions
+├── GOVERNANCE.md                   # Promotion criteria, contribution workflow
 ├── CLAUDE.md                       # Claude Code instructions for this repo
 ├── install.sh                      # CLI for installing and managing skill symlinks
 ├── Makefile                        # Setup shortcuts (init, install, list, clean)
@@ -66,13 +57,13 @@ ai-synapse/
 
 ---
 
-## Root Files
+## Key Files
 
 ### [`src/SKILLS_REGISTRY.yaml`](src/SKILLS_REGISTRY.yaml)
 The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines. Named presets (`full`, `feature`, `bugfix`, `docs-only`) are defined here as trusted stage sequences that bypass dependency resolution.
 
-### [`src/AGENTS_REGISTRY.md`](src/AGENTS_REGISTRY.md)
-Human-readable discovery table for agent definitions — internal recipes dispatched by skills, not user-invocable. Check here before creating a new agent to see if one already covers the capability you need.
+### [`AGENTS_REGISTRY.md`](AGENTS_REGISTRY.md)
+Discovery table for agent definitions — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`. Check this registry before creating a new agent to see if one already covers the capability you need.
 
 ### [`TAXONOMY.md`](TAXONOMY.md)
 Controlled vocabulary for the `domain` and `intent` frontmatter fields in every `SKILL.md`. Enforced by the pre-commit hook — committing a skill with a value not listed here will fail. When nothing in the taxonomy fits a new skill, the convention is to propose an addition here rather than invent ad hoc values. This keeps skill metadata consistent and makes routing and filtering predictable.
@@ -120,6 +111,13 @@ argument-hint: "[args]"
 
 The `description` field is a **routing contract**: it specifies when the skill fires, not what it does. Claude Code matches user intent against this field to select the right skill.
 
+### Agents and protocols
+
+Beyond skills, two supporting concepts live under `src/`:
+
+- **Agent definitions** (`src/agents/`) — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder. See [`AGENTS_REGISTRY.md`](AGENTS_REGISTRY.md) for discovery.
+- **Protocols** (`src/protocols/`) — shared conventions and schemas injected into agent prompts by observers. The first protocol is the [execution trace](src/protocols/traces/execution-trace.md) — a self-reported observability format that skills like `improve-skill` inject when grading workflow behavior.
+
 ### Two kinds of skills
 
 - **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/<domain>/`.
@@ -129,7 +127,7 @@ Submoduled suites are portable: a team can adopt `jira-suite` without pulling al
 
 ### Registration is intentional, not automatic
 
-Skills land in ai-synapse only after review — via `/skill-creator` or `/improve-skill` — with an `EVAL.md`, via a PR that adds the submodule (or local directory) and a `SKILLS_REGISTRY.yaml` entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
+Skills land in ai-synapse only after review — via `/skill-creator` or `/improve-skill` — with an `EVAL.md`, via a PR that adds the submodule (or local directory) and a `src/SKILLS_REGISTRY.yaml` entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
 
 ### Framework tools
 
@@ -137,7 +135,7 @@ Three root-level symlinks point at skills for working **on the framework itself*
 
 | Tool | Path | Description |
 |------|------|-------------|
-| `/skill-creator` | [`src/skill/skill-creator/`](src/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and a `SKILLS_REGISTRY.yaml` entry. |
+| `/skill-creator` | [`src/skill/skill-creator/`](src/skill/skill-creator/) | Full pipeline for creating a new skill — baseline test, design principles check, eval generation, improvement loop. Produces a PR-ready skill with `EVAL.md` and registry entry. |
 | `/improve-skill` | [`src/skill/improve-skill/`](src/skill/improve-skill/) | Score-fix-rescore loop against an existing `EVAL.md` until quality criteria are met. |
 | `/auto-research` | [`src/optimization/auto-research/`](src/optimization/auto-research/) | Autonomous modify-measure-keep loop for skills, code, prompts, or any measurable target. |
 

@@ -20,11 +20,14 @@ src/
       EVAL.md               # Test prompts + output criteria (optional)
       references/           # Companion files loaded on-demand during specific phases
       templates/            # Output templates
+      agents/               # Symlinks to src/agents/ definitions used by this skill
+  agents/                   # Internal recipes dispatched by skills (not user-invocable)
+  protocols/                # Shared conventions/schemas injected into agents by observers
+  SKILLS_REGISTRY.yaml      # Pipeline metadata and stage dependencies
 ```
 
 **Root files:**
-- `src/SKILLS_REGISTRY.yaml` — single source of truth for pipeline metadata and stage dependencies
-- `src/AGENTS_REGISTRY.md` — human-readable agent discovery table
+- `AGENTS_REGISTRY.md` — human-readable agent discovery table
 - `TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
 - `install.sh` — CLI for installing/managing skill symlinks
