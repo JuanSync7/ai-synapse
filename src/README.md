@@ -76,8 +76,6 @@ End-to-end lifecycle for building, evaluating, improving, and certifying Claude 
 | [`skill-creator`](skill/skill-creator/) | write | Scaffolds new skills — baseline test, design principles, EVAL.md, improvement loop |
 | [`improve-skill`](skill/improve-skill/) | improve | Score-fix-rescore loop against an existing EVAL.md |
 | [`write-skill-eval`](skill/write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |
-| [`generate-output-criteria`](skill/generate-output-criteria/) | generate | Binary pass/fail output criteria as impartial judge |
-| [`generate-test-prompts`](skill/generate-test-prompts/) | generate | Diverse test prompts blind to SKILL.md body |
 | [`synapse-gatekeeper`](skill/synapse-gatekeeper/) | validate | Certifies promotion readiness — APPROVE / REVISE / REJECT verdict |
 
 ---

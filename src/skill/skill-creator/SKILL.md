@@ -32,6 +32,7 @@ TaskCreate: "Loop 1 Build — Phase 2: Write the skill"
 TaskCreate: "Loop 1 Build — Phase 2.5: Pipeline registration"
 TaskCreate: "Loop 2 Eval — Phase 3: Generate test prompts"
 TaskCreate: "Loop 2 Eval — Phase 4: Generate output criteria"
+TaskCreate: "Loop 2 Eval — Phase 4.5: Generate execution criteria"
 TaskCreate: "Loop 2 Eval — Phase 5: Assemble EVAL.md"
 TaskCreate: "Loop 3 Improve — Phase 6-7: Validate and iterate (or hand off to auto-research)"
 ```
@@ -132,6 +133,7 @@ Build the skill directory:
 skill-name/
 ├── SKILL.md          (required — under 500 lines)
 ├── SCOPE.md          (recommended — 5-line capability profile for model migration)
+├── agents/           (optional — symlinks to agent definitions this skill dispatches)
 ├── templates/        (optional — output format skeletons)
 ├── references/       (optional — domain knowledge, loaded on demand)
 ├── rules/            (optional — hard constraints, naming conventions, coding standards)
@@ -297,27 +299,21 @@ Classify the skill type — this determines what failure mode to prioritize in E
 
 Record the classification. After Phase 4, verify at least one output criterion tests this primary failure mode — if none does, add one.
 
-Run `/generate-test-prompts` with only the skill's name and description:
-
-```
-/generate-test-prompts [skill-name] [one-line description]
-```
+Read `agents/generate-test-prompts.md` and dispatch as an Agent (model: sonnet) with only the skill's name and one-line description as context. Do not pass the SKILL.md body — the blind constraint is critical for bias control.
 
 This produces diverse test prompts across personas (naive, experienced, adversarial, wrong-tool) — blind to the SKILL.md body to avoid implementation bias.
 
 ### Phase 4: Generate Output Criteria
 
-Run `/generate-output-criteria` with the skill directory path:
+Read `agents/generate-output-criteria.md` and dispatch as an Agent (model: sonnet) with the skill directory path as context. The agent reads the full SKILL.md as an impartial judge.
 
-```
-/generate-output-criteria [path to skill directory]
-```
-
-This reads the full SKILL.md as an impartial judge and produces binary output quality criteria (EVAL-Oxx) — what makes the skill's output good or bad.
+This produces binary output quality criteria (EVAL-Oxx) — what makes the skill's output good or bad.
 
 ### Phase 5: Assemble EVAL.md
 
-Combine the outputs from Phase 3 and Phase 4 into an EVAL.md in the skill's directory:
+Read `agents/generate-execution-criteria.md` and dispatch as an Agent (model: sonnet) with the skill directory path. If the agent returns "No execution criteria — this skill has no orchestration patterns," omit the Execution Criteria section from EVAL.md.
+
+Combine the outputs from Phase 3, Phase 4, and the execution criteria agent into an EVAL.md in the skill's directory:
 
 ```markdown
 # [Skill Name] — Evaluation Criteria
@@ -325,11 +321,14 @@ Combine the outputs from Phase 3 and Phase 4 into an EVAL.md in the skill's dire
 ## Structural Criteria
 (From improve-skill's baseline checklist — no need to duplicate here)
 
+## Execution Criteria
+(From agents/generate-execution-criteria.md — omit section entirely if no orchestration patterns)
+
 ## Output Criteria
-(From /generate-output-criteria)
+(From agents/generate-output-criteria.md)
 
 ## Test Prompts
-(From /generate-test-prompts)
+(From agents/generate-test-prompts.md)
 ```
 
 ---
@@ -350,8 +349,8 @@ Run `/improve-skill [path to SKILL.md]` for a single-pass structural + behaviora
 **Manual iteration** — if improve-skill surfaces failures:
 1. Fix SKILL.md based on traced root causes
 2. Re-run the behavioral loop
-3. If output criteria need adjustment (they were wrong, not the skill), update via `/generate-output-criteria`
-4. If test prompts are insufficient, add more via `/generate-test-prompts`
+3. If output criteria need adjustment (they were wrong, not the skill), read `agents/generate-output-criteria.md` and dispatch as Agent
+4. If test prompts are insufficient, read `agents/generate-test-prompts.md` and dispatch as Agent
 
 **Autonomous iteration** — for skills worth optimizing overnight:
 
@@ -395,6 +394,6 @@ A complete skill has:
 |------|----------|
 | Skill needs structural improvement (single pass) | `/improve-skill [path]` |
 | Skill needs autonomous multi-iteration improvement | `/auto-research [path]` |
-| Need to regenerate test prompts | `/generate-test-prompts [name] [description]` |
-| Need to regenerate output criteria | `/generate-output-criteria [path]` |
+| Need to regenerate test prompts | Read `agents/generate-test-prompts.md` and dispatch as Agent |
+| Need to regenerate output criteria | Read `agents/generate-output-criteria.md` and dispatch as Agent |
 | Need full EVAL.md from scratch | `/write-skill-eval [path]` |

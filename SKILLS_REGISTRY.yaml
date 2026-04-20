@@ -141,6 +141,15 @@ registry:
               context_type: code_review
               requires_all: [test-docs]
               skippable: true
+          - name: write-test-coverage
+            description: "Test coverage register mapping acceptance criteria to test scenarios"
+            pipeline:
+              stage_name: test-coverage
+              input_type: engineering_guide | formal_spec
+              output_type: coverage_register
+              context_type: doc_review
+              requires_any: [eng-guide, spec]
+              skippable: true
 
   - name: integration
     summary: "External tool integrations for project management, communication, and collaboration"
@@ -174,10 +183,6 @@ registry:
             description: "Karpathy-style score-fix-rescore loop for skill quality"
           - name: write-skill-eval
             description: "Generates EVAL.md with output criteria and test prompts"
-          - name: generate-output-criteria
-            description: "Generates binary pass/fail output criteria as impartial judge"
-          - name: generate-test-prompts
-            description: "Generates diverse test prompts blind to SKILL.md body"
           - name: synapse-gatekeeper
             description: "Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria"
             # Not pipeline-routable: terminal certification gate, no downstream skill depends on its output

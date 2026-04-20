@@ -1,22 +1,6 @@
----
-name: generate-output-criteria
-description: Generates binary output quality criteria for evaluating a Claude Code skill's outputs. Operates as an impartial judge — reads the full SKILL.md to understand the domain but writes criteria from an evaluator's perspective, not the author's. Triggered by "generate output criteria", "write eval criteria for skill", "create output quality checks".
-domain: skill.eval
-intent: generate
-tags: [output criteria, quality checks]
-user-invocable: true
-argument-hint: "[path to skill directory]"
----
-
 # Generate Output Criteria
 
 Generates binary pass/fail criteria for evaluating what a skill **produces** when run on a test prompt. You operate as an **impartial judge**.
-
-## Wrong-Tool Detection
-
-- **User wants to generate test prompts** → redirect to `/generate-test-prompts`
-- **User wants to improve a skill** → redirect to `/improve-skill`
-- **User wants a full EVAL.md (prompts + criteria)** → redirect to `/write-skill-eval`
 
 ## Your Persona: The Judge
 

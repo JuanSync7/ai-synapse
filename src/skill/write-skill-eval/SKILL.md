@@ -1,6 +1,6 @@
 ---
 name: write-skill-eval
-description: Router for the skill evaluation suite. Generates EVAL.md files containing structural criteria, output criteria, and test prompts for any Claude Code skill. Routes to generate-test-prompts (blind prompt generation) and generate-output-criteria (judge-based criteria writing). Triggered by "write eval for skill", "create skill evaluation", "generate EVAL.md", "evaluate this skill".
+description: Generates EVAL.md files containing structural criteria, execution criteria, output criteria, and test prompts for any Claude Code skill. Dispatches agent definitions for blind prompt generation, judge-based criteria writing, and execution criteria extraction. Triggered by "write eval for skill", "create skill evaluation", "generate EVAL.md", "evaluate this skill".
 domain: skill.eval
 intent: route
 tags: [EVAL.md, criteria, test prompts]
@@ -14,8 +14,8 @@ Routes to the correct sub-skill for generating evaluation artifacts. The evaluat
 
 ## Wrong-Tool Detection
 
-- **User wants only test prompts (no criteria)** → redirect to `/generate-test-prompts`
-- **User wants only output quality criteria (no prompts)** → redirect to `/generate-output-criteria`
+- **User wants only test prompts (no criteria)** — this skill dispatches the test prompt agent internally; proceed with just that step
+- **User wants only output criteria (no prompts)** — this skill dispatches the criteria agent internally; proceed with just that step
 - **User wants to improve a skill using an existing EVAL.md** → redirect to `/improve-skill`
 
 ## Progress Tracking
@@ -25,6 +25,7 @@ At the start, create a task list:
 ```
 TaskCreate: "Generate test prompts (blind)"
 TaskCreate: "Generate output criteria (judge)"
+TaskCreate: "Generate execution criteria (orchestration)"
 TaskCreate: "Assemble EVAL.md"
 ```
 
@@ -35,13 +36,17 @@ Mark each `in_progress` when starting, `completed` when done. When dispatching s
 ```
 write-skill-eval (you are here)
         │
-        ├── /generate-test-prompts
+        ├── agents/generate-test-prompts.md
         │     sees: skill name + description ONLY
         │     produces: diverse test prompts across personas
         │
-        └── /generate-output-criteria
-              sees: full SKILL.md (as impartial judge)
-              produces: binary output quality criteria
+        ├── agents/generate-output-criteria.md
+        │     sees: full SKILL.md (as impartial judge)
+        │     produces: binary output quality criteria
+        │
+        └── agents/generate-execution-criteria.md
+              sees: full SKILL.md
+              produces: EVAL-E criteria (if orchestration patterns exist)
 ```
 
 **Bias controls:**
@@ -53,26 +58,29 @@ write-skill-eval (you are here)
 
 | User Intent | Route To |
 |-------------|----------|
-| Generate test prompts for a skill | `/generate-test-prompts` |
-| Write output quality criteria | `/generate-output-criteria` |
+| Generate test prompts for a skill | Read `agents/generate-test-prompts.md` and dispatch as Agent |
+| Write output quality criteria | Read `agents/generate-output-criteria.md` and dispatch as Agent |
+| Generate execution criteria | Read `agents/generate-execution-criteria.md` and dispatch as Agent |
 | Create a full EVAL.md | Run both in sequence (criteria first, then prompts) |
 | Improve an existing EVAL.md | Identify which section needs work, route accordingly |
 
 ## EVAL.md Structure
 
-Every EVAL.md follows the template in [templates/eval.md](templates/eval.md) with three sections:
+Every EVAL.md follows the template in [templates/eval.md](templates/eval.md) with four sections:
 
 1. **Structural Criteria** (EVAL-Sxx) — checks against the SKILL.md document itself
-2. **Output Criteria** (EVAL-Oxx) — checks against what the skill produces when run
-3. **Test Prompts** — diverse prompts across naive, experienced, adversarial, and wrong-tool personas
+2. **Execution Criteria** (EVAL-Exx) — checks against how the skill orchestrates execution (optional — only for skills with orchestration patterns)
+3. **Output Criteria** (EVAL-Oxx) — checks against what the skill produces when run
+4. **Test Prompts** — diverse prompts across personas
 
 ## Workflow: Generating a Full EVAL.md
 
 1. Read the target skill's name and description from its SKILL.md frontmatter
-2. Run `/generate-output-criteria [path to skill]` — produces output criteria section
-3. Run `/generate-test-prompts [skill name] [skill description]` — produces test prompts section
-4. Structural criteria come from improve-skill's baseline checklist (not generated here)
-5. Assemble into EVAL.md using the template and write to the skill's directory
+2. Read `agents/generate-output-criteria.md` and dispatch as Agent (model: sonnet) with the skill directory path
+3. Read `agents/generate-test-prompts.md` and dispatch as Agent (model: sonnet) with only the skill name and description (blind constraint)
+4. Read `agents/generate-execution-criteria.md` and dispatch as Agent (model: sonnet) with the skill directory path. If the agent returns no criteria (no orchestration patterns), omit the Execution Criteria section.
+5. Structural criteria come from improve-skill's baseline checklist (not generated here)
+6. Assemble into EVAL.md using the template and write to the skill's directory
 
 ## Quality Gates
 

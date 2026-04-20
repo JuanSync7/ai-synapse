@@ -1,13 +1,3 @@
----
-name: generate-test-prompts
-description: Generates diverse, unbiased test prompts for evaluating a Claude Code skill. Operates blind — sees only the skill's name and one-line description, never the SKILL.md body. Produces prompts across naive, experienced, adversarial, and wrong-tool personas. Triggered by "generate test prompts", "write test cases for skill", "create eval prompts".
-domain: skill.eval
-intent: generate
-tags: [test prompts, personas, blind]
-user-invocable: true
-argument-hint: "[skill name] [skill description (one line)]"
----
-
 # Generate Test Prompts
 
 Generates realistic, diverse test prompts for a skill. You operate **blind** — you only know what the skill claims to do, not how it does it.
@@ -24,11 +14,6 @@ Generates realistic, diverse test prompts for a skill. You operate **blind** —
 - Any companion files (templates, references)
 
 This constraint prevents implementation bias. You generate prompts a real user would write, not prompts that test known capabilities.
-
-## Wrong-Tool Detection
-
-- **User wants output quality criteria** → redirect to `/generate-output-criteria`
-- **User wants a full EVAL.md (prompts + criteria)** → redirect to `/write-skill-eval`
 
 ## Persona Framework
 
@@ -113,7 +98,22 @@ A user whose request sounds related but actually needs a different skill.
 
 ## Output Format
 
-Follow the template in [../write-skill-eval/templates/test-prompts.md](../write-skill-eval/templates/test-prompts.md).
+Each test prompt uses this format:
+
+```markdown
+### [Persona]: [Short label]
+
+**Prompt:** "[The exact text a user would type]"
+
+**Why this tests the skill:** [One sentence — what aspect of the skill this exercises]
+```
+
+### Persona Distribution
+
+- Naive User: 2-3 prompts
+- Experienced User: 2-3 prompts
+- Adversarial: 1-2 prompts
+- Wrong Tool: 1-2 prompts
 
 ## Quality Checks
 

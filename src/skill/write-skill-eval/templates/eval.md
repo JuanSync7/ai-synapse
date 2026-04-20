@@ -21,6 +21,19 @@
 
 ---
 
+## Execution Criteria
+
+<!-- Binary checks against HOW the skill orchestrates execution. -->
+<!-- Only present for skills with orchestration patterns (subagent dispatch, model selection, phase gates). -->
+<!-- Evaluated by improve-skill's behavioral pass using execution trace protocol. -->
+<!-- Omit this section entirely if the skill has no orchestration patterns. -->
+
+- [ ] **EVAL-E01:** [Criterion name]
+  - **Test:** [How to verify — inspect the execution trace for X]
+  - **Fail signal:** [What failing looks like in the trace]
+
+---
+
 ## Output Criteria
 
 <!-- Binary checks against what the skill PRODUCES when run on a test prompt. -->

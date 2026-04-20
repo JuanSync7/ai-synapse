@@ -44,6 +44,9 @@ Pass 1: Structural (fast, no skill execution)
 Pass 2: Behavioral (slower, requires running the skill)
   Run skill on test prompts from EVAL.md
   Grade outputs against EVAL.md output criteria
+  If the skill's EVAL.md contains `## Execution Criteria` (EVAL-Exx):
+    inject the execution trace protocol into the subagent prompt
+    and grade the returned trace against EVAL-E criteria
   Trace failures back to SKILL.md instructions
   Fix SKILL.md → re-run → re-grade → repeat until passing
 ```
@@ -142,6 +145,22 @@ Execute this task using the skill at [path-to-skill]:
 - Save output to: [workspace]/run-[N]/prompt-[ID]/output/
 ```
 
+If the skill's EVAL.md contains an `## Execution Criteria` section, append to the subagent prompt:
+
+```
+---
+After completing the task above, append an `## Execution Trace` section to your response. Record in YAML format:
+- phases_executed: list of phases that ran
+- agents_dispatched: for each Agent() call, record phase, purpose, target, and model
+- workflow_decisions: for each key branching decision, record what was decided, what was chosen, and why
+- precondition_checks: for each input validation, record what was checked and pass/fail
+- context_isolation: boolean flags for what was deliberately excluded from subagent prompts
+Nesting: shallow (trace only top-level execution, not recursive subagent traces).
+---
+```
+
+If no Execution Criteria section exists in EVAL.md, do not inject the trace protocol.
+
 ### Grading
 
 For each output, evaluate every EVAL-Oxx criterion:
@@ -154,6 +173,19 @@ For each output, evaluate every EVAL-Oxx criterion:
 | Adversarial 1 | FAIL | FAIL | PASS | ... | 5/10 |
 ```
 
+### Execution Grading (when EVAL-E criteria exist)
+
+For each output that includes an execution trace, evaluate every EVAL-Exx criterion:
+
+```markdown
+| Prompt | EVAL-E01 | EVAL-E02 | EVAL-E03 | ... | Pass Rate |
+|--------|----------|----------|----------|-----|-----------|
+| Naive 1 | PASS | PASS | N/A | ... | 2/2 |
+| Expert 1 | PASS | FAIL | PASS | ... | 4/5 |
+```
+
+If the execution trace is missing (subagent did not append it), mark all EVAL-E criteria as FAIL for that prompt and note "trace missing" as the root cause.
+
 ### Tracing Failures
 
 When an output criterion fails, trace backward:
@@ -162,6 +194,15 @@ When an output criterion fails, trace backward:
 2. **What's in the output?** — The matrix is missing 3 requirements
 3. **What instruction should have prevented this?** — The skill says "build the traceability matrix at the end" but doesn't say "verify every requirement appears"
 4. **Fix** — Add verification instruction to SKILL.md
+
+### Tracing Execution Failures
+
+When an execution criterion fails, trace backward:
+
+1. **What failed?** — e.g., EVAL-E02 "Phase 1 subagents use model: sonnet" failed
+2. **What's in the trace?** — The trace shows model: opus for Phase 1 dispatches
+3. **What instruction should have prevented this?** — The skill says "dispatch per-file agents" but doesn't specify model
+4. **Fix** — Add explicit `model: sonnet` instruction to the Phase 1 dispatch section of SKILL.md
 
 ### When to Stop
 
@@ -213,6 +254,21 @@ Root causes:
 
 Behavioral Cycle 2: 58/60 → improving
 Behavioral Cycle 3: 60/60 → behavioral pass complete
+```
+
+### Execution Pass (when EVAL-E criteria exist)
+
+```
+Execution Cycle 1: 3/5 EVAL-E criteria passed
+Failing:
+  - EVAL-E02: Phase 1 subagents dispatched with model: opus (should be sonnet)
+  - EVAL-E05: Phase 1 prompt includes acceptance criteria (context isolation violated)
+Root causes:
+  - No explicit model instruction in Phase 1 dispatch
+  - Phase 1 prompt template includes AC by default
+→ fixing SKILL.md...
+
+Execution Cycle 2: 5/5 → execution pass complete
 ```
 
 ---
