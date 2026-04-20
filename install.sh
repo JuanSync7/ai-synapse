@@ -15,6 +15,7 @@ usage() {
     echo "  available           List all available skills in the repo"
     echo "  clean               Remove all installed skill symlinks"
     echo "  zip <path...>       Package skills as .zip for Claude Desktop"
+    echo "  identity            Install identity files (SOUL.md, stakeholder.md)"
     echo ""
     echo "Examples:"
     echo "  ai-skills install src/skills/docs src/skills/code/build-plan"
@@ -127,8 +128,74 @@ cmd_clean() {
         fi
     done
 
+    # Also clean identity symlinks in ~/.claude/
+    local CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+    for identity_file in "SOUL.md" "stakeholder.md"; do
+        local link="$CLAUDE_DIR/$identity_file"
+        if [ -L "$link" ]; then
+            local real
+            real="$(readlink "$link")"
+            if [[ "$real" == "$SKILLS_DIR"* ]] || [ ! -e "$link" ]; then
+                rm "$link"
+                echo "  rm  $identity_file (identity)"
+                count=$((count + 1))
+            fi
+        fi
+    done
+
     echo ""
-    echo "Removed $count skill(s)"
+    echo "Removed $count symlink(s)"
+}
+
+cmd_install_identity() {
+    local IDENTITY_DIR="$SKILLS_DIR/identity"
+    local CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+
+    if [ ! -d "$IDENTITY_DIR" ]; then
+        echo "Error: identity/ directory not found"
+        exit 1
+    fi
+
+    local count=0
+
+    # Files to install: source_name -> target_name
+    # SOUL.template.md is excluded (repo-only, not installed)
+    local src_files=("SOUL.md" "STAKEHOLDER.md")
+    local tgt_files=("SOUL.md" "stakeholder.md")
+
+    for i in "${!src_files[@]}"; do
+        local src="$IDENTITY_DIR/${src_files[$i]}"
+        local target_name="${tgt_files[$i]}"
+        local target="$CLAUDE_DIR/$target_name"
+
+        if [ ! -f "$src" ]; then
+            echo "  skip  ${src_files[$i]} (not found)"
+            continue
+        fi
+
+        if [ -L "$target" ]; then
+            local existing
+            existing="$(readlink "$target")"
+            if [ "$existing" = "$src" ]; then
+                echo "  skip  $target_name (already installed)"
+            else
+                echo "  WARN  $target_name collision: already points to $existing"
+            fi
+            continue
+        fi
+
+        if [ -f "$target" ]; then
+            echo "  WARN  $target_name exists as regular file — back up and remove before installing"
+            continue
+        fi
+
+        ln -s "$src" "$target"
+        echo "  add   $target_name -> identity/${src_files[$i]}"
+        count=$((count + 1))
+    done
+
+    echo ""
+    echo "Installed $count identity file(s) -> $CLAUDE_DIR"
 }
 
 cmd_zip() {
@@ -189,6 +256,7 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
 # Main
 case "${1:-}" in
     install)  shift; cmd_install "$@" ;;
+    identity) cmd_install_identity ;;
     list)     cmd_list ;;
     available) cmd_available ;;
     clean)    cmd_clean ;;

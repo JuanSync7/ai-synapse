@@ -13,6 +13,7 @@ Two kinds of skills live here:
 ## Repository Layout
 
 ```
+identity/                     # Personal identity files (SOUL.md, STAKEHOLDER.md)
 src/
   skills/
     <domain>/
@@ -26,6 +27,11 @@ src/
   protocols/                  # Shared conventions/schemas injected into agents by observers
   SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
 ```
+
+**Identity files (`identity/`):**
+- `SOUL.md` — personal identity file: background, worldview, opinions, thinking style, blind spots, tensions, boundaries
+- `SOUL.template.md` — blank skeleton with guidance for creating your own SOUL.md
+- `STAKEHOLDER.md` — decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers
 
 **Root files:**
 - `AGENTS_REGISTRY.md` — human-readable agent discovery table
@@ -64,6 +70,7 @@ After cloning, run `make init` to configure git hooks.
 ```bash
 ./install.sh install all                          # install everything
 ./install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
+./install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./install.sh list                                 # show installed skills
 ./install.sh available                            # show all available skills
 ./install.sh clean                                # remove all symlinks
