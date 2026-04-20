@@ -14,6 +14,29 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 2. **Has a passing EVAL.md** — an EVAL.md exists, was generated or reviewed by `/write-skill-eval`, and the skill scores ≥ 80 against it.
 3. **Not a duplicate** — no existing skill in the registry already covers the same intent at the same scope. A variation in phrasing is not enough — the use case must be genuinely distinct.
 
+### Agent Definitions
+
+Agent definitions (`src/agents/`) are internal recipes dispatched by skills — never user-invocable. They have a lighter governance model than skills:
+
+- **No EVAL.md required** — agents are tested indirectly through the skills that dispatch them
+- **No gatekeeper review** — agents land via normal commits, not promotion PRs
+- **No registry entry** — agents are listed in `AGENTS_REGISTRY.md` for discovery, not `SKILLS_REGISTRY.yaml`
+- **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
+
+An agent belongs in `src/agents/` when it is dispatched by 1+ skills and encapsulates a distinct persona or capability (e.g., impartial judge, blind prompt author). If only one skill uses it and it's short, inline it in the skill instead.
+
+### Draft Skills
+
+Skills may land on `main` as **drafts** — functional but not yet gatekeeper-certified. A draft skill:
+
+- Has a `SKILL.md` and `EVAL.md` (pre-commit hook enforced)
+- Passes structural checks (Tier 1)
+- Has **not** been certified by `/synapse-gatekeeper` (Tiers 2-3 pending)
+
+Draft skills are usable but carry no quality guarantee. To track draft status, the skill's entry in `SKILLS_REGISTRY.yaml` should include `status: draft`. A skill without a `status` field is assumed certified.
+
+**Promoting a draft:** Run `/improve-skill` until eval score ≥ 80, then `/synapse-gatekeeper`. Update `status: certified` (or remove the field) in the registry entry.
+
 ### Standalone vs. Submodule
 
 | Type | Description | Lives in |
@@ -144,3 +167,9 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 - **Lowercase hyphenated** — `write-spec-docs`, not `WriteSpecDocs` or `write_spec_docs`.
 - **Domain-prefixed when collision risk** — if the skill name is generic (e.g., `reporter`, `planner`), prefix with the domain (`jira-reporter`, `jira-planner`).
 - `scripts/install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.
+
+### Agent naming
+
+- **`<domain>-<concern>-<role>`** — e.g., `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor`
+- The domain prefix clusters related agents (all `skill-eval-*` sort together)
+- The role noun communicates what the agent *is*, not what it produces (prefer `judge` over `generate-criteria`)
