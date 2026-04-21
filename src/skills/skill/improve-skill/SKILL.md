@@ -118,6 +118,7 @@ When doing a deep improvement pass, also evaluate against skill design principle
 - [ ] Policy/procedure balance — workflow steps that involve judgment use policy framing ("when X, prioritize Y because...") rather than rigid mechanical sequences
 - [ ] Preconditions checked — if the skill requires input artifacts, there is an explicit check-and-fail instruction, not silent assumption
 - [ ] Token-budget boundary correct — detail needed only at one decision point lives in a companion file, not inline in SKILL.md body (distinct from the baseline "progressive disclosure" check which verifies companion files exist; this checks the always-on vs on-demand split is right)
+- [ ] Tone matches function — constraints, gates, and prohibitions use commitment language (MUST/NEVER/DO NOT); judgment calls and coaching use policy language. Flag enforcement points using soft language ("should", "consider", "ideally") or coaching sections using unnecessary commitment language
 
 ---
 

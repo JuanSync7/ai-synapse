@@ -71,6 +71,7 @@ Before building a skill, internalize these — they determine whether the skill 
 8. **Restriction when discipline demands it** — some skills must override defaults. Every HITL gate or approval checkpoint must define a safe default for headless execution (silent auto-approve is not acceptable).
 9. **Loud failure on preconditions** — check inputs, surface failures, never proceed silently
 10. **Concrete over abstract** — filled-in examples, good/bad contrasts
+11. **Match tone to function** — commitment language (MUST/NEVER/DO NOT) for constraints, gates, and prohibitions; policy language for judgment calls and coaching. A skill that uses MUST everywhere is rigid. A skill that uses "should" everywhere is ignorable.
 
 ## Workflow
 
@@ -177,14 +178,14 @@ Point to companion files from SKILL.md using this format:
 
 #### SKILL.md Frontmatter
 
-> **Read [`../TAXONOMY.md`](../TAXONOMY.md)** to pick `domain` and `intent` values from the controlled vocabulary. Do not invent new values — if nothing fits, propose an addition to TAXONOMY.md.
+> **Read [`../SKILL_TAXONOMY.md`](../SKILL_TAXONOMY.md)** to pick `domain` and `intent` values from the controlled vocabulary. Do not invent new values — if nothing fits, propose an addition to SKILL_TAXONOMY.md.
 
 ```yaml
 ---
 name: skill-name
 description: [Triggering conditions ONLY — phrases a USER would say. Never summarize the workflow. Never use internal architecture terms. If the description could replace reading the SKILL.md body, it's wrong.]
-domain: [pick from TAXONOMY.md domains]
-intent: [pick from TAXONOMY.md intents]
+domain: [pick from SKILL_TAXONOMY.md domains]
+intent: [pick from SKILL_TAXONOMY.md intents]
 tags: [freeform, lowercase, hyphenated]
 user-invocable: true
 argument-hint: "[expected arguments]"

@@ -235,3 +235,29 @@ at all. Defense: caching is obviously better." *(straw-man counter-argument)*
 Write a self-critique that considers alternatives and defends the recommendation.
 ```
 *The agent's idea of "considers alternatives" may be very different from yours.*
+
+---
+
+## 11. Match tone to function
+
+**Commitment language (MUST, NEVER, DO NOT) for constraints, gates, and prohibitions. Policy language for judgment calls, coaching, and suggestions.** A skill that uses MUST everywhere is rigid and brittle. A skill that uses "should" everywhere is ignorable. Be deliberate about which you use where.
+
+**Consequence:** Soft language on enforcement points gets rationalized past. The agent treats "should" as optional and skips the instruction under pressure — which is exactly the moment the instruction matters most.
+
+**Good:**
+```markdown
+MUST dispatch the review agent as a separate Agent — DO NOT run the review
+inline. The agent produces an independent verdict.
+
+When the user mentions which skill will consume this protocol, suggest where
+the injection point should go.
+```
+*First paragraph: enforcement (dispatch requirement). Commitment language. Second paragraph: advisory (suggestion). Policy language. Each matches its function.*
+
+**Bad:**
+```markdown
+The review agent should ideally be dispatched as a separate agent for
+independent verification, though you can also run the checks inline
+if that's more convenient.
+```
+*"Should ideally" and "you can also" are escape hatches on an enforcement point. The agent will take the convenient path every time.*
