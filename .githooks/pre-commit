@@ -1,17 +1,27 @@
 #!/bin/bash
 set -euo pipefail
 
-# Pre-commit hook: structural validation for changed skills.
-# Checks frontmatter fields, TAXONOMY.md values, domain README rows, and EVAL.md existence.
+# Pre-commit hook: structural validation for changed skills, agents, and protocols.
+# Skills: frontmatter fields, SKILL_TAXONOMY.md values, domain README rows, EVAL.md existence.
+# Agents: frontmatter fields (name/domain/role), AGENT_TAXONOMY.md values, AGENTS_REGISTRY.md listing.
+# Protocols: frontmatter fields (name/domain/type), PROTOCOL_TAXONOMY.md values.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-TAXONOMY="$REPO_ROOT/TAXONOMY.md"
+SKILL_TAXONOMY="$REPO_ROOT/SKILL_TAXONOMY.md"
+AGENT_TAXONOMY="$REPO_ROOT/AGENT_TAXONOMY.md"
+PROTOCOL_TAXONOMY="$REPO_ROOT/PROTOCOL_TAXONOMY.md"
 
 errors=()
 
-# Get staged files that are in skill directories (contain a SKILL.md sibling)
-changed_skill_dirs=()
+# Collect all staged files once
+staged_files=()
 while IFS= read -r file; do
+    staged_files+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+# --- Identify changed skill directories ---
+changed_skill_dirs=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
     dir="$(dirname "$file")"
     # Walk up to find the skill directory (the one containing SKILL.md)
     while [ "$dir" != "." ] && [ "$dir" != "$REPO_ROOT" ]; do
@@ -31,48 +41,103 @@ while IFS= read -r file; do
         fi
         dir="$(dirname "$dir")"
     done
-done < <(git diff --cached --name-only --diff-filter=ACM)
+done
 
-if [ ${#changed_skill_dirs[@]} -eq 0 ]; then
+# --- Identify changed agent files ---
+changed_agent_files=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -q '^src/agents/.*\.md$'; then
+        found=false
+        for a in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
+            if [ "$a" = "$file" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            changed_agent_files+=("$file")
+        fi
+    fi
+done
+
+# --- Identify changed protocol files ---
+changed_protocol_files=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -q '^src/protocols/.*\.md$'; then
+        found=false
+        for p in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
+            if [ "$p" = "$file" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            changed_protocol_files+=("$file")
+        fi
+    fi
+done
+
+# Exit early if nothing to validate
+if [ ${#changed_skill_dirs[@]} -eq 0 ] && [ ${#changed_agent_files[@]} -eq 0 ] && [ ${#changed_protocol_files[@]} -eq 0 ]; then
     exit 0
 fi
 
-# Extract valid domains and intents from TAXONOMY.md
-domains=()
-intents=()
-in_domains=false
-in_intents=false
+# --- Helper: extract table values from a taxonomy file under a given heading ---
+# Usage: extract_taxonomy_values <file> <heading> → populates _taxonomy_values array
+_taxonomy_values=()
+extract_taxonomy_values() {
+    local file="$1"
+    local heading="$2"
+    _taxonomy_values=()
+    local in_section=false
 
-while IFS= read -r line; do
-    if echo "$line" | grep -q "^## Domains"; then
-        in_domains=true
-        in_intents=false
-        continue
-    fi
-    if echo "$line" | grep -q "^## Intents"; then
-        in_intents=true
-        in_domains=false
-        continue
-    fi
-    if echo "$line" | grep -q "^## "; then
-        in_domains=false
-        in_intents=false
-        continue
-    fi
+    while IFS= read -r line; do
+        if echo "$line" | grep -q "^## ${heading}$"; then
+            in_section=true
+            continue
+        fi
+        if echo "$line" | grep -q "^## "; then
+            in_section=false
+            continue
+        fi
+        if [ "$in_section" = true ]; then
+            val="$(echo "$line" | grep '^\| `' | sed 's/^| `//;s/`.*//' || true)"
+            if [ -n "$val" ]; then
+                _taxonomy_values+=("$val")
+            fi
+        fi
+    done < "$file"
+}
 
-    if [ "$in_domains" = true ]; then
-        val="$(echo "$line" | grep '^\| `' | sed 's/^| `//;s/`.*//' || true)"
-        if [ -n "$val" ]; then
-            domains+=("$val")
-        fi
-    fi
-    if [ "$in_intents" = true ]; then
-        val="$(echo "$line" | grep '^\| `' | sed 's/^| `//;s/`.*//' || true)"
-        if [ -n "$val" ]; then
-            intents+=("$val")
-        fi
-    fi
-done < "$TAXONOMY"
+# Extract skill taxonomy values
+skill_domains=()
+skill_intents=()
+if [ ${#changed_skill_dirs[@]} -gt 0 ]; then
+    extract_taxonomy_values "$SKILL_TAXONOMY" "Domains"
+    skill_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$SKILL_TAXONOMY" "Intents"
+    skill_intents=("${_taxonomy_values[@]}")
+fi
+
+# Extract agent taxonomy values
+agent_domains=()
+agent_roles=()
+if [ ${#changed_agent_files[@]} -gt 0 ]; then
+    extract_taxonomy_values "$AGENT_TAXONOMY" "Domains"
+    agent_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$AGENT_TAXONOMY" "Roles"
+    agent_roles=("${_taxonomy_values[@]}")
+fi
+
+# Extract protocol taxonomy values
+protocol_domains=()
+protocol_types=()
+if [ ${#changed_protocol_files[@]} -gt 0 ]; then
+    extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Domains"
+    protocol_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Types"
+    protocol_types=("${_taxonomy_values[@]}")
+fi
 
 for skill_dir in "${changed_skill_dirs[@]}"; do
     skill_md="$REPO_ROOT/$skill_dir/SKILL.md"
@@ -87,33 +152,33 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         fi
     done
 
-    # --- Check 2: domain and intent values are in TAXONOMY.md ---
+    # --- Check 2: domain and intent values are in SKILL_TAXONOMY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
     intent_val="$(echo "$frontmatter" | grep '^intent:' | sed 's/^intent: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
         found=false
-        for d in "${domains[@]}"; do
+        for d in "${skill_domains[@]}"; do
             if [ "$d" = "$domain_val" ]; then
                 found=true
                 break
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$skill_dir: domain '$domain_val' not found in TAXONOMY.md")
+            errors+=("$skill_dir: domain '$domain_val' not found in SKILL_TAXONOMY.md")
         fi
     fi
 
     if [ -n "$intent_val" ]; then
         found=false
-        for i in "${intents[@]}"; do
+        for i in "${skill_intents[@]}"; do
             if [ "$i" = "$intent_val" ]; then
                 found=true
                 break
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$skill_dir: intent '$intent_val' not found in TAXONOMY.md")
+            errors+=("$skill_dir: intent '$intent_val' not found in SKILL_TAXONOMY.md")
         fi
     fi
 
@@ -141,8 +206,128 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
     fi
 done
 
+# =============================================================================
+# Agent validation
+# =============================================================================
+
+for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
+    agent_md="$REPO_ROOT/$agent_file"
+    agent_name="$(basename "$agent_file" .md)"
+
+    # --- Check 1: Frontmatter fields exist ---
+    frontmatter="$(sed -n '/^---$/,/^---$/p' "$agent_md" | sed '1d;$d')"
+
+    for field in name description domain role; do
+        if ! echo "$frontmatter" | grep -q "^${field}:"; then
+            errors+=("$agent_file: missing frontmatter field '$field'")
+        fi
+    done
+
+    # --- Check 2: domain and role values are in AGENT_TAXONOMY.md ---
+    domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    role_val="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
+
+    if [ -n "$domain_val" ]; then
+        found=false
+        for d in "${agent_domains[@]}"; do
+            if [ "$d" = "$domain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$agent_file: domain '$domain_val' not found in AGENT_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$role_val" ]; then
+        found=false
+        for r in "${agent_roles[@]}"; do
+            if [ "$r" = "$role_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$agent_file: role '$role_val' not found in AGENT_TAXONOMY.md")
+        fi
+    fi
+
+    # --- Check 3: Listed in AGENTS_REGISTRY.md ---
+    agents_registry="$REPO_ROOT/AGENTS_REGISTRY.md"
+    if [ -f "$agents_registry" ]; then
+        if ! grep -q "\[$agent_name\]" "$agents_registry"; then
+            errors+=("$agent_file: no row for '$agent_name' in AGENTS_REGISTRY.md")
+        fi
+    else
+        errors+=("$agent_file: missing AGENTS_REGISTRY.md")
+    fi
+
+    # --- Check 4: New agent warning ---
+    if git diff --cached --name-only --diff-filter=A | grep -q "^${agent_file}$"; then
+        echo "  WARN  $agent_file: new agent — run /synapse-gatekeeper before merging"
+    fi
+done
+
+# =============================================================================
+# Protocol validation
+# =============================================================================
+
+for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
+    protocol_md="$REPO_ROOT/$protocol_file"
+    protocol_name="$(basename "$protocol_file" .md)"
+
+    # --- Check 1: Frontmatter fields exist ---
+    frontmatter="$(sed -n '/^---$/,/^---$/p' "$protocol_md" | sed '1d;$d')"
+
+    for field in name description domain type; do
+        if ! echo "$frontmatter" | grep -q "^${field}:"; then
+            errors+=("$protocol_file: missing frontmatter field '$field'")
+        fi
+    done
+
+    # --- Check 2: domain and type values are in PROTOCOL_TAXONOMY.md ---
+    domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    type_val="$(echo "$frontmatter" | grep '^type:' | sed 's/^type: *//' | tr -d '"' | tr -d "'" || true)"
+
+    if [ -n "$domain_val" ]; then
+        found=false
+        for d in "${protocol_domains[@]}"; do
+            if [ "$d" = "$domain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$protocol_file: domain '$domain_val' not found in PROTOCOL_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$type_val" ]; then
+        found=false
+        for t in "${protocol_types[@]}"; do
+            if [ "$t" = "$type_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$protocol_file: type '$type_val' not found in PROTOCOL_TAXONOMY.md")
+        fi
+    fi
+
+    # --- Check 3: New protocol warning ---
+    if git diff --cached --name-only --diff-filter=A | grep -q "^${protocol_file}$"; then
+        echo "  WARN  $protocol_file: new protocol — run /synapse-gatekeeper before merging"
+    fi
+done
+
+# =============================================================================
+# Report errors
+# =============================================================================
+
 if [ ${#errors[@]} -gt 0 ]; then
-    echo "Skill validation failed:"
+    echo "Validation failed:"
     echo ""
     for err in "${errors[@]}"; do
         echo "  - $err"

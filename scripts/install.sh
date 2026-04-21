@@ -21,6 +21,7 @@ usage() {
     echo "  agents              Install agent definitions from src/agents/"
     echo "  zip <path...>       Package skills as .zip for Claude Desktop"
     echo "  identity            Install identity files (SOUL.md, stakeholder.md)"
+    echo "  doctor              Check for broken symlinks"
     echo ""
     echo "Examples:"
     echo "  ai-skills install src/skills/docs src/skills/code/build-plan"
@@ -64,10 +65,15 @@ cmd_install() {
                 existing="$(readlink "$TARGET/$skill_name")"
                 if [ "$existing" = "$skill_dir" ]; then
                     echo "  skip  $skill_name (already installed)"
+                    continue
+                elif [ ! -e "$TARGET/$skill_name" ]; then
+                    # Broken symlink — replace it
+                    rm "$TARGET/$skill_name"
+                    echo "  fix   $skill_name (was broken: $existing)"
                 else
                     echo "  WARN  $skill_name collision: already points to $existing"
+                    continue
                 fi
-                continue
             fi
 
             ln -s "$skill_dir" "$TARGET/$skill_name"
@@ -198,10 +204,14 @@ cmd_install_identity() {
             existing="$(readlink "$target")"
             if [ "$existing" = "$src" ]; then
                 echo "  skip  $target_name (already installed)"
+                continue
+            elif [ ! -e "$target" ]; then
+                rm "$target"
+                echo "  fix   $target_name (was broken: $existing)"
             else
                 echo "  WARN  $target_name collision: already points to $existing"
+                continue
             fi
-            continue
         fi
 
         if [ -f "$target" ]; then
@@ -239,10 +249,14 @@ cmd_install_agents() {
             existing="$(readlink "$target")"
             if [ "$existing" = "$src" ]; then
                 echo "  skip  $name (already installed)"
+                continue
+            elif [ ! -e "$target" ]; then
+                rm "$target"
+                echo "  fix   $name (was broken: $existing)"
             else
                 echo "  WARN  $name collision: already points to $existing"
+                continue
             fi
-            continue
         fi
 
         ln -s "$src" "$target"
@@ -309,6 +323,39 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
     echo "Packaged $count skill(s) → $DIST_DIR"
 }
 
+cmd_doctor() {
+    local broken=0
+
+    echo "Checking skills ($TARGET)..."
+    if [ -d "$TARGET" ]; then
+        for link in "$TARGET"/*; do
+            [ -L "$link" ] || continue
+            if [ ! -e "$link" ]; then
+                echo "  BROKEN  $(basename "$link") -> $(readlink "$link")"
+                broken=$((broken + 1))
+            fi
+        done
+    fi
+
+    echo "Checking agents ($AGENTS_TARGET)..."
+    if [ -d "$AGENTS_TARGET" ]; then
+        for link in "$AGENTS_TARGET"/*; do
+            [ -L "$link" ] || continue
+            if [ ! -e "$link" ]; then
+                echo "  BROKEN  $(basename "$link") -> $(readlink "$link")"
+                broken=$((broken + 1))
+            fi
+        done
+    fi
+
+    echo ""
+    if [ "$broken" -eq 0 ]; then
+        echo "All symlinks healthy."
+    else
+        echo "$broken broken symlink(s) found. Run 'install all' to auto-fix, or 'clean' to remove all."
+    fi
+}
+
 # Main
 case "${1:-}" in
     install)  shift; cmd_install "$@" ;;
@@ -317,6 +364,7 @@ case "${1:-}" in
     list)     cmd_list ;;
     available) cmd_available ;;
     clean)    cmd_clean ;;
+    doctor)   cmd_doctor ;;
     zip)      shift; cmd_zip "$@" ;;
     -h|--help|"") usage ;;
     *)        echo "Unknown command: $1"; usage; exit 1 ;;

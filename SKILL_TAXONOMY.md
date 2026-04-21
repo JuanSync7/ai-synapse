@@ -24,6 +24,13 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | `orchestration` | Multi-agent coordination |
 | `creative` | Standalone creative/visual |
 | `integration` | External tool integrations |
+| `agent` | Agent development lifecycle |
+| `agent.create` | Agent creation and improvement |
+| `agent.eval` | Agent evaluation and certification |
+| `protocol` | Protocol development lifecycle |
+| `protocol.create` | Protocol creation and improvement |
+| `protocol.eval` | Protocol evaluation and certification |
+| `integration` | External tool integrations |
 | `integration.jira` | JIRA project tracking |
 | `frameworks.langgraph` | LangGraph-specific tools |
 

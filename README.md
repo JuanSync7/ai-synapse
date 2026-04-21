@@ -48,7 +48,9 @@ ai-synapse/
 │   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
 │
 ├── AGENTS_REGISTRY.md              # Agent discovery table
-├── TAXONOMY.md                     # Controlled vocabulary for domain/intent fields
+├── SKILL_TAXONOMY.md               # Controlled vocabulary for skill domain/intent fields
+├── AGENT_TAXONOMY.md               # Controlled vocabulary for agent domain/role fields
+├── PROTOCOL_TAXONOMY.md            # Controlled vocabulary for protocol domain/type fields
 ├── GOVERNANCE.md                   # Promotion criteria, contribution workflow
 ├── CLAUDE.md                       # Claude Code instructions for this repo
 ├── scripts/
@@ -68,8 +70,14 @@ The single source of truth for pipeline metadata. Every skill that participates 
 ### [`AGENTS_REGISTRY.md`](AGENTS_REGISTRY.md)
 Discovery table for agent definitions — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`. Check this registry before creating a new agent to see if one already covers the capability you need.
 
-### [`TAXONOMY.md`](TAXONOMY.md)
+### [`SKILL_TAXONOMY.md`](SKILL_TAXONOMY.md)
 Controlled vocabulary for the `domain` and `intent` frontmatter fields in every `SKILL.md`. Enforced by the pre-commit hook — committing a skill with a value not listed here will fail. When nothing in the taxonomy fits a new skill, the convention is to propose an addition here rather than invent ad hoc values. This keeps skill metadata consistent and makes routing and filtering predictable.
+
+### [`AGENT_TAXONOMY.md`](AGENT_TAXONOMY.md)
+Controlled vocabulary for the `domain` and `role` fields in agent definitions. Agents follow the `<domain>-<concern>-<role>` naming convention. Enforced by the pre-commit hook when committing changes to `src/agents/`.
+
+### [`PROTOCOL_TAXONOMY.md`](PROTOCOL_TAXONOMY.md)
+Controlled vocabulary for the `domain` and `type` fields in protocol definitions. Enforced by the pre-commit hook when committing changes to `src/protocols/`.
 
 ### [`GOVERNANCE.md`](GOVERNANCE.md)
 Authoritative rules for the doc-authoring skill suite — layer hierarchy, cross-skill coherence gates, and propagation rules for when specs change. Not loaded at runtime; it is the human-readable source from which rules are inlined into each doc skill's `SKILL.md`. When a rule changes, update `GOVERNANCE.md` first, then propagate to each affected skill. This separation keeps skills self-contained (no runtime file dependency) while providing a single place to reason about suite-level consistency.
@@ -78,7 +86,7 @@ Authoritative rules for the doc-authoring skill suite — layer hierarchy, cross
 Project-level instructions for Claude Code. Explains the repo structure, submodule architecture, skill anatomy, and the two-layer validation model (pre-commit structural checks + PR-time quality evaluation). Claude reads this automatically when working in this repo. Changes here affect how Claude interprets tasks and structures contributions.
 
 ### [`.githooks/pre-commit`](.githooks/pre-commit)
-Runs automatically on every commit touching a skill directory. Checks: required frontmatter fields present, `domain` and `intent` values exist in `TAXONOMY.md`, the domain `README.md` has a row for the skill, and `EVAL.md` exists alongside every `SKILL.md`. Fails loudly with actionable errors. Activated via `make init`.
+Runs automatically on every commit touching a skill directory. Checks: required frontmatter fields present, `domain` and `intent` values exist in `SKILL_TAXONOMY.md`, the domain `README.md` has a row for the skill, and `EVAL.md` exists alongside every `SKILL.md`. Fails loudly with actionable errors. Activated via `make init`.
 
 ---
 
@@ -104,8 +112,8 @@ src/skills/<domain>/<skill-name>/
 ---
 name: skill-name
 description: "Trigger conditions — when this skill fires (not a workflow summary)"
-domain: docs.spec       # from TAXONOMY.md
-intent: write           # from TAXONOMY.md
+domain: docs.spec       # from SKILL_TAXONOMY.md
+intent: write           # from SKILL_TAXONOMY.md
 tags: [lowercase, hyphenated]
 user-invocable: true
 argument-hint: "[args]"

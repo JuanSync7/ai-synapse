@@ -16,14 +16,26 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 
 ### Agent Definitions
 
-Agent definitions (`src/agents/`) are internal recipes dispatched by skills — never user-invocable. They have a lighter governance model than skills:
+Agent definitions (`src/agents/`) are internal recipes dispatched by skills — never user-invocable. They follow the same governance rigor as skills, adapted for their role:
 
-- **No EVAL.md required** — agents are tested indirectly through the skills that dispatch them
-- **No gatekeeper review** — agents land via normal commits, not promotion PRs
-- **No registry entry** — agents are listed in `AGENTS_REGISTRY.md` for discovery, not `SKILLS_REGISTRY.yaml`
+- **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
+- **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-gatekeeper`, same as skills
+- **No standalone EVAL.md** — agents are tested indirectly through the skills that dispatch them. A standalone eval format will be defined when `write-agent-eval` is built (currently a draft stub)
+- **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
 - **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
 
 An agent belongs in `src/agents/` when it is dispatched by 1+ skills and encapsulates a distinct persona or capability (e.g., impartial judge, blind prompt author). If only one skill uses it and it's short, inline it in the skill instead.
+
+### Protocol Definitions
+
+Protocols (`src/protocols/`) are shared conventions and schemas injected into agents by observers — never executed directly. They define structured formats for inter-agent communication and observability.
+
+- **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
+- **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-gatekeeper`
+- **No standalone EVAL.md** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). A standalone eval format will be defined when `write-protocol-eval` is built (currently a draft stub)
+- **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
+
+A protocol belongs in `src/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
 
 ### Draft Skills
 
@@ -61,8 +73,8 @@ Checked automatically by the pre-commit hook. No LLM required.
 - [ ] `SKILL.md` exists in the skill directory
 - [ ] `EVAL.md` exists alongside `SKILL.md` (**REJECT if absent**)
 - [ ] Frontmatter is complete: `name`, `description`, `domain`, `intent` all present
-- [ ] `domain` value exists in `TAXONOMY.md`
-- [ ] `intent` value exists in `TAXONOMY.md`
+- [ ] `domain` value exists in `SKILL_TAXONOMY.md`
+- [ ] `intent` value exists in `SKILL_TAXONOMY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
 - [ ] `user-invocable` field is present
 - [ ] `argument-hint` is present when `user-invocable: true`
@@ -87,6 +99,50 @@ Evaluated by `synapse-gatekeeper` against skill design principles.
 - [ ] If registered: `stage_name` is unique across the registry
 - [ ] If registered: `requires_all`/`requires_any` entries resolve to real stage names
 
+### Agent Promotion
+
+Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agent-checklist.md`.
+
+#### Tier 1 — Structural
+
+- [ ] Agent `.md` file exists in `src/agents/` and is non-empty
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `role` all present
+- [ ] `domain` value exists in `AGENT_TAXONOMY.md`
+- [ ] `role` value exists in `AGENT_TAXONOMY.md`
+- [ ] `tags` is a well-formed array of lowercase hyphenated strings
+- [ ] Name follows `<domain>-<concern>-<role>` convention
+- [ ] Name is globally unique (no collision in `AGENTS_REGISTRY.md`)
+- [ ] Listed in `AGENTS_REGISTRY.md` with correct description and consumer list
+
+#### Tier 2 — Quality
+
+- [ ] Clear persona/role description in the opening paragraph
+- [ ] Every instruction traces to a failure mode
+- [ ] Under 300 lines
+- [ ] Consumer skills identified (which skills dispatch this agent)
+- [ ] No user-facing language (agents are never user-invocable)
+
+### Protocol Promotion
+
+Protocols clear two tiers. Evaluated by `synapse-gatekeeper` using `references/protocol-checklist.md`.
+
+#### Tier 1 — Structural
+
+- [ ] Protocol `.md` file exists in `src/protocols/` and is non-empty
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `type` all present
+- [ ] `domain` value exists in `PROTOCOL_TAXONOMY.md`
+- [ ] `type` value exists in `PROTOCOL_TAXONOMY.md`
+- [ ] `tags` is a well-formed array of lowercase hyphenated strings
+- [ ] Schema block present (YAML or JSON — machine-parseable, not prose)
+- [ ] Injection instructions present (how an observer injects the protocol)
+
+#### Tier 2 — Conformance
+
+- [ ] Schema is machine-parseable (can be validated programmatically)
+- [ ] Injection instructions are self-contained (observer can inject without modification)
+- [ ] At least one filled-in example of the protocol's output
+- [ ] Zero-overhead design confirmed (no cost when not injected)
+
 ---
 
 ## REVISE vs. REJECT
@@ -108,6 +164,14 @@ Examples:
 - Name collision with an existing skill in the registry or `~/.claude/skills/`
 - Skill duplicates an existing skill's use case (not a distinct intent)
 - Skill has significant shared infrastructure that should be in its own repo (should be a submodule, not standalone)
+
+**Agent-specific:**
+- REVISE: missing AGENTS_REGISTRY.md entry, name doesn't follow convention, consumer skills not identified
+- REJECT: frontmatter absent, domain/role not in AGENT_TAXONOMY.md
+
+**Protocol-specific:**
+- REVISE: missing example, injection instructions unclear, zero-overhead not confirmed
+- REJECT: frontmatter absent, domain/type not in PROTOCOL_TAXONOMY.md, no schema block
 
 ---
 
@@ -161,6 +225,17 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 
 ---
 
+## Change Requests
+
+When brainstorming or improving a skill reveals that another skill, agent, or protocol needs updating, drop a change request file in the affected target's `change_requests/` folder rather than expanding scope.
+
+- **One file per change**, named `YYYY-MM-DD-short-description.md`
+- **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template.
+- **Consumed by** `/skill-brainstorm` — it checks for `change_requests/` on entry and incorporates pending requests as context.
+- **Deleted** after the change is implemented. An empty folder means no pending obligations.
+
+---
+
 ## Naming Conventions
 
 - **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory. No namespacing is possible at runtime.
@@ -173,3 +248,9 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 - **`<domain>-<concern>-<role>`** — e.g., `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor`
 - The domain prefix clusters related agents (all `skill-eval-*` sort together)
 - The role noun communicates what the agent *is*, not what it produces (prefer `judge` over `generate-criteria`)
+
+### Protocol naming
+
+- **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
+- Protocols live in subdirectories of `src/protocols/` organized by concern (e.g., `traces/`, `schemas/`)
+- The directory name groups related protocols; the file name identifies the specific protocol

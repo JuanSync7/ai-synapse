@@ -38,6 +38,7 @@ registry:
             skills:
               - name: write-spec-docs
                 description: "Formal requirements spec with FRs, NFRs, acceptance criteria"
+                # Companion artifact: _SPEC_MAP.md (document map + knowledge graph index)
                 pipeline:
                   stage_name: spec
                   input_type: design_sketch
@@ -186,6 +187,31 @@ registry:
           - name: synapse-gatekeeper
             description: "Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria"
             # Not pipeline-routable: terminal certification gate, no downstream skill depends on its output
+
+  - name: agent
+    summary: "Agent development lifecycle: create and evaluate agent definitions"
+    children:
+      - name: agent-lifecycle
+        summary: "Build and maintain agents"
+        skills:
+          - name: agent-creator
+            description: "Creates new agent definitions with frontmatter and taxonomy alignment"
+            status: draft
+          - name: write-agent-eval
+            description: "Generates evaluation criteria for agent definitions"
+            status: draft
+
+  - name: protocol
+    summary: "Protocol development lifecycle: create and evaluate protocol definitions"
+    children:
+      - name: protocol-lifecycle
+        summary: "Build and maintain protocols"
+        skills:
+          - name: protocol-creator
+            description: "Creates new protocol definitions with frontmatter and taxonomy alignment"
+          - name: write-protocol-eval
+            description: "Generates conformance testing criteria for protocol definitions"
+            status: draft
 
   - name: meta
     summary: "Meta-level tools: routing, reasoning, framework utilities, orchestration, creative"

@@ -35,7 +35,9 @@ src/
 
 **Root files:**
 - `AGENTS_REGISTRY.md` — human-readable agent discovery table
-- `TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
+- `SKILL_TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
+- `AGENT_TAXONOMY.md` — controlled vocabulary for agent `domain` and `role` metadata fields
+- `PROTOCOL_TAXONOMY.md` — controlled vocabulary for protocol `domain` and `type` metadata fields
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
 - `scripts/install.sh` — CLI for installing/managing skill symlinks
 - `Makefile` — repo setup (`make init` configures git hooks)
@@ -87,8 +89,8 @@ Every SKILL.md has YAML frontmatter followed by a markdown body:
 ---
 name: skill-name
 description: "Trigger conditions — when this skill fires (not a workflow summary)"
-domain: docs.spec           # from TAXONOMY.md
-intent: write               # from TAXONOMY.md
+domain: docs.spec           # from SKILL_TAXONOMY.md
+intent: write               # from SKILL_TAXONOMY.md
 tags: [lowercase, hyphenated]
 user-invocable: true
 argument-hint: "[args]"
@@ -112,18 +114,28 @@ These are the core principles for writing and modifying skills (full reference: 
 5. **Every instruction traces to a failure mode** — no instruction without "without this, the agent does X which causes Y."
 6. **Loud failure on preconditions** — check inputs and fail clearly; never proceed silently with bad data.
 
-## After Modifying a Skill
+## After Modifying an Artifact
 
-Whenever any file inside a skill directory changes (SKILL.md, references/, templates/, EVAL.md, or companion files), two layers of validation apply:
+Whenever any file inside a skill directory, agent file, or protocol file changes, two layers of validation apply:
 
 ### Layer 1: Structural checks (enforced by pre-commit hook)
 
 These run automatically on every commit — no LLM needed:
 
+**Skills:**
 - SKILL.md frontmatter has required fields (`name`, `description`, `domain`, `intent`)
-- `domain` and `intent` values exist in `TAXONOMY.md`
+- `domain` and `intent` values exist in `SKILL_TAXONOMY.md`
 - Domain README.md has a row matching the skill
 - EVAL.md exists alongside SKILL.md
+
+**Agents** (`src/agents/*.md`):
+- Frontmatter has required fields (`name`, `description`, `domain`, `role`)
+- `domain` and `role` values exist in `AGENT_TAXONOMY.md`
+- Listed in `AGENTS_REGISTRY.md`
+
+**Protocols** (`src/protocols/**/*.md`):
+- Frontmatter has required fields (`name`, `description`, `domain`, `type`)
+- `domain` and `type` values exist in `PROTOCOL_TAXONOMY.md`
 
 ### Layer 2: Quality evaluation
 
@@ -131,9 +143,10 @@ The evaluation tier depends on the type of change:
 
 - **New skill or external import** → run `/skill-creator` (full pipeline: baseline test, design principles, eval generation, improvement loop), then `/synapse-gatekeeper` for certification
 - **Modified existing skill** (SKILL.md, references/, templates/) → run `/improve-skill` (score-fix loop against existing EVAL.md)
+- **New or modified agent/protocol** → run `/synapse-gatekeeper <artifact-path>` for certification
 - **Trivial changes** (typos, formatting-only) → Layer 1 is sufficient
 
-**New skills must be certified before merging.** Run `/synapse-gatekeeper <skill-path> --score <score>` and include the APPROVE verdict in the PR description. If the skill is not ready for certification, mark it `status: draft` in `SKILLS_REGISTRY.yaml` — this is tracked and must be resolved before the skill is considered production-ready. See `GOVERNANCE.md` for full promotion criteria.
+**New artifacts must be certified before merging.** Run `/synapse-gatekeeper <artifact-path> [--score <score>]` and include the APPROVE verdict in the PR description. If not ready for certification, mark it `status: draft` in the appropriate registry — this is tracked and must be resolved before the artifact is considered production-ready. See `GOVERNANCE.md` for full promotion criteria.
 
 ## Conventions
 
@@ -142,4 +155,4 @@ The evaluation tier depends on the type of change:
 - **Wrong-Tool Detection** sections redirect to sibling skills when the user's intent doesn't match.
 - EVAL.md files are generated artifacts containing structural criteria, output criteria, and test prompts.
 - Pipeline-routable skills must be registered in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
-- Domain and intent values must come from `TAXONOMY.md`. If nothing fits, propose an addition there — don't invent ad hoc values.
+- Domain and intent values must come from `SKILL_TAXONOMY.md`. If nothing fits, propose an addition there — don't invent ad hoc values.
