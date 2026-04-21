@@ -1,3 +1,11 @@
+---
+name: execution-trace
+description: "Structured self-report trace appended by subagents when an observer requests execution observability"
+domain: observability
+type: trace
+tags: [execution-trace, self-reported, subagent-observability]
+---
+
 # Execution Trace Protocol
 
 A structured self-report appended by a subagent to its response when an observer requests execution observability. Zero overhead in normal runs — only injected when someone is watching.

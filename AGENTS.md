@@ -23,7 +23,7 @@ src/
   SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
 ```
 
-Root files: `AGENTS_REGISTRY.md` (agent discovery), `TAXONOMY.md` (domain/intent vocabulary), `GOVERNANCE.md` (promotion criteria).
+Root files: `AGENTS_REGISTRY.md` (agent discovery), `SKILL_TAXONOMY.md` (domain/intent vocabulary), `GOVERNANCE.md` (promotion criteria).
 
 ## Skill Anatomy
 
@@ -33,8 +33,8 @@ Every SKILL.md has YAML frontmatter followed by a markdown body:
 ---
 name: skill-name
 description: "Trigger conditions — when this skill fires"
-domain: docs.spec           # from TAXONOMY.md
-intent: write               # from TAXONOMY.md
+domain: docs.spec           # from SKILL_TAXONOMY.md
+intent: write               # from SKILL_TAXONOMY.md
 tags: [lowercase, hyphenated]
 user-invocable: true
 argument-hint: "[args]"
@@ -45,13 +45,13 @@ The `description` field is a routing contract: it specifies when the skill fires
 
 ## Three-Tier Taxonomy
 
-| Concept | Location | Purpose |
-|---------|----------|---------|
-| **Skills** | `src/skills/<domain>/<skill-name>/SKILL.md` | User-facing recipes — invoked by name |
-| **Agents** | `src/agents/*.md` | Internal recipes dispatched by skills — not user-invocable |
-| **Protocols** | `src/protocols/` | Shared conventions injected into agents by observers |
+| Concept | Location | Frontmatter | Taxonomy | Purpose |
+|---------|----------|-------------|----------|---------|
+| **Skills** | `src/skills/<domain>/<skill-name>/SKILL.md` | name, description, domain, intent | `SKILL_TAXONOMY.md` | User-facing recipes — invoked by name |
+| **Agents** | `src/agents/*.md` | name, description, domain, role | `AGENT_TAXONOMY.md` | Internal recipes dispatched by skills — not user-invocable |
+| **Protocols** | `src/protocols/<concern>/<name>.md` | name, description, domain, type | `PROTOCOL_TAXONOMY.md` | Shared conventions injected into agents by observers |
 
-Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`.
+All three artifact types require YAML frontmatter, taxonomy-validated metadata, and gatekeeper review for promotion. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`.
 
 ## Pipeline System
 
@@ -70,7 +70,7 @@ The autonomous orchestrator (`src/skills/orchestration/autonomous-orchestrator/`
 
 Two validation layers apply:
 
-1. **Pre-commit (structural)** — frontmatter fields present, domain/intent in TAXONOMY.md, EVAL.md exists
+1. **Pre-commit (structural)** — frontmatter fields present, domain/intent in SKILL_TAXONOMY.md, EVAL.md exists
 2. **PR-time (quality)** — new skills run full creation pipeline; modified skills run score-fix loop
 
 ## Conventions
@@ -78,4 +78,4 @@ Two validation layers apply:
 - Skill names must be globally unique (flat discovery directory, no namespacing)
 - EVAL.md files contain structural criteria, output criteria, and test prompts
 - Pipeline-routable skills must be registered in `src/SKILLS_REGISTRY.yaml`
-- Domain and intent values must come from `TAXONOMY.md`
+- Domain and intent values must come from `SKILL_TAXONOMY.md`

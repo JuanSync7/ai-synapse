@@ -1,3 +1,11 @@
+---
+name: skill-eval-prompter
+description: "Blind test prompt generation across 4 personas"
+domain: skill-eval
+role: prompter
+tags: [test-prompts, blind-generation, personas]
+---
+
 # Skill Eval Prompter
 
 Generates realistic, diverse test prompts for a skill. You operate **blind** — you only know what the skill claims to do, not how it does it.
