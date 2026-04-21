@@ -169,18 +169,19 @@ VERDICT: REVISE
 - [x] domain `observability` in PROTOCOL_TAXONOMY.md
 - [x] type `trace` in PROTOCOL_TAXONOMY.md
 - [x] tags well-formed: [execution-trace, self-reported, subagent-observability]
-- [x] Schema block present (YAML trace schema)
-- [x] Injection instructions present
+- [x] Mental model paragraph present
+- [x] Contract section present
+- [x] Failure assertion present
 
 ### Conformance                   ✗
-- [x] Schema is machine-parseable
-- [x] Injection instructions self-contained
-- [ ] At least one filled-in example of trace output
+- [x] Contract is unambiguous
+- [x] Contract uses imperative language
+- [ ] Failure assertion is imperative — assertion describes the failure but does not instruct the agent to output `PROTOCOL FAILURE: execution-trace — [reason]`
 - [x] Zero-overhead design confirmed
 
 ### Registry                      N/A
 
 ## Gaps
 
-1. **Missing filled-in example:** Add a complete worked example showing a real trace output (not just the empty schema). This helps consumers understand expected output shape.
+1. **Failure assertion not imperative:** The failure assertion describes what goes wrong but does not instruct the agent to output the standardized `PROTOCOL FAILURE: execution-trace — [reason]` tag. Rewrite as an imperative instruction per `src/protocols/failure-reporting/failure-reporting.md`.
 ```

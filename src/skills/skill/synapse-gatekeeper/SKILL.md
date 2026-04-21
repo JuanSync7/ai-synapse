@@ -78,6 +78,8 @@ TaskCreate "Phase 5 — Issue verdict and report"
 - The protocol `.md` file itself
 - > **Read [`references/protocol-checklist.md`](references/protocol-checklist.md)** for the protocol-specific checklist
 
+**Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/improve-skill` or `/auto-research`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
+
 **Early exits (skill flow only):**
 - If `SKILL.md` is absent → emit `VERDICT: REJECT` immediately. Do not proceed.
 - If `EVAL.md` is absent → record a REJECT-tier structural failure. Complete the structural checklist (marking EVAL.md as `[ ]`), then issue `VERDICT: REJECT`. Skip Quality and Registry tiers entirely — they require a working eval.
@@ -169,9 +171,11 @@ A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b
 
 **Verdict rules:**
 
+A tier passes when ALL items in its checklist are `[x]`. Any `[ ]` item means the tier fails — there is no "non-blocking" category. If an item does not apply, omit it from the checklist entirely rather than marking it `[ ]`.
+
 | Condition | Verdict |
 |-----------|---------|
-| All tiers pass | APPROVE |
+| All tiers pass (every item `[x]`) | APPROVE |
 | Any fixable gap (score < 80, weak description, missing README row, missing argument-hint, unverified quality tier, missing registry entry for pipeline skill) | REVISE |
 | EVAL.md absent, name collision, or fundamental structural failure | REJECT |
 
@@ -198,4 +202,4 @@ VERDICT: <APPROVE | REVISE | REJECT>
 <specific actionable items — omit section entirely if APPROVE>
 ```
 
-The verdict must always be the first line of output. Orchestrators rely on this for automated parsing — do not prepend preamble, headers, or explanatory text before it.
+The verdict MUST be the first line of output. DO NOT prepend preamble, headers, or explanatory text before it — orchestrators rely on this for automated parsing.
