@@ -97,6 +97,65 @@
 6. "write a single spec that covers authentication, authorization, audit logging, session management, and password recovery for our entire platform"
 7. "write a spec for a system that must be both real-time and support batch processing, handle unlimited concurrent users, and never fail"
 
+### Update Mode
+10. "We need to add rate limiting requirements to the existing auth spec at docs/AUTH_SPEC.md — the security team flagged it during review"
+11. "Update the pipeline spec to handle a new downstream consumer — the analytics team needs events routed to their Snowflake instance"
+
+### Coherence Failure
+12. "Write a spec for a recommendation engine that has both a query pipeline and an indexing pipeline — they share the concept of 'embedding' but define it differently in each context"
+
 ### Wrong Tool
-8. "can you summarize this existing spec document for a stakeholder meeting?"
-9. "write me an implementation plan for the auth spec we already have"
+13. "can you summarize this existing spec document for a stakeholder meeting?"
+14. "write me an implementation plan for the auth spec we already have"
+
+---
+
+## Structural Criteria (additional)
+
+- [ ] **EVAL-S06:** Update mode in Wrong-Tool Detection
+  - **Test:** Wrong-Tool Detection section includes an entry for updating existing specs that routes to this skill in update mode (not a redirect to another skill).
+  - **Fail signal:** Update requests redirect to another skill, or no update entry exists.
+
+---
+
+## Execution Criteria
+
+- [ ] **EVAL-E01:** Sequential section dispatch
+  - **Test:** Sections are dispatched one at a time through the writer agent, not in parallel batches or waves.
+  - **Fail signal:** Multiple sections dispatched simultaneously, or wave-based execution pattern.
+
+- [ ] **EVAL-E02:** Writer model matches brief assignment
+  - **Test:** The model used for the writer agent matches the `model` field in the section brief from the notepad.
+  - **Fail signal:** Writer dispatched with a different model than specified in the brief.
+
+- [ ] **EVAL-E03:** Section reviewer dispatched for every section
+  - **Test:** After every writer dispatch, the section reviewer agent is dispatched with the brief, written section, and writer sidecar.
+  - **Fail signal:** A section is written without a subsequent review dispatch.
+
+- [ ] **EVAL-E04:** Coherence reviewer after all sections
+  - **Test:** After all sections pass per-section review, the coherence reviewer is dispatched with the full spec and doc map paths.
+  - **Fail signal:** No coherence review, or coherence review before all sections are complete.
+
+- [ ] **EVAL-E05:** Doc map updated after each section write
+  - **Test:** After a section passes review, the doc map's sections table, entity index, and REQ index are updated before proceeding to the next section.
+  - **Fail signal:** Doc map is only updated at the end, or not updated at all.
+
+- [ ] **EVAL-E06:** Remaining briefs scanned for cross-ref impact
+  - **Test:** After each section write, the planner checks whether signals from the writer sidecar affect upcoming briefs and revises them if needed.
+  - **Fail signal:** Briefs are never revised after initial construction, even when new entities are discovered.
+
+- [ ] **EVAL-E07:** NEEDS_MANUAL surfaces specific questions
+  - **Test:** When a section hits max retries, the surfaced message contains specific, answerable questions — not vague "needs work" statements.
+  - **Fail signal:** NEEDS_MANUAL message is generic (e.g., "Section 4 needs manual review").
+
+- [ ] **EVAL-E08:** Update mode detection
+  - **Test:** When an existing spec file and `_SPEC_MAP.md` are present, the skill enters update mode — reads existing files as base, identifies affected sections, and produces update-mode briefs with `change_reason` and `delta` fields.
+  - **Fail signal:** Existing spec is overwritten from scratch, or update mode is not detected.
+
+- [ ] **EVAL-E09:** Writer brief has all required fields
+  - **Test:** Every brief dispatched to the writer contains: `heading`, `key_points` (2+), `depth`, `source_excerpts` (1+), `section_id`, `spec_file`, `map_file`.
+  - **Fail signal:** Brief is missing required fields, or key_points has fewer than 2 items.
+
+- [ ] **EVAL-E10:** Notepad used as external memory
+  - **Test:** The planner creates a notepad file, writes briefs to it, reads it before each dispatch, and updates it after each verdict.
+  - **Fail signal:** Planning decisions are made in-context without file-based memory, or notepad is created but never read back.

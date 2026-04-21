@@ -37,7 +37,7 @@ If the symlink is broken or the repo is missing, tell the user: "ai-skills repo 
 
 ## Domain Vocabulary
 
-> **Read [`../../TAXONOMY.md`](../../TAXONOMY.md)** at session start to internalize the domain and intent vocabulary. If TAXONOMY.md is missing or unreadable, fall back to directory names as the domain vocabulary — list `<repo>/` and use directory names (`docs/`, `code/`, `meta/`, etc.) as domain hints.
+> **Read [`../../SKILL_TAXONOMY.md`](../../SKILL_TAXONOMY.md)** at session start to internalize the domain and intent vocabulary. If SKILL_TAXONOMY.md is missing or unreadable, fall back to directory names as the domain vocabulary — list `<repo>/` and use directory names (`docs/`, `code/`, `meta/`, etc.) as domain hints.
 
 Use this vocabulary to classify every request before routing. The domain tells you which directory to look in; the intent tells you which skill within that directory to pick. The mapping from domain to directory:
 

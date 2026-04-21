@@ -42,13 +42,13 @@
   - **Test:** User says "use write-design-docs." Verify the router skips classification and README scanning, resolves the skill's path, and loads it directly.
   - **Fail signal:** Router goes through the full classification algorithm instead of bypassing.
 
-- [ ] **EVAL-O08:** Router reads TAXONOMY.md for domain vocabulary before routing
-  - **Test:** On first routing request in a session, verify the router reads TAXONOMY.md before classifying.
-  - **Fail signal:** Router classifies based on ad-hoc knowledge or directory listing without reading TAXONOMY.md.
+- [ ] **EVAL-O08:** Router reads SKILL_TAXONOMY.md for domain vocabulary before routing
+  - **Test:** On first routing request in a session, verify the router reads SKILL_TAXONOMY.md before classifying.
+  - **Fail signal:** Router classifies based on ad-hoc knowledge or directory listing without reading SKILL_TAXONOMY.md.
 
-- [ ] **EVAL-O09:** Router handles missing TAXONOMY.md gracefully
-  - **Test:** If TAXONOMY.md is absent or unreadable, verify the router falls back to directory-name-based classification and does not error out.
-  - **Fail signal:** Router fails, errors, or stops responding when TAXONOMY.md is missing.
+- [ ] **EVAL-O09:** Router handles missing SKILL_TAXONOMY.md gracefully
+  - **Test:** If SKILL_TAXONOMY.md is absent or unreadable, verify the router falls back to directory-name-based classification and does not error out.
+  - **Fail signal:** Router fails, errors, or stops responding when SKILL_TAXONOMY.md is missing.
 
 - [ ] **EVAL-O10:** Router loads companion files relative to the skill's directory
   - **Test:** After loading a SKILL.md that references companion files (e.g., `references/skill-design-principles.md`), verify those reads use paths relative to the loaded skill's directory, not relative to the router.

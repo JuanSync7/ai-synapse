@@ -43,6 +43,8 @@ On first substantive exchange, create a scratchpad file to serve as working memo
 
 ## Phase A: Is This Skill-Worthy?
 
+Before starting, check if the target skill directory has a `change_requests/` folder. If it does, read all files in it — these are pending obligations from other skills' brainstorms that affect this skill. Incorporate them as context for the diagnostic questions below.
+
 > **Read [`references/coaching-policy.md`](references/coaching-policy.md)** — governs coaching behavior across both phases.
 
 Work through these questions conversationally — they are not a checklist to blast through:

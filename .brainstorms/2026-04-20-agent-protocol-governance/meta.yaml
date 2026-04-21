@@ -1,0 +1,20 @@
+schema_version: 1
+
+status: active
+topic: "How agents and protocols should fit into taxonomy, governance, and gatekeeper"
+slug: "agent-protocol-governance"
+
+type: "decision"
+shape: ""
+
+scope: project
+
+created: "2026-04-20"
+last_updated: "2026-04-20"
+
+related_sessions: []
+related_skills: ["synapse-gatekeeper", "skill-creator"]
+follow_ups: []
+
+pause_reason: ""
+open_threads_at_pause: []

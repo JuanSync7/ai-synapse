@@ -63,7 +63,7 @@ done
 # --- Identify changed protocol files ---
 changed_protocol_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/protocols/.*\.md$'; then
+    if echo "$file" | grep -q '^src/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/'; then
         found=false
         for p in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
             if [ "$p" = "$file" ]; then

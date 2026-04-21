@@ -1,20 +1,25 @@
 ---
 name: synapse-gatekeeper
-description: "Use when a skill is complete and ready for promotion review, or to check if a skill meets the bar to land in ai-synapse."
+description: "Use when a skill, agent, or protocol is complete and ready for promotion review, or to check if an artifact meets the bar to land in ai-synapse."
 domain: skill.eval
 intent: validate
-tags: [skill, promotion, certification, gatekeeper]
+tags: [skill, agent, protocol, promotion, certification, gatekeeper]
 user-invocable: true
-argument-hint: "<skill-path> [--score <0-100>]"
+argument-hint: "<artifact-path> [--score <0-100>]"
 ---
 
-Synapse gatekeeper is the promotion gate for ai-synapse. A skill is not ready to merge just because it was built — it must meet the bar. This skill reads a finished skill, checks it across three tiers (structural, quality, registry), and issues a parseable verdict. APPROVE = ready for PR. REVISE = fixable gaps. REJECT = fundamental problem that prevents promotion. The verdict is always the first line so orchestrators can parse it without scanning the full report.
+Synapse gatekeeper is the promotion gate for ai-synapse. An artifact is not ready to merge just because it was built — it must meet the bar. This skill reads a finished skill, agent, or protocol, detects the artifact type, and runs the appropriate checklist. APPROVE = ready for PR. REVISE = fixable gaps. REJECT = fundamental problem that prevents promotion. The verdict is always the first line so orchestrators can parse it without scanning the full report.
+
+Three artifact types, three flows:
+- **Skill** (default) — `SKILL.md` in a directory under `src/skills/` → three tiers (structural, quality, registry)
+- **Agent** — `.md` file in `src/agents/` → two tiers (structural, quality) via `references/agent-checklist.md`
+- **Protocol** — `.md` file in `src/protocols/` → two tiers (structural, conformance) via `references/protocol-checklist.md`
 
 ---
 
 ## Execution Scope
 
-Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `test-inputs/` when they appear in the skill directory being reviewed. These are scaffolding artifacts, not part of the live skill surface. Evaluate only `SKILL.md`, `references/`, `templates/`, and the domain `README.md` row.
+Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `test-inputs/` when they appear in the artifact directory being reviewed. These are scaffolding artifacts, not part of the live surface. For skills, evaluate `SKILL.md`, `references/`, `templates/`, and the domain `README.md` row. For agents and protocols, evaluate the `.md` file itself.
 
 ---
 
@@ -24,18 +29,20 @@ Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `tes
 |-------------------------|-------------|
 | Fix gaps identified in a verdict | Issue the verdict first, then redirect to `/improve-skill` |
 | Build a skill from scratch | `/skill-creator` |
-| Review a decision or design approach (not a skill) | `/stakeholder-reviewer` |
-| Evaluate or rewrite an EVAL.md only | `/write-skill-eval` |
+| Build an agent from scratch | `/agent-creator` |
+| Build a protocol from scratch | `/protocol-creator` |
+| Review a decision or design approach (not an artifact) | `/stakeholder-reviewer` |
+| Evaluate or rewrite an EVAL.md only | `/write-skill-eval`, `/write-agent-eval`, or `/write-protocol-eval` |
 
 ---
 
 ## Progress Tracking
 
 ```
-TaskCreate "Phase 1 — Load skill files" status:in_progress
+TaskCreate "Phase 1 — Load artifact and detect type" status:in_progress
 TaskCreate "Phase 2 — Structural tier check"
-TaskCreate "Phase 3 — Quality tier check"
-TaskCreate "Phase 4 — Registry tier check"
+TaskCreate "Phase 3 — Quality / Conformance tier check"
+TaskCreate "Phase 4 — Registry tier check (skills only)"
 TaskCreate "Phase 5 — Issue verdict and report"
 ```
 
@@ -45,35 +52,55 @@ TaskCreate "Phase 5 — Issue verdict and report"
 
 | Input | Required | Description |
 |-------|----------|-------------|
-| `<skill-path>` | Yes | Path to the skill directory (containing SKILL.md) |
-| `--score <0-100>` | No | Eval score from a prior `/improve-skill` or auto-research run |
+| `<artifact-path>` | Yes | Path to the artifact: skill directory (containing SKILL.md), agent `.md` file in `src/agents/`, or protocol `.md` file in `src/protocols/` |
+| `--score <0-100>` | No | Eval score from a prior `/improve-skill` or auto-research run (skills only) |
 
 ---
 
-## Phase 1 — Load
+## Phase 1 — Load and Detect Type
 
-Read the following files:
-- `<skill-path>/SKILL.md`
-- `<skill-path>/EVAL.md`
-- `<skill-path>/` directory listing (to detect `references/`, `templates/`, `examples/`)
+**Artifact type detection:**
+- Path matches `src/agents/*.md` → **agent flow**
+- Path matches `src/protocols/**/*.md` → **protocol flow**
+- Path contains a `SKILL.md` file → **skill flow** (default)
+- None of the above → emit `VERDICT: REJECT` with "unrecognized artifact type"
 
-**Early exits:**
+**Skill flow — read:**
+- `<artifact-path>/SKILL.md`
+- `<artifact-path>/EVAL.md`
+- `<artifact-path>/` directory listing (to detect `references/`, `templates/`, `examples/`)
+
+**Agent flow — read:**
+- The agent `.md` file itself
+- > **Read [`references/agent-checklist.md`](references/agent-checklist.md)** for the agent-specific checklist
+
+**Protocol flow — read:**
+- The protocol `.md` file itself
+- > **Read [`references/protocol-checklist.md`](references/protocol-checklist.md)** for the protocol-specific checklist
+
+**Early exits (skill flow only):**
 - If `SKILL.md` is absent → emit `VERDICT: REJECT` immediately. Do not proceed.
 - If `EVAL.md` is absent → record a REJECT-tier structural failure. Complete the structural checklist (marking EVAL.md as `[ ]`), then issue `VERDICT: REJECT`. Skip Quality and Registry tiers entirely — they require a working eval.
+
+**Early exits (agent/protocol flow):**
+- If the `.md` file is absent or empty → emit `VERDICT: REJECT` immediately.
+- If frontmatter is absent → emit `VERDICT: REJECT` immediately.
 
 ---
 
 ## Phase 2 — Structural Tier
 
-> **Read [`../../TAXONOMY.md`](../../TAXONOMY.md)** to validate `domain` and `intent` values against the controlled vocabulary.
+### Skill flow
+
+> **Read [`../../SKILL_TAXONOMY.md`](../../SKILL_TAXONOMY.md)** to validate `domain` and `intent` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
 | SKILL.md exists | File is present and non-empty |
 | EVAL.md exists | File is present (**REJECT if absent**) |
 | Frontmatter complete | `name`, `description`, `domain`, `intent` all present |
-| `domain` in TAXONOMY.md | Value matches a row in TAXONOMY.md |
-| `intent` in TAXONOMY.md | Value matches a row in TAXONOMY.md |
+| `domain` in SKILL_TAXONOMY.md | Value matches a row in SKILL_TAXONOMY.md |
+| `intent` in SKILL_TAXONOMY.md | Value matches a row in SKILL_TAXONOMY.md |
 | `tags` well-formed | Array of lowercase hyphenated strings |
 | `user-invocable` present | Field exists (true or false) |
 | `argument-hint` present | Present when `user-invocable: true` |
@@ -82,9 +109,19 @@ Read the following files:
 
 **Name uniqueness:** Check `SKILLS_REGISTRY.yaml` for any entry with the same `name` value. A collision is an immediate REJECT — two skills with the same name cannot coexist in `~/.claude/skills/`.
 
+### Agent flow
+
+Use the checklist from `references/agent-checklist.md` (loaded in Phase 1). Validate against `AGENT_TAXONOMY.md` and `AGENTS_REGISTRY.md`.
+
+### Protocol flow
+
+Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). Validate against `PROTOCOL_TAXONOMY.md`.
+
 ---
 
-## Phase 3 — Quality Tier
+## Phase 3 — Quality / Conformance Tier
+
+### Skill flow
 
 > **Read [`references/skill-design-principles.md`](references/skill-design-principles.md)** before evaluating quality criteria.
 
@@ -99,9 +136,19 @@ Read the following files:
 
 **If no score is provided:** Mark the quality tier as `unverified`. A missing score blocks APPROVE — a skill cannot be certified without a measured eval score. The verdict will be at most REVISE.
 
+### Agent flow
+
+Use the Tier 2 (Quality) checks from `references/agent-checklist.md`.
+
+### Protocol flow
+
+Use the Tier 2 (Conformance) checks from `references/protocol-checklist.md`.
+
 ---
 
-## Phase 4 — Registry Tier
+## Phase 4 — Registry Tier (Skills Only)
+
+**Agent and protocol flows skip this phase entirely** — agents are listed in `AGENTS_REGISTRY.md` (checked in Phase 2), protocols have no registry.
 
 > **Read [`../../SKILLS_REGISTRY.yaml`](../../SKILLS_REGISTRY.yaml)** to check registration status.
 
@@ -135,19 +182,17 @@ A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b
 ```
 VERDICT: <APPROVE | REVISE | REJECT>
 
-## Certification Report — <skill-name>
+## Certification Report — <artifact-name> (<skill | agent | protocol>)
 
 ### Structural                    <✓ | ✗>
-- [x] SKILL.md exists
-- [x] EVAL.md exists
-- [ ] ...
-
-### Quality                       <✓ | ✗ | unverified>
-- [x] Description is routing contract
-- [ ] ...
-
-### Registry                      <✓ | ✗>
 - [x] ...
+
+### Quality / Conformance         <✓ | ✗ | unverified>
+- [x] ...
+
+### Registry                      <✓ | ✗ | N/A>
+- [x] ...
+(N/A for agents and protocols)
 
 ## Gaps
 <specific actionable items — omit section entirely if APPROVE>

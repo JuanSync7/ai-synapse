@@ -1,6 +1,6 @@
 # Example Verdicts — synapse-gatekeeper
 
-Three complete worked examples. Each shows the full certification report output for a realistic skill, illustrating the expected format and content for each verdict type.
+Five worked examples — three for skills, one for an agent, one for a protocol. Each shows the full certification report output, illustrating the expected format for each artifact type and verdict.
 
 ---
 
@@ -19,8 +19,8 @@ VERDICT: APPROVE
 - [x] SKILL.md exists
 - [x] EVAL.md exists
 - [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `skill.create` in TAXONOMY.md
-- [x] intent `write` in TAXONOMY.md
+- [x] domain `skill.create` in SKILL_TAXONOMY.md
+- [x] intent `write` in SKILL_TAXONOMY.md
 - [x] tags well-formed: [skill, creation, scaffolding, eval]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-name> [--domain <domain>]"
@@ -57,8 +57,8 @@ VERDICT: REVISE
 - [x] SKILL.md exists
 - [x] EVAL.md exists
 - [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `skill.eval` in TAXONOMY.md
-- [x] intent `generate` in TAXONOMY.md
+- [x] domain `skill.eval` in SKILL_TAXONOMY.md
+- [x] intent `generate` in SKILL_TAXONOMY.md
 - [x] tags well-formed: [eval, skill, test-prompts, output-criteria]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-path>"
@@ -100,8 +100,8 @@ VERDICT: REJECT
 - [x] SKILL.md exists
 - [ ] EVAL.md exists — ABSENT (REJECT)
 - [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `engineering.planning` in TAXONOMY.md
-- [x] intent `write` in TAXONOMY.md
+- [x] domain `engineering.planning` in SKILL_TAXONOMY.md
+- [x] intent `write` in SKILL_TAXONOMY.md
 - [x] tags well-formed
 - [x] user-invocable: true
 - [x] argument-hint present
@@ -115,4 +115,72 @@ VERDICT: REJECT
 ## Gaps
 
 1. **EVAL.md missing:** No certification is possible without an EVAL.md. Run `/write-skill-eval src/skills/skill/write-scope-docs` to generate one, then re-run `/synapse-gatekeeper` with a measured eval score.
+```
+
+---
+
+## Example 4 — Agent APPROVE
+
+**Input:** `/synapse-gatekeeper src/agents/skill-eval-judge.md`
+
+---
+
+```
+VERDICT: APPROVE
+
+## Certification Report — skill-eval-judge (agent)
+
+### Structural                    ✓
+- [x] Agent file exists and is non-empty
+- [x] Frontmatter complete (name, description, domain, role)
+- [x] domain `skill-eval` in AGENT_TAXONOMY.md
+- [x] role `judge` in AGENT_TAXONOMY.md
+- [x] tags well-formed: [output-criteria, binary-grading, impartial]
+- [x] Name follows `<domain>-<concern>-<role>` convention
+- [x] Name globally unique in AGENTS_REGISTRY.md
+- [x] Listed in AGENTS_REGISTRY.md with correct description and consumers
+
+### Quality                       ✓
+- [x] Clear persona ("impartial judge" mindset in opening paragraph)
+- [x] Instructions trace to failure modes
+- [x] Under 300 lines (98 lines)
+- [x] Consumer skills identified (skill-creator, write-skill-eval, improve-skill)
+- [x] No user-facing language
+
+### Registry                      N/A
+```
+
+---
+
+## Example 5 — Protocol REVISE
+
+**Input:** `/synapse-gatekeeper src/protocols/traces/execution-trace.md`
+
+---
+
+```
+VERDICT: REVISE
+
+## Certification Report — execution-trace (protocol)
+
+### Structural                    ✓
+- [x] Protocol file exists and is non-empty
+- [x] Frontmatter complete (name, description, domain, type)
+- [x] domain `observability` in PROTOCOL_TAXONOMY.md
+- [x] type `trace` in PROTOCOL_TAXONOMY.md
+- [x] tags well-formed: [execution-trace, self-reported, subagent-observability]
+- [x] Schema block present (YAML trace schema)
+- [x] Injection instructions present
+
+### Conformance                   ✗
+- [x] Schema is machine-parseable
+- [x] Injection instructions self-contained
+- [ ] At least one filled-in example of trace output
+- [x] Zero-overhead design confirmed
+
+### Registry                      N/A
+
+## Gaps
+
+1. **Missing filled-in example:** Add a complete worked example showing a real trace output (not just the empty schema). This helps consumers understand expected output shape.
 ```
