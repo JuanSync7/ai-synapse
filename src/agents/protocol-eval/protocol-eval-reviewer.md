@@ -1,5 +1,5 @@
 ---
-name: protocol-review-agent
+name: protocol-eval-reviewer
 description: "Signal-strength reviewer — validates protocol instructions use commitment language, named trigger moments, and follow universal anatomy"
 domain: protocol-eval
 role: reviewer
