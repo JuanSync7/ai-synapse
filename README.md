@@ -9,6 +9,8 @@
   <sub>Composable skills for autonomous doc authoring, code generation, testing, and multi-agent pipelines</sub>
 </p>
 
+> **Status: pre-release (v0.x).** The framework scaffolding — install, registry, governance, taxonomy, pipeline — is stable. Individual skills are in varying states of maturity (see the `Status` column in [`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md)); some are draft stubs reserved for future work.
+
 ---
 
 ## What is AI-Synapse?
