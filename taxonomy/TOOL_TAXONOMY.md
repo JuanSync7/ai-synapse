@@ -13,6 +13,7 @@ Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention.
 | `validation` | Input/output validation, schema checking |
 | `analysis` | Code analysis, metric computation |
 | `integration` | External service interaction tooling |
+| `synapse` | Synapse ecosystem tooling — branching, registry sync, validation |
 
 ## Actions
 
@@ -24,6 +25,7 @@ Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention.
 | `parser` | Extracts structured data from unstructured input |
 | `transformer` | Converts between formats |
 | `reporter` | Aggregates and formats results for consumption |
+| `automator` | Runs a sequence of mechanical operations (git, file, CI) |
 
 ## Types
 

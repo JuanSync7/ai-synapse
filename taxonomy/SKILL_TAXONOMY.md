@@ -22,6 +22,7 @@ Controlled vocabulary for skill metadata. When creating a new skill, pick `domai
 | `meta` | Meta-level tools: routing, framework utilities |
 | `optimization` | Autonomous iterative improvement |
 | `orchestration` | Multi-agent coordination |
+| `synapse` | Synapse ecosystem management — branching, registry, validation |
 | `creative` | Standalone creative/visual |
 | `integration` | External tool integrations |
 | `agent` | Agent development lifecycle |

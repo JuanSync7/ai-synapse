@@ -8,6 +8,7 @@ Controlled vocabulary for protocol metadata. When creating a new protocol, pick 
 |--------|-------------|
 | `observability` | Execution traces, logging conventions, telemetry schemas |
 | `memory` | Working memory patterns, state externalization, compaction safety |
+| `synapse` | Synapse ecosystem conventions — contribution workflow, branching, CR lifecycle |
 
 ## Types
 

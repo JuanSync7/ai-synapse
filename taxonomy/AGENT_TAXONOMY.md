@@ -11,6 +11,7 @@ Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.
 | `skill-eval` | Skill evaluation and quality assessment |
 | `docs` | Document authoring, review, and maintenance |
 | `protocol-eval` | Protocol evaluation, signal-strength review, conformance testing |
+| `synapse` | Synapse ecosystem management — workflow automation, manifest generation |
 
 ## Roles
 
