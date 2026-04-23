@@ -17,7 +17,7 @@ The relevant signal: does the user have a concrete, decided answer to "what are 
 - Topic is "I want Claude to always do X" or "I want a command that does Y"
 - Topic describes agentic behavior extension
 
-**Action:** Redirect with: *"This looks skill-shaped. `/synapse-brainstorm` is purpose-built for this — hand off, or keep here?"* Default-keep is valid; user may want to explore the idea before deciding it's a skill.
+**Action:** Hard redirect: *"This looks skill-shaped. `/synapse-brainstorm` is purpose-built for thinking through new skill ideas — redirecting there."* Do not offer to keep here; the skill-shaped topic needs artifact-aware lenses that this skill does not carry.
 
 ### 2. Clear direction already → implementation skill
 

@@ -138,3 +138,46 @@
 ### Artifacts
 - Notepad: `<path>/notepad.md`
 - Meta: `<path>/meta.yaml`
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PER-THREAD MEMO — used when coach offers multi-memo output
+     for planning/decompose brainstorms with deliverable-shaped threads.
+     One file per thread: T1-<slug>.md, T2-<slug>.md, etc.
+     Summary memo still produced alongside these.
+     ═══════════════════════════════════════════════════════════════════ -->
+
+# Thread Memo — <thread title>
+
+> Thread: T<n> | Session: `<YYYY-MM-DD-<slug>>` | Summary memo: `<path>`
+
+---
+
+## What this is
+<!-- One paragraph: what deliverable/component/file this thread represents. -->
+
+## Why it matters
+<!-- What problem this solves or what breaks without it. -->
+
+## Key decisions
+<!-- Resolved positions from this thread's Zone 2 section.
+     Each bullet self-contained enough for an implementor to act on. -->
+
+## Edge cases considered
+<!-- From lens rotation — what was pressure-tested and how it's handled. -->
+
+| Edge case | Handling |
+|---|---|
+| <edge case> | <how> |
+
+## Verbatim blocks
+<!-- VERBATIM -->
+<!-- Structural content copied exactly from notepad Zone 2.
+     Schemas, interfaces, decision tables, comparison matrices. -->
+
+## Dependencies
+<!-- What this thread depends on (other threads, external systems). -->
+
+## Open questions
+<!-- Remaining uncertainties for the implementor. -->

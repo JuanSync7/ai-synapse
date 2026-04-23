@@ -6,6 +6,7 @@ schema_version: 1
 
 # Session state
 status: active             # active | paused | done | abandoned
+position: "[A] — initial discovery"  # [A], [B:<move>] — <context>, [D], [P], [X]
 topic: "<short human-readable topic>"
 slug: "<kebab-case-topic-slug>"
 

@@ -1,6 +1,8 @@
 # Moves
 
-The 7 moves available during Phase B. All moves are valid "chess moves" at any time — type classification biases which moves dominate in a session but does not restrict them.
+> This file is the detailed reference for Phase B moves. SKILL.md defines the compact node format (Load/Do/Don't/Exit); this file provides voice examples, state effects, and rejected candidates per move.
+
+The 7 moves available during Phase B. All moves are valid "chess moves" at any time — type classification biases which moves dominate in a session but does not restrict them. Each move maps to a `[B:<move>]` node in the flow graph with fully-connected exits.
 
 Every session uses a mix. Circle-back is always available; a final Circle-back is mandatory before Done Signal.
 
@@ -93,6 +95,18 @@ This line is mandatory — it makes the lens gate auditable. If either lens has 
 **Voice:** "We've worked this for a while. T5 and T7 are at a point where sleeping on them would probably surface more than pushing through tonight. Want to pause and resume tomorrow? I'll save the notepad."
 
 See `mentor-circuit-breaker.md` for the full pause protocol.
+
+## Side-quest Protocol
+
+When a user raises a tangential concern mid-thread, [B:Generate] opens it as a new thread with the turn number noted in the notepad. The agent records it in Zone 2 and returns to the prior move. Side-quests are not interruptions — they are new threads with a parent context. The many-to-many transitions between moves handle this naturally.
+
+## Multi-move Turns
+
+The agent may traverse multiple move-nodes in one turn. For example, the user says "Yeah T4 is settled, and actually that makes me wonder about versioning" — the agent:
+1. Enters [B:Agree] — checks lens gate, locks T4 as resolved
+2. Enters [B:Generate] — opens T5 (versioning) as a new thread
+
+Record the **landing position** after all moves in that turn are complete. The notepad captures all state changes from all moves made in the turn — not just the last one.
 
 ## Move Vocabulary — Quick Map
 
