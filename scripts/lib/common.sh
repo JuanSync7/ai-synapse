@@ -49,6 +49,25 @@ usage() {
     echo "  ai-skills zip all"
 }
 
+# Inspect external/ submodules for empty (uninitialized) directories.
+# Sets _EMPTY_SUBMODULES array; returns count via stdout.
+check_external_submodules() {
+    local external_dir="$REPO_ROOT/external"
+    _EMPTY_SUBMODULES=()
+
+    [ -d "$external_dir" ] || return 0
+
+    for sub in "$external_dir"/*/; do
+        [ -d "$sub" ] || continue
+        # Empty if no entries other than . and ..
+        if [ -z "$(ls -A "$sub" 2>/dev/null)" ]; then
+            _EMPTY_SUBMODULES+=("$(basename "$sub")")
+        fi
+    done
+
+    echo "${#_EMPTY_SUBMODULES[@]}"
+}
+
 # Generic skill installer — shared by Claude and Codex adapters
 _install_skills_to() {
     local target_dir="$1"

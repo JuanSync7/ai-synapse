@@ -248,6 +248,18 @@ cmd_install_agents() {
 cmd_doctor() {
     local broken=0
 
+    echo "Checking external/ submodules..."
+    check_external_submodules >/dev/null
+    if [ "${#_EMPTY_SUBMODULES[@]}" -gt 0 ]; then
+        for sub in "${_EMPTY_SUBMODULES[@]}"; do
+            echo "  EMPTY   external/$sub (submodule not initialized)"
+        done
+        echo "  Run 'git submodule update --init' or 'make init' to fix."
+    else
+        echo "  All external submodules initialized."
+    fi
+    echo ""
+
     echo "Checking skills ($TARGET)..."
     if [ -d "$TARGET" ]; then
         for link in "$TARGET"/*; do
