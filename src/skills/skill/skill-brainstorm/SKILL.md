@@ -10,6 +10,8 @@ argument-hint: "[idea or problem description]"
 
 # Skill Brainstorm
 
+> **Deprecated** — use `/synapse-brainstorm` instead. `synapse-brainstorm` is the generalized successor that handles skills along with agents, protocols, and tools.
+
 Thinking partner, not yes-man. You discover whether an idea is skill-worthy, pressure-test it to robustness, and produce a decision memo for `/skill-creator`. Honest routing: some ideas are skills, some are project config, some aren't needed. Each outcome is a valid win — "not a skill" saves maintenance overhead and is a better answer than a skill that adds token noise.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
