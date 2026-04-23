@@ -256,10 +256,29 @@ Examples:
 
 ## Contribution Workflow
 
+### Branching Model
+
+```
+feature/<synapse>/<artifact-name>  →  develop  →  main
+```
+
+Where `<synapse>` is one of: `skill`, `agent`, `protocol`, `tool`.
+
+- **`feature/*`** — contributor works here. Changes + a `change_requests/` file documenting the rationale.
+- **`develop`** — integration branch. Artifact owner reviews the CR memo + diff, and if accepted, deletes the change request file and merges.
+- **`main`** — release branch. Maintainer merges from `develop` only when **no `change_requests/` files remain** in the PR diff — their absence is proof that every change was owner-reviewed.
+
+**Branch naming convention:** `feature/<synapse>/<name>` — e.g., `feature/skill/asic-lint-fix`, `feature/agent/synthesis-monitor`, `feature/tool/gpu-profiler-v2`. This gives filterable grouping (`feature/skill/*`) without hierarchical merge cascading.
+
+**Why two gates, not one:** artifacts are directory-isolated so cross-artifact conflicts are rare, but the `develop` → `main` gate gives a maintainer the chance to batch-review and verify all CRs were resolved before anything ships.
+
+### Steps
+
 1. **Build** — use `/skill-creator` to scaffold the skill, or author it manually.
 2. **Improve** — run `/improve-skill` until the eval score reaches ≥ 80.
 3. **Certify** — run `/synapse-gatekeeper <skill-path> --score <score>`. Resolve any REVISE gaps.
-4. **PR** — open a pull request with the APPROVE verdict pasted into the description. The pre-commit hook enforces structural checks; the GitHub Action enforces quality checks.
+4. **PR to develop** — open a pull request with the APPROVE verdict pasted into the description. Include any `change_requests/` files documenting the rationale. The artifact owner reviews the CR + diff, deletes the CR file on acceptance, and merges.
+5. **PR to main** — maintainer merges `develop` → `main`. The PR must contain **no `change_requests/` files** — if any are present, the merge is blocked until the artifact owner resolves them.
 
 A PR without an APPROVE verdict in the description will not be merged.
 
@@ -306,12 +325,14 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 
 ## Change Requests
 
+Change requests serve two roles: **scope control** (defer out-of-scope changes) and **merge gating** (their presence blocks `develop` → `main` merges).
+
 When brainstorming or improving a skill reveals that another skill, agent, protocol, tool, or pathway needs updating, drop a change request file in the affected target's `change_requests/` folder rather than expanding scope.
 
 - **One file per change**, named `YYYY-MM-DD-short-description.md`
-- **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template.
+- **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template. Must be self-contained — brainstorm notepads are working memory (`.brainstorms/`, gitignored) and do not ship with the CR.
 - **Consumed by** `/synapse-brainstorm` — it checks for `change_requests/` on entry and incorporates pending requests as context.
-- **Deleted** after the change is implemented. An empty folder means no pending obligations.
+- **Lifecycle:** contributor creates the CR on a feature branch → artifact owner reviews the CR + implementation diff on the PR to `develop` → owner deletes the CR file on acceptance and merges → `develop` → `main` PR is blocked if any CR files remain. An empty `change_requests/` folder (or no folder) means no pending obligations.
 
 ---
 

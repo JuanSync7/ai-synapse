@@ -67,6 +67,9 @@ The flow is: **brainstorm → create → improve → certify → PR**. Each stag
 - [ ] `cortex.ps1` — native PowerShell dispatcher for Windows (no WSL required)
 - [ ] Protocol and tool lifecycle skills (create → evaluate → certify)
 - [ ] Agent creator improvements — companion scaffolding, symlink wiring
+- [ ] Pre-commit enforcement of `change_requests/` gate on `main` branch
+- [x] ~~Auto-branch creation from `/synapse-brainstorm`~~ — `synapse-cr-dispatcher` tool dispatches CRs to `feature/<synapse>/<name>/<slug>` branches
+- [x] ~~Tool test infrastructure~~ — `./cortex test` discovers and runs tool tests; pre-commit auto-runs tests for changed tools
 
 ### Future
 
@@ -283,6 +286,8 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex scaffold tool integration my-mcp   # scaffold a new tool
 ./cortex validate                           # run all structural checks
 ./cortex validate src/skills/docs/my-skill  # validate one artifact
+./cortex test                               # run all tool tests
+./cortex test src/tools/synapse/my-tool     # test one tool
 ```
 
 ### Maintainer — repo hygiene and repair
@@ -318,6 +323,25 @@ See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
 ```
 
 → See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.
+
+---
+
+## Contributing
+
+Contributions follow a two-gate branching model:
+
+```
+feature/<synapse>/<name>  →  develop  →  main
+```
+
+Where `<synapse>` is one of: `skill`, `agent`, `protocol`, `tool`.
+
+1. Create a feature branch (`feature/skill/my-fix`, `feature/tool/my-tool`, etc.)
+2. Make changes and include a `change_requests/` file documenting the rationale
+3. PR to `develop` — artifact owner reviews the CR + diff, deletes the CR on acceptance
+4. PR to `main` — blocked if any `change_requests/` files remain in the diff
+
+See [`GOVERNANCE.md`](GOVERNANCE.md) for full promotion criteria, naming conventions, and the contribution workflow.
 
 ---
 
