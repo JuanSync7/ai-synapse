@@ -1,0 +1,1 @@
+../../skill-creator/references/writing-conventions.md

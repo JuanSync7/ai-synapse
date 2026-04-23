@@ -17,6 +17,7 @@ Documentation authoring skills. Produces scope docs, architecture docs, specs, s
 | [write-test-docs](write-test-docs/) | write | Test planning document for module test specs |
 | [write-test-coverage](write-test-coverage/) | write | Living test coverage register — maps acceptance criteria to test scenarios |
 | [patch-docs](patch-docs/) | improve | Diff-driven incremental doc patcher — targeted section updates from git diffs |
+| [write-postmortem](write-postmortem/) | write | Structured blameless postmortem document from incident facts |
 
 ## Layer Chain
 

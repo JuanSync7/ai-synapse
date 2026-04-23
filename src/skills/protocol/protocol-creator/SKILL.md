@@ -22,7 +22,7 @@ Protocols are not skills. Skills are long-running workflows with phases and prog
 - **User wants to create an agent** → redirect to `/agent-creator`
 - **User wants to improve an existing protocol** → redirect to `/improve-skill` (adapt for protocols until `/improve-protocol` exists)
 - **User wants to evaluate a protocol** → redirect to `/write-protocol-eval`
-- **User wants to brainstorm whether something should be a protocol** → redirect to `/skill-brainstorm`
+- **User wants to brainstorm whether something should be a protocol** → redirect to `/synapse-brainstorm`
 - **User wants to certify a protocol for promotion** → redirect to `/synapse-gatekeeper`
 
 ## Progress Tracking
@@ -46,13 +46,13 @@ Mark each task `in_progress` when starting, `completed` when done.
 |-------|----------|-------------|
 | `<protocol-name>` | Yes | Name for the protocol (lowercase, hyphenated) |
 | `--domain <domain>` | No | Domain from PROTOCOL_TAXONOMY.md (prompted if not provided) |
-| Decision memo path | No | From `/skill-brainstorm` — if provided, read it first and extract anchors |
+| Decision memo path | No | From `/synapse-brainstorm` — if provided, read it first and extract anchors |
 
 ---
 
 ## Phase 1: Elicit Precision Anchors
 
-**Decision memo check:** If the user provides a decision memo from `/skill-brainstorm`, read it first. Evaluate the memo against the gate conditions below. Fill any gaps the memo doesn't cover. If all gate conditions are already met, proceed directly to Phase 2. If the memo is incomplete, use it as a starting point and complete the remaining anchors.
+**Decision memo check:** If the user provides a decision memo from `/synapse-brainstorm`, read it first. Evaluate the memo against the gate conditions below. Fill any gaps the memo doesn't cover. If all gate conditions are already met, proceed directly to Phase 2. If the memo is incomplete, use it as a starting point and complete the remaining anchors.
 
 Extract these four precision anchors — each MUST have a concrete, unambiguous answer:
 
@@ -67,7 +67,7 @@ Extract these four precision anchors — each MUST have a concrete, unambiguous 
 
 **Duplicate check:** Read `PROTOCOL_REGISTRY.md` (if it exists) and check for overlapping protocols. Surface any overlap and let the user decide: differentiate, merge, or abandon.
 
-> **Read [`../../PROTOCOL_TAXONOMY.md`](../../PROTOCOL_TAXONOMY.md)** to pick `domain` and `type` values. If nothing fits, propose an addition — do not invent ad hoc values.
+> **Read [`../../../../taxonomy/PROTOCOL_TAXONOMY.md`](../../../../taxonomy/PROTOCOL_TAXONOMY.md)** to pick `domain` and `type` values. If nothing fits, propose an addition — do not invent ad hoc values.
 
 **Phase 1 gate — all must be true before proceeding:**
 - [ ] All 4 precision anchors have concrete, unambiguous answers
@@ -124,7 +124,7 @@ Every protocol MUST have this. When the trigger fires but preconditions aren't m
 PROTOCOL FAILURE: <protocol-name> — [specific reason]
 ```
 
-This follows the tag format in `src/protocols/failure-reporting/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the output naturally.
+This follows the tag format in `src/protocols/observability/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the output naturally.
 
 ### Section 5: Configuration (optional)
 
@@ -147,9 +147,9 @@ Protocols MUST be 30–120 lines including frontmatter. Over 120 lines means the
 
 ## Phase 3: Signal-Strength Review
 
-> **Read [`agents/protocol-review-agent.md`](agents/protocol-review-agent.md)** and dispatch as an Agent (model: sonnet) with the drafted protocol file as input.
+> **Read [`agents/protocol-eval-reviewer.md`](agents/protocol-eval-reviewer.md)** and dispatch as an Agent (model: sonnet) with the drafted protocol file as input.
 
-MUST dispatch the protocol-review-agent as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose of a separate reviewer.
+MUST dispatch the protocol-eval-reviewer as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose of a separate reviewer.
 
 **If any checks fail:** Fix the specific issues identified in the review. Re-dispatch the agent for a second review.
 
@@ -212,5 +212,5 @@ A complete protocol has:
 | Protocol needs improvement after creation | `/improve-skill <protocol-path>` |
 | Protocol needs conformance tests | `/write-protocol-eval <protocol-path>` |
 | Protocol needs promotion certification | `/synapse-gatekeeper <protocol-path>` |
-| User wants to brainstorm whether something should be a protocol | `/skill-brainstorm` |
+| User wants to brainstorm whether something should be a protocol | `/synapse-brainstorm` |
 | User wants to create a skill instead | `/skill-creator` |

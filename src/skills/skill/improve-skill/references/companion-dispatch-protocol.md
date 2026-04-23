@@ -1,0 +1,1 @@
+../../skill-creator/references/companion-dispatch-protocol.md

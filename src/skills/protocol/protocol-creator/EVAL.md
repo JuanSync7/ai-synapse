@@ -15,7 +15,7 @@
   - **Fail signal:** Anchors are re-elicited interactively even though the memo already satisfied all gate conditions, or the memo is ignored and elicitation proceeds from scratch.
 
 - [ ] **EVAL-E03:** Protocol review agent dispatched with correct model
-  - **Test:** Verify the trace shows an Agent() call to `agents/protocol-review-agent.md` using `model: sonnet` with the drafted protocol file as input.
+  - **Test:** Verify the trace shows an Agent() call to `agents/protocol-eval-reviewer.md` using `model: sonnet` with the drafted protocol file as input.
   - **Fail signal:** Review agent is not dispatched (inline review substituted instead), or the dispatch omits the model specification.
 
 - [ ] **EVAL-E04:** Re-dispatch on review failure, two-cycle cap honored

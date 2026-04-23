@@ -1,6 +1,6 @@
 # Protocol Checklist
 
-Loaded by synapse-gatekeeper when the artifact path points to `src/protocols/**/*.md`. Protocols have two tiers — no registry tier (protocols are not in SKILLS_REGISTRY.yaml).
+Loaded by synapse-gatekeeper when the artifact path points to `src/protocols/<domain>/<protocol>.md`. Protocols have two tiers — no registry tier (protocols are not in SKILLS_REGISTRY.yaml).
 
 ---
 
@@ -8,7 +8,7 @@ Loaded by synapse-gatekeeper when the artifact path points to `src/protocols/**/
 
 | Check | Pass condition |
 |-------|---------------|
-| Protocol file exists | `.md` file is present in `src/protocols/` and non-empty |
+| Protocol file exists | `.md` file is present in `src/protocols/<domain>/` and non-empty |
 | Frontmatter complete | `name`, `description`, `domain`, `type` all present |
 | `domain` in PROTOCOL_TAXONOMY.md | Value matches a row in PROTOCOL_TAXONOMY.md |
 | `type` in PROTOCOL_TAXONOMY.md | Value matches a row in PROTOCOL_TAXONOMY.md |
@@ -16,6 +16,7 @@ Loaded by synapse-gatekeeper when the artifact path points to `src/protocols/**/
 | Mental model paragraph present | One paragraph after the heading explaining WHY the protocol exists |
 | Contract section present | Section with imperative rules (MUST/NEVER/BEFORE/AFTER) — behavioral or schema-based |
 | Failure assertion present | Protocol contains a `PROTOCOL FAILURE: [protocol-name] — [reason]` instruction |
+| Domain README has row | Domain `README.md` contains a row linking this protocol |
 
 ---
 

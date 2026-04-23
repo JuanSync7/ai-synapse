@@ -6,7 +6,8 @@ End-to-end skill development lifecycle — brainstorm, create, evaluate, improve
 
 | Skill | Intent | Description |
 |-------|--------|-------------|
-| [skill-brainstorm](skill-brainstorm/) | plan | Coaching brainstorm to shape skill ideas before /skill-creator |
+| [skill-brainstorm](skill-brainstorm/) | plan | **Deprecated** — superseded by synapse-brainstorm |
+| [synapse-brainstorm](synapse-brainstorm/) | plan | Generalized brainstorm for any artifact type with multi-artifact output |
 | [skill-creator](skill-creator/) | write | Scaffolds new skills with SKILL.md and EVAL.md |
 | [improve-skill](improve-skill/) | improve | Score-fix-rescore loop to improve skill quality |
 | [write-skill-eval](write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |

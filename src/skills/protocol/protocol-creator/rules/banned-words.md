@@ -34,4 +34,4 @@ Words and phrases that MUST NOT appear in a protocol's Contract or Failure Asser
 
 ## How to Use
 
-During Phase 3 (Signal-Strength Review), protocol-review-agent checks every sentence in the Contract and Failure Assertion sections against this list. Any match is a FAIL that must be rewritten before the protocol ships.
+During Phase 3 (Signal-Strength Review), protocol-eval-reviewer checks every sentence in the Contract and Failure Assertion sections against this list. Any match is a FAIL that must be rewritten before the protocol ships.

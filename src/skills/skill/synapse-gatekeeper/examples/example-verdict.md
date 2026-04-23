@@ -121,7 +121,7 @@ VERDICT: REJECT
 
 ## Example 4 — Agent APPROVE
 
-**Input:** `/synapse-gatekeeper src/agents/skill-eval-judge.md`
+**Input:** `/synapse-gatekeeper src/agents/skill-eval/skill-eval-judge.md`
 
 ---
 
@@ -139,6 +139,7 @@ VERDICT: APPROVE
 - [x] Name follows `<domain>-<concern>-<role>` convention
 - [x] Name globally unique in AGENTS_REGISTRY.md
 - [x] Listed in AGENTS_REGISTRY.md with correct description and consumers
+- [x] Domain README (src/agents/skill-eval/README.md) has row for skill-eval-judge
 
 ### Quality                       ✓
 - [x] Clear persona ("impartial judge" mindset in opening paragraph)
@@ -154,7 +155,7 @@ VERDICT: APPROVE
 
 ## Example 5 — Protocol REVISE
 
-**Input:** `/synapse-gatekeeper src/protocols/traces/execution-trace.md`
+**Input:** `/synapse-gatekeeper src/protocols/observability/execution-trace.md`
 
 ---
 
@@ -172,6 +173,7 @@ VERDICT: REVISE
 - [x] Mental model paragraph present
 - [x] Contract section present
 - [x] Failure assertion present
+- [x] Domain README (src/protocols/observability/README.md) has row for execution-trace
 
 ### Conformance                   ✗
 - [x] Contract is unambiguous
@@ -183,5 +185,5 @@ VERDICT: REVISE
 
 ## Gaps
 
-1. **Failure assertion not imperative:** The failure assertion describes what goes wrong but does not instruct the agent to output the standardized `PROTOCOL FAILURE: execution-trace — [reason]` tag. Rewrite as an imperative instruction per `src/protocols/failure-reporting/failure-reporting.md`.
+1. **Failure assertion not imperative:** The failure assertion describes what goes wrong but does not instruct the agent to output the standardized `PROTOCOL FAILURE: execution-trace — [reason]` tag. Rewrite as an imperative instruction per `src/protocols/observability/failure-reporting.md`.
 ```

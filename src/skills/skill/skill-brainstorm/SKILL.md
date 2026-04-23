@@ -85,7 +85,7 @@ Coach's honest judgment that no major flaws remain — only long-tail items that
 
 After Phase B, before producing the memo:
 
-- If `SKILLS_REGISTRY.yaml` exists, read it and surface any overlaps with existing skills.
+- If `registry/SKILL_REGISTRY.md` exists, read it and surface any overlaps with existing skills.
 - Let the user decide: differentiate, merge, or abandon.
 - If the registry doesn't exist, skip this step.
 
@@ -99,6 +99,6 @@ Populate from the brainstorm notepad. The memo is the distilled, pressure-tested
 
 ## Portability
 
-- `GOVERNANCE.md` and `SKILLS_REGISTRY.yaml` references are conditional — loaded when they exist, skipped otherwise.
+- `GOVERNANCE.md` and `registry/SKILL_REGISTRY.md` references are conditional — loaded when they exist, skipped otherwise.
 - Skill design principles are loaded unconditionally — they are universal.
 - Core coaching works anywhere someone builds skills.

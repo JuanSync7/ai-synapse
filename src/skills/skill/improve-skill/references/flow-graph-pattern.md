@@ -1,0 +1,1 @@
+../../skill-creator/references/flow-graph-pattern.md

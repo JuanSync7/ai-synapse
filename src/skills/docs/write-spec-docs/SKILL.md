@@ -8,6 +8,8 @@ user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"
 ---
 
+This skill makes you a **spec planner**: your job is orchestration and judgment, not prose writing. You construct briefs, dispatch writer and reviewer agents, propagate discoveries across sections, and hold external memory. The core insight is that isolation produces quality — each section gets full context for its own concerns, and the planner's job is to make sure that context is accurate and forward-propagating. When you're tempted to write spec content yourself, stop — that impulse skips the isolation guarantee.
+
 ## Wrong-Tool Detection
 
 - **User wants a quick summary of an existing spec** → redirect to `/write-spec-summary`
@@ -27,7 +29,7 @@ Layer 4: Design Document        ← write-design
 Layer 5: Implementation Plan    ← build-plan
 ```
 
-**Before writing, verify:**
+**Before writing, verify — FAIL LOUDLY if these are not met:**
 - FR-ID ranges do not overlap with any sibling spec for the same system
 - Design principles are defined if cross-cutting concerns apply across multiple requirements
 - Out-of-scope list is explicit — include both "out of scope for this spec" and "out of scope for this project" when the distinction matters
@@ -37,10 +39,6 @@ Layer 5: Implementation Plan    ← build-plan
 - Layer 4 Implementation Guide → `/write-impl`
 
 ---
-
-# Specification Document Skill
-
-You are the **planner** — you orchestrate spec writing by constructing section briefs, dispatching writer and reviewer agents, propagating discoveries between sections, and maintaining file-based working memory. You never write spec content directly.
 
 ## Input Gathering
 
@@ -118,9 +116,9 @@ Every requirement MUST have three fields — the writer agent enforces this, but
 
 ## Orchestration Model
 
-You are the planner. All state lives in files. Every decision, every brief, every signal — externalized to disk so the workflow survives auto-compaction. You plan, you dispatch, you integrate. You never write spec content directly.
+All state lives in files — every decision, every brief, every signal externalized to disk so the workflow survives auto-compaction. The reason: subagents have no memory of what you decided, so the notepad is the only communication channel between your planning turns and their execution turns. When in doubt about whether to write something down, write it down.
 
-> This skill follows the [external-memory protocol](../../protocols/external-memory/external-memory.md). Read it if this is your first time orchestrating with file-based memory.
+> This skill follows the [external-memory protocol](../../../protocols/memory/external-memory.md). Read it if this is your first time orchestrating with file-based memory.
 
 ### Memory Files
 
@@ -133,67 +131,49 @@ You are the planner. All state lives in files. Every decision, every brief, ever
 
 ### Mode Detection
 
-Detect mode before initializing memory:
+Detect mode before initializing memory — the two modes initialize state differently, and getting this wrong either overwrites an existing spec or tries to create skeletons that already exist:
 
-- **Create mode:** No existing spec file at the target path. Start from scratch.
-- **Update mode:** Existing spec file AND existing `_SPEC_MAP.md` found. Brief includes `change_reason` and affected sections. Used by `/patch-docs` for structural changes.
-
-Without explicit mode detection, create mode overwrites existing specs and update mode tries to create skeletons that already exist.
+- **Create mode:** No existing spec file at the target path → start from scratch, create skeleton and full doc map.
+- **Update mode:** Existing spec file AND existing `_SPEC_MAP.md` found → read them as base, produce update-mode briefs with `change_reason` and `delta` fields for affected sections only.
 
 ### Create Mode Flow
 
-1. **Read inputs** — all source material the user provided (architecture docs, improvement lists, codebase). Read [template.md](template.md).
-2. **Create spec skeleton** — write the spec file with all section headings and `<!-- sec:id -->` / `<!-- /sec:id -->` anchor pairs. No content yet — just the skeleton.
-3. **Create doc map** — initialize `_SPEC_MAP.md` from [templates/spec-map.md](templates/spec-map.md). Fill in the skeleton table with actual section headings and anchors.
-4. **Create notepad** — initialize from [templates/notepad.md](templates/notepad.md). Fill in paths and document skeleton.
-5. **Produce section briefs** — for each section, construct a brief in the notepad. You may iterate freely — revise briefs, reorder, adjust depth and model assignment. This is your reasoning space.
-6. **Per-section dispatch loop** — process sections sequentially (see below).
-7. **Coherence review** — dispatch the coherence reviewer on the full doc (see below).
-8. **Finalization** — surface NEEDS_MANUAL items, update README dashboard.
+**Read all source material first** — architecture docs, improvement lists, codebase excerpts, the [template.md](template.md). Planning without this context produces briefs that starve the writer of the details needed to write correctly.
+
+**Create skeleton and memory files before producing any content.** The skeleton (section headings + `<!-- sec:id -->` / `<!-- /sec:id -->` anchor pairs) is the contract between you and the writers — they fill in anchors, not freeform text. Initialize `_SPEC_MAP.md` from [templates/spec-map.md](templates/spec-map.md) and the notepad from [templates/notepad.md](templates/notepad.md). The notepad is your reasoning space — write freely, revise briefs, reorder sections, adjust depth and model assignments before any dispatch.
+
+**Brief quality gates the dispatch loop.** A brief with weak `key_points` or missing `source_excerpts` will produce a weak section that comes back as REJECT. Invest time in briefs rather than relying on retries.
+
+**Sequence:** Read inputs → create skeleton → initialize doc map → initialize notepad → produce section briefs → per-section dispatch loop → coherence review → finalize (surface NEEDS_MANUAL items, update README dashboard).
 
 ### Update Mode Flow
 
-1. **Read existing spec + doc map** — these are your base. Do not create a skeleton.
-2. **Identify affected sections** — from the change context (user request or `/patch-docs` escalation), determine which sections need updating.
-3. **Create notepad** — initialize from template, but only produce briefs for affected sections. Each brief gets `change_reason` and `delta` fields in addition to standard fields.
-4. **Per-section dispatch loop** — same as create mode, but writer operates in update prompt mode.
-5. **Coherence review** — on the full doc (changes may affect coherence beyond updated sections).
-6. **Finalization** — same as create mode.
+**Start from what exists — read the spec and doc map as base before anything else.** Don't create a skeleton. The existing entity index and REQ index are the source of truth for cross-references; briefs must point to them, not re-derive them.
+
+**Scope the update to affected sections, but run coherence review on the full doc.** A change to one section can silently break another's cross-references — the coherence reviewer catches this; the per-section reviewer doesn't.
+
+**Sequence:** Read existing spec + doc map → identify affected sections → initialize notepad (update-mode briefs only, with `change_reason` and `delta`) → per-section dispatch loop → coherence review (full doc) → finalize.
 
 ### Per-Section Dispatch Loop
 
-Process sections **sequentially** — each section's output may inform the next section's brief. This is the core quality guarantee: isolated context per section, discoveries propagated forward. You never write spec content directly — every section goes through the writer agent.
+Process sections **sequentially** — the core quality guarantee is isolated context per section with discoveries propagated forward. Running sections in parallel eliminates forward propagation and produces cross-reference inconsistencies that the coherence reviewer will reject anyway.
 
-For each section in the notepad:
+**Before each dispatch, re-read the notepad.** Signals from completed sections may change what a later brief should emphasize — a new entity defined earlier may need to be referenced rather than re-explained. Revise the brief in the notepad before dispatching; briefs should reflect the current state of the doc, not the state when you first planned them.
 
-1. **Finalize the brief.** Read the notepad. Check if signals from previous sections affect this brief. Revise if needed. Write the updated brief back to the notepad.
-2. **Dispatch the writer.** Use the `docs-spec-section-writer` agent. Pass:
-   - The finalized brief (from notepad)
-   - The spec file path
-   - The doc map file path
-   - The model assignment from the brief (`model` field)
-3. **Read the writer's sidecar.** Extract signals (new entities, cross-refs, assumptions).
-4. **Dispatch the section reviewer.** Use the `docs-spec-section-reviewer` agent (Sonnet). Pass:
-   - The brief
-   - The spec file path + section anchor (so the reviewer can read the written section)
-   - The full writer sidecar
-5. **Handle the verdict:**
-   - **PASS:** Update the doc map (section status, entity index, REQ index). Log signals to notepad. Scan all remaining briefs for cross-ref impact — revise any that reference entities discovered in this section.
-   - **PASS-with-note:** Same as PASS, plus log the reviewer's notes for consideration in upcoming briefs.
-   - **REJECT:** Read the reject reasoning. Revise the brief in the notepad (record the old brief in Rejected Briefs). Re-dispatch writer + reviewer **once**. If still rejected → mark as NEEDS_MANUAL with the specific rejection reason.
-6. **Update notepad** — set section status, append to signals log and decisions.
-7. **Proceed to next section.**
+**Dispatch `docs-spec-section-writer` with the finalized brief, spec file path, doc map file path, and model from the brief.** Then immediately dispatch `docs-spec-section-reviewer` (always Sonnet) with the brief, the written section's anchor, and the full writer sidecar. Never skip the reviewer — it catches requirement format errors and anti-patterns before they compound across sections.
+
+**Verdicts:**
+- **PASS:** Update the doc map (section status, entity index, REQ index). Log signals to notepad. **Scan remaining briefs for cross-ref impact** — this is where forward propagation happens. Revise any brief that references an entity just defined.
+- **PASS-with-note:** Same as PASS, plus log reviewer notes for consideration in upcoming briefs.
+- **REJECT:** Read the rejection reasoning carefully — revise the brief to address the specific gap (record the old brief in Rejected Briefs for audit). Re-dispatch writer + reviewer once. If still rejected → NEEDS_MANUAL with the specific rejection reason, then continue to the next section. Do not halt the pipeline for one section.
+
+Update the notepad (section status, signals log, decisions) after every verdict before moving forward.
 
 ### Coherence Review
 
-After all sections complete the per-section loop:
+After all sections pass per-section review, dispatch `docs-spec-coherence-reviewer` (Sonnet) with the spec file path and doc map. The per-section reviewer validates each section in isolation — the coherence reviewer is the only check that catches cross-section inconsistencies (conflicting entity definitions, missing cross-references, broken ID ranges). Always run it, even when all per-section verdicts were PASS.
 
-1. **Dispatch the coherence reviewer.** Use the `docs-spec-coherence-reviewer` agent (Sonnet). Pass:
-   - The spec file path
-   - The doc map file path
-2. **Handle the verdict:**
-   - **PASS:** Proceed to finalization.
-   - **REJECT:** Read the per-section rejection table. For each rejected section, re-enter the per-section dispatch loop in update mode (writer gets `change_reason` from the rejection). Run coherence review **once more** after all fixes. If still failing → fail loudly with a summary table of unresolved issues.
+On REJECT: read the per-section rejection table, re-enter the dispatch loop in update mode for each flagged section (writer gets `change_reason` from the rejection), then run coherence review once more. If still failing → FAIL LOUDLY with a summary table of unresolved issues.
 
 ### Brief Construction
 
@@ -233,15 +213,15 @@ When a section hits max retries (1 per section, 1 coherence re-pass) and cannot 
 ### Model Policy
 
 - **Planner (you):** Uses whatever model the user invoked with
-- **Writer:** Model per brief — default Sonnet, escalate to Opus for complex sections (deep depth, high cross-ref count, domain expertise needed)
-- **Section reviewer:** Always Sonnet
-- **Coherence reviewer:** Always Sonnet
+- **Writer:** Model per brief — default Sonnet; MUST use Opus for complex sections (`depth: deep`, high cross-ref count, or domain expertise required)
+- **Section reviewer:** MUST be Sonnet
+- **Coherence reviewer:** MUST be Sonnet
 
 ### Retry Policy
 
 - **Per-section:** Max 1 retry. After revision + re-dispatch, if still rejected → NEEDS_MANUAL.
 - **Coherence:** Max 1 re-pass after fixing rejected sections. If still failing → fail loudly with summary table.
-- **Failure tags:** All agents use the [failure-reporting protocol](../../protocols/failure-reporting/failure-reporting.md). Accumulate failures, continue through all sections, surface complete summary at the end.
+- **Failure tags:** All agents use the [failure-reporting protocol](../../../protocols/observability/failure-reporting.md). Accumulate failures, continue through all sections, surface complete summary at the end.
 
 ---
 

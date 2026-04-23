@@ -6,26 +6,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **central library** for Claude Code skills — both a home for standalone skills and a registry that submodules skill suites from external repos. Skills are organized into domain directories and installed as symlinks into `~/.claude/skills/`.
 
-Two kinds of skills live here:
-- **Standalone skills** — self-contained SKILL.md + EVAL.md with no shared infrastructure. These live directly in this repo.
-- **Submoduled suites** — multi-skill projects with shared config, templates, and CI. These live in their own repos and are wired in as git submodules.
+Two kinds of artifacts live here:
+- **Standalone** — self-contained skills, agents, and protocols with no shared infrastructure. These live under `src/`.
+- **External suites** — multi-artifact projects with shared config, templates, and CI. These live in their own repos and are wired in as git submodules under `external/`.
 
 ## Repository Layout
 
 ```
 identity/                     # Personal identity files (SOUL.md, STAKEHOLDER.md)
-src/
+src/                          # ai-synapse-owned artifacts
   skills/
     <domain>/
-      <skill-name>/           # git submodule OR local skill directory
+      <skill-name>/           # Each skill: SKILL.md + EVAL.md + companions
         SKILL.md              # The skill definition (frontmatter + body)
         EVAL.md               # Test prompts + output criteria (optional)
         references/           # Companion files loaded on-demand during specific phases
         templates/            # Output templates
         agents/               # Symlinks to src/agents/ definitions used by this skill
-  agents/                     # Internal recipes dispatched by skills (not user-invocable)
-  protocols/                  # Shared conventions/schemas injected into agents by observers
-  SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
+  agents/
+    <domain>/                 # Agents organized by domain (skill-eval, docs, protocol-eval)
+  protocols/
+    <domain>/                 # Protocols organized by domain (observability, memory)
+  SKILLS_REGISTRY.yaml        # Pipeline routing metadata (pipeline-routable skills only)
+external/                     # Externally-owned submodule suites
+  <suite-name>/               # git submodule — may contain skills/, agents/, protocols/
 ```
 
 **Identity files (`identity/`):**
@@ -33,35 +37,42 @@ src/
 - `SOUL.template.md` — blank skeleton with guidance for creating your own SOUL.md
 - `STAKEHOLDER.md` — decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers
 
+**Registry files (`registry/`):**
+- `registry/SKILL_REGISTRY.md` — full skill catalog (all skills, human-readable)
+- `registry/AGENTS_REGISTRY.md` — agent discovery table
+- `registry/PROTOCOL_REGISTRY.md` — protocol discovery table
+
+**Taxonomy files (`taxonomy/`):**
+- `taxonomy/SKILL_TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
+- `taxonomy/AGENT_TAXONOMY.md` — controlled vocabulary for agent `domain` and `role` metadata fields
+- `taxonomy/PROTOCOL_TAXONOMY.md` — controlled vocabulary for protocol `domain` and `type` metadata fields
+
 **Root files:**
-- `AGENTS_REGISTRY.md` — human-readable agent discovery table
-- `SKILL_TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
-- `AGENT_TAXONOMY.md` — controlled vocabulary for agent `domain` and `role` metadata fields
-- `PROTOCOL_TAXONOMY.md` — controlled vocabulary for protocol `domain` and `type` metadata fields
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
 - `scripts/install.sh` — CLI for installing/managing skill symlinks
 - `Makefile` — repo setup (`make init` configures git hooks)
 - `.githooks/` — git hooks for structural validation on commit
 
-## Submodule Architecture
+## src/ vs external/
 
-Skill suites with shared infrastructure (multiple related skills, shared templates, suite-specific CI) live in their own repos and are wired in as git submodules. This makes them portable — a team can adopt `jira-suite` without pulling all of ai-synapse.
+- **`src/`** — ai-synapse-owned artifacts. Convention-enforced (pre-commit hook, `reorganize.sh`). Skills, agents, and protocols organized by domain.
+- **`external/`** — externally-owned submodule suites. Each suite is a git submodule with its own structure (may contain `skills/`, `agents/`, `protocols/`). Their internal layout is owned by the external repo.
 
-**When to keep a skill in ai-synapse:** It's standalone — one SKILL.md + EVAL.md, no shared config, no multi-skill coordination.
+**When to keep an artifact in `src/`:** It's standalone — no shared config, no multi-artifact coordination.
 
-**When to extract to its own repo:** The skill is part of a suite with shared infrastructure, needs its own CI, or is meant to be adopted independently by other teams.
+**When to extract to `external/`:** The artifact is part of a suite with shared infrastructure, needs its own CI, or is meant to be adopted independently by other teams.
 
-**Adding a submoduled suite:**
-1. Create a standalone repo with the skill(s), shared config, and its own CI
-2. Add it as a git submodule under the appropriate domain directory in this repo
-3. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and domain `README.md` as usual
-4. `scripts/install.sh` works the same — it follows symlinks regardless of whether the source is a submodule or local directory
+**Adding an external suite:**
+1. Create a standalone repo with the artifact(s), shared config, and its own CI
+2. Add it as a git submodule under `external/`: `git submodule add <url> external/<suite-name>`
+3. Register the artifact(s) in the appropriate registry (`registry/SKILL_REGISTRY.md`, `registry/AGENTS_REGISTRY.md`, etc.)
+4. `scripts/install.sh` discovers artifacts in both `src/` and `external/` automatically
 
-**Modifying a submoduled skill:**
-- Make changes in the skill's own repo, not here
+**Modifying an external artifact:**
+- Make changes in the suite's own repo, not here
 - Update the submodule pointer in this repo after the external change lands
 
-**Registration is intentional, not automatic.** Skills land in ai-synapse only after review (`/skill-creator` or `/improve-skill`), with an EVAL.md, via a PR that adds the submodule + registry entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
+**Registration is intentional, not automatic.** Artifacts land in ai-synapse only after review, with an EVAL.md, via a PR that adds the submodule + registry entry. External repos are where free iteration happens; ai-synapse is where you promote to.
 
 ## Setup
 
@@ -69,17 +80,32 @@ After cloning, run `make init` to configure git hooks.
 
 ## Install Commands
 
+### Claude Code (default)
+
 ```bash
-./scripts/install.sh install all                          # install everything
-./scripts/install.sh install src/skills/docs src/skills/code/build-plan # install specific domains or skills
+./scripts/install.sh install all                          # install all skills
+./scripts/install.sh install src/skills/docs src/skills/code/build-plan # install specific domains
 ./scripts/install.sh agents                               # install agent definitions
 ./scripts/install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./scripts/install.sh list                                 # show installed skills
 ./scripts/install.sh available                            # show all available skills
-./scripts/install.sh clean                                # remove all symlinks
+./scripts/install.sh clean                                # remove all symlinks (all harnesses)
 ```
 
 Target directory: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
+
+### Codex CLI
+
+```bash
+./scripts/install.sh codex all                            # install to ~/.codex/skills/ (global)
+./scripts/install.sh codex-project all                    # install to .agents/skills/ (project)
+```
+
+Target directory: `$CODEX_SKILLS_DIR` (default: `~/.codex/skills/`).
+
+### Multi-Harness Support
+
+ai-synapse supports multiple AI coding harnesses. SKILL.md is the universal authoring format — extra Claude-specific frontmatter fields are ignored by other harnesses. See `references/harness-mappings.yaml` for the full compatibility table.
 
 ## Skill Anatomy
 
@@ -124,18 +150,21 @@ These run automatically on every commit — no LLM needed:
 
 **Skills:**
 - SKILL.md frontmatter has required fields (`name`, `description`, `domain`, `intent`)
-- `domain` and `intent` values exist in `SKILL_TAXONOMY.md`
+- `domain` and `intent` values exist in `taxonomy/SKILL_TAXONOMY.md`
 - Domain README.md has a row matching the skill
 - EVAL.md exists alongside SKILL.md
+- Listed in `registry/SKILL_REGISTRY.md`
 
-**Agents** (`src/agents/*.md`):
+**Agents** (`src/agents/<domain>/<agent>.md`):
 - Frontmatter has required fields (`name`, `description`, `domain`, `role`)
 - `domain` and `role` values exist in `AGENT_TAXONOMY.md`
-- Listed in `AGENTS_REGISTRY.md`
+- Domain README.md has a row matching the agent
+- Listed in `registry/AGENTS_REGISTRY.md`
 
-**Protocols** (`src/protocols/**/*.md`):
+**Protocols** (`src/protocols/<domain>/<protocol>.md`):
 - Frontmatter has required fields (`name`, `description`, `domain`, `type`)
 - `domain` and `type` values exist in `PROTOCOL_TAXONOMY.md`
+- Domain README.md has a row matching the protocol
 
 ### Layer 2: Quality evaluation
 
@@ -148,11 +177,30 @@ The evaluation tier depends on the type of change:
 
 **New artifacts must be certified before merging.** Run `/synapse-gatekeeper <artifact-path> [--score <score>]` and include the APPROVE verdict in the PR description. If not ready for certification, mark it `status: draft` in the appropriate registry — this is tracked and must be resolved before the artifact is considered production-ready. See `GOVERNANCE.md` for full promotion criteria.
 
+## Directory README Convention
+
+Every directory in the repo must have a README.md. Exceptions: dot-directories (`.git`, `.claude`, `.brainstorms`) and generated/transient directories (`dist`).
+
+**README.md files are enforced indexes, not freeform docs.** They are the same class of artifact as taxonomy files — authoritative, structural, validated by the pre-commit hook. The hook checks that domain README.md tables have a row for every artifact in that directory. Treat a missing or stale row as a structural error, not a documentation gap.
+
+**Leaf directories** (domain directories that contain artifact files directly):
+- One-line description of the domain at the top
+- A catalog table of all artifacts in that directory (name → link, role/intent, one-line description)
+- Example: `src/agents/docs/README.md` lists every agent file in that folder
+
+**Parent directories** (directories that contain subdirectories):
+- One-line description of what lives here
+- A summary table per artifact class: one row per subdirectory, linking to its README
+- No content duplication — the parent row is a pointer (`[domain/](domain/)` + one-liner), not a copy of the child's catalog
+- Example: `src/README.md` has three tables (skills, agents, protocols), each row linking to a domain README
+
+**The rule:** if you add a new artifact or domain, you update two READMEs — the directory it lives in, and its parent. Nothing higher up needs to change; the summary propagates by link traversal, not by copy.
+
 ## Conventions
 
 - **Skill names must be globally unique.** Claude discovers skills from a flat `~/.claude/skills/` directory — no namespacing is possible. Use domain-prefixed names (e.g., `jira-reporter`, `jira-planner`) to avoid collisions across repos. `scripts/install.sh` warns on name collisions.
 - Skills with 3+ phases include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when the user's intent doesn't match.
 - EVAL.md files are generated artifacts containing structural criteria, output criteria, and test prompts.
-- Pipeline-routable skills must be registered in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
+- All skills must have a row in `registry/SKILL_REGISTRY.md`. Pipeline-routable skills also register a stage entry in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
 - Domain and intent values must come from `SKILL_TAXONOMY.md`. If nothing fits, propose an addition there — don't invent ad hoc values.

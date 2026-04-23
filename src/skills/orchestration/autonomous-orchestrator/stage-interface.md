@@ -62,10 +62,12 @@ All other stages dispatch to existing skills. If the orchestrator's brainstormin
 ## How to Add a New Stage
 
 1. **Create the skill** — run `/skill-creator` to build the skill directory and SKILL.md.
-2. **Register in SKILLS_REGISTRY.yaml** — `skill-creator` prompts for pipeline metadata and appends the entry. If adding manually, declare a `pipeline:` block under the correct domain/group with: `stage_name`, `input_type`, `output_type`, `context_type`, `requires_all`/`requires_any`, `skippable`.
+2. **Register in both places** — `skill-creator` handles this automatically:
+   - Add a row to `registry/SKILL_REGISTRY.md` (always)
+   - Append a `pipeline:` block to `SKILLS_REGISTRY.yaml` under the correct domain/group with: `stage_name`, `input_type`, `output_type`, `context_type`, `requires_all`/`requires_any`, `skippable`
 3. **Define the inter-stage contract** in `pipeline-templates.md` — what artifact does it receive, what does it produce?
 4. **Add to presets if appropriate** — update the `presets:` section in `SKILLS_REGISTRY.yaml` for any named pipeline that should include this stage.
-5. **Verify** — confirm `stage_name` is unique in the registry, `requires` references resolve, and at least one preset or goal type would route to it.
+5. **Verify** — confirm `stage_name` is unique in `SKILLS_REGISTRY.yaml`, `requires` references resolve, and at least one preset or goal type would route to it.
 
 No changes to orchestrator SKILL.md are needed — the router reads from `SKILLS_REGISTRY.yaml` dynamically.
 

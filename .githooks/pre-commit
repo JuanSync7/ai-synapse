@@ -7,9 +7,9 @@ set -euo pipefail
 # Protocols: frontmatter fields (name/domain/type), PROTOCOL_TAXONOMY.md values.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-SKILL_TAXONOMY="$REPO_ROOT/SKILL_TAXONOMY.md"
-AGENT_TAXONOMY="$REPO_ROOT/AGENT_TAXONOMY.md"
-PROTOCOL_TAXONOMY="$REPO_ROOT/PROTOCOL_TAXONOMY.md"
+SKILL_TAXONOMY="$REPO_ROOT/taxonomy/SKILL_TAXONOMY.md"
+AGENT_TAXONOMY="$REPO_ROOT/taxonomy/AGENT_TAXONOMY.md"
+PROTOCOL_TAXONOMY="$REPO_ROOT/taxonomy/PROTOCOL_TAXONOMY.md"
 
 errors=()
 
@@ -46,7 +46,7 @@ done
 # --- Identify changed agent files ---
 changed_agent_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/agents/.*\.md$'; then
+    if echo "$file" | grep -q '^src/agents/.*\.md$' && ! echo "$file" | grep -q 'README\.md$'; then
         found=false
         for a in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             if [ "$a" = "$file" ]; then
@@ -63,7 +63,7 @@ done
 # --- Identify changed protocol files ---
 changed_protocol_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/'; then
+    if echo "$file" | grep -q '^src/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
         found=false
         for p in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
             if [ "$p" = "$file" ]; then
@@ -199,10 +199,20 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         errors+=("$skill_dir: missing EVAL.md")
     fi
 
-    # --- Check 5: New skill without gatekeeper certification ---
+    # --- Check 5: SKILL_REGISTRY.md has a row for this skill ---
+    skill_registry_md="$REPO_ROOT/registry/SKILL_REGISTRY.md"
+    if [ -f "$skill_registry_md" ]; then
+        if ! grep -qF "$skill_name" "$skill_registry_md"; then
+            errors+=("$skill_dir: no row for '$skill_name' in registry/SKILL_REGISTRY.md — add a row when creating or registering a skill")
+        fi
+    else
+        errors+=("$skill_dir: missing registry/SKILL_REGISTRY.md")
+    fi
+
+    # --- Check 6: New skill without gatekeeper certification ---
     # Warn (non-blocking) if this is a new SKILL.md not previously tracked by git
     if git diff --cached --name-only --diff-filter=A | grep -q "^${skill_dir}/SKILL.md$"; then
-        echo "  WARN  $skill_dir: new skill — run /synapse-gatekeeper before merging (or mark status: draft in SKILLS_REGISTRY.yaml)"
+        echo "  WARN  $skill_dir: new skill — run /synapse-gatekeeper before merging (or mark status: draft in registry/SKILL_REGISTRY.md)"
     fi
 done
 
@@ -253,8 +263,20 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
         fi
     fi
 
-    # --- Check 3: Listed in AGENTS_REGISTRY.md ---
-    agents_registry="$REPO_ROOT/AGENTS_REGISTRY.md"
+    # --- Check 3: Domain README.md has a matching row ---
+    agent_domain_dir="$(dirname "$agent_file")"
+    agent_domain_readme="$REPO_ROOT/$agent_domain_dir/README.md"
+
+    if [ -f "$agent_domain_readme" ]; then
+        if ! grep -q "\[$agent_name\]" "$agent_domain_readme"; then
+            errors+=("$agent_file: no row for '$agent_name' in $agent_domain_dir/README.md")
+        fi
+    else
+        errors+=("$agent_file: missing $agent_domain_dir/README.md")
+    fi
+
+    # --- Check 4: Listed in AGENTS_REGISTRY.md ---
+    agents_registry="$REPO_ROOT/registry/AGENTS_REGISTRY.md"
     if [ -f "$agents_registry" ]; then
         if ! grep -q "\[$agent_name\]" "$agents_registry"; then
             errors+=("$agent_file: no row for '$agent_name' in AGENTS_REGISTRY.md")
@@ -316,9 +338,50 @@ for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"
         fi
     fi
 
-    # --- Check 3: New protocol warning ---
+    # --- Check 3: Domain README.md has a matching row ---
+    protocol_domain_dir="$(dirname "$protocol_file")"
+    protocol_domain_readme="$REPO_ROOT/$protocol_domain_dir/README.md"
+
+    if [ -f "$protocol_domain_readme" ]; then
+        if ! grep -q "\[$protocol_name\]" "$protocol_domain_readme"; then
+            errors+=("$protocol_file: no row for '$protocol_name' in $protocol_domain_dir/README.md")
+        fi
+    else
+        errors+=("$protocol_file: missing $protocol_domain_dir/README.md")
+    fi
+
+    # --- Check 4: New protocol warning ---
     if git diff --cached --name-only --diff-filter=A | grep -q "^${protocol_file}$"; then
         echo "  WARN  $protocol_file: new protocol — run /synapse-gatekeeper before merging"
+    fi
+done
+
+# =============================================================================
+# SKILLS_REGISTRY.yaml → registry/SKILL_REGISTRY.md sync check
+# When SKILLS_REGISTRY.yaml is staged, every pipeline skill must have a row
+# in registry/SKILL_REGISTRY.md.
+# =============================================================================
+yaml_registry="$REPO_ROOT/src/SKILLS_REGISTRY.yaml"
+skill_registry_md="$REPO_ROOT/registry/SKILL_REGISTRY.md"
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if [ "$file" = "src/SKILLS_REGISTRY.yaml" ] && [ -f "$yaml_registry" ] && [ -f "$skill_registry_md" ]; then
+        while IFS= read -r yaml_skill; do
+            [ -z "$yaml_skill" ] && continue
+            if ! grep -qF "$yaml_skill" "$skill_registry_md"; then
+                errors+=("SKILLS_REGISTRY.yaml: '$yaml_skill' is pipeline-registered but has no row in registry/SKILL_REGISTRY.md")
+            fi
+        done < <(awk '
+            /- name:/ {
+                match($0, /name: *([^ ]+)/, arr)
+                candidate = arr[1]
+                gsub(/["'"'"']/, "", candidate)
+                looking = 1; count = 0
+            }
+            looking && /pipeline:/ { print candidate; looking = 0 }
+            looking && /- name:/   { looking = 0 }
+            looking { count++; if (count > 15) looking = 0 }
+        ' "$yaml_registry" 2>/dev/null || true)
+        break
     fi
 done
 

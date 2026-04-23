@@ -1,0 +1,112 @@
+# Harness compatibility mappings for ai-synapse
+#
+# Documents where each AI coding harness expects skills, instructions,
+# agents, and MCP config. Used by install.sh adapters to place files
+# in the correct locations per harness.
+#
+# Sources: official documentation + intellectronica/ruler (2.6k stars)
+# Last updated: 2026-04-21
+
+harnesses:
+
+  claude-code:
+    status: supported           # supported | planned | deferred
+    instructions: CLAUDE.md
+    skills:
+      dir_global: "~/.claude/skills/{skill-name}/"
+      dir_project: null
+      scope: global
+      format: SKILL.md          # YAML frontmatter + markdown body
+      required_frontmatter: [name, description]
+      extra_frontmatter: [domain, intent, tags, user-invocable, argument-hint]
+      supports_companion_files: true
+      supports_progressive_disclosure: true
+    agents:
+      dir: "~/.claude/agents/"
+      format: "*.md"
+    mcp_config: "~/.claude/mcp.json"
+    install_method: symlink
+    notes: "Native format. Source of truth for ai-synapse."
+
+  codex-cli:
+    status: supported
+    instructions: AGENTS.md     # hierarchical discovery, max 32 KiB
+    skills:
+      dir_global: "~/.codex/skills/{skill-name}/"
+      dir_project: ".agents/skills/{skill-name}/"
+      scope: both               # global and project
+      format: SKILL.md          # same file format, fewer required fields
+      required_frontmatter: [name, description]
+      extra_frontmatter: []     # unknown fields are ignored
+      supports_companion_files: true
+      supports_progressive_disclosure: true
+    agents:
+      dir: null                 # config-based (agents/openai.yaml sidecar)
+      format: null
+    mcp_config: "~/.codex/config.toml"
+    install_method: symlink
+    notes: >
+      Nearly identical to Claude Code. Extra frontmatter fields are ignored.
+      Supports subagent dispatch with depth control (agents.max_depth).
+
+  gemini-cli:
+    status: planned
+    instructions: GEMINI.md     # hierarchical (global + project + subdir)
+    skills:
+      dir_global: "~/.gemini/commands/"
+      dir_project: ".gemini/commands/"
+      scope: both
+      format: "*.toml"          # different format — TOML, not markdown
+      required_frontmatter: null
+      supports_companion_files: true  # recursive GEMINI.md scanning
+      supports_progressive_disclosure: true
+    agents:
+      dir: "~/.gemini/agents/"  # built-in agent registry
+      format: "*.md"
+    mcp_config: null            # uses extensions, not MCP
+    install_method: copy        # format conversion needed
+    notes: >
+      Close architecture, different file formats. Hierarchical GEMINI.md
+      scanning provides rich context. Agent registry mirrors ai-synapse pattern.
+      Requires SKILL.md → TOML conversion for commands.
+
+  cursor:
+    status: deferred
+    instructions: ".cursor/rules/*.mdc"   # YAML frontmatter + markdown
+    skills:
+      dir_global: null          # no global skill directory
+      dir_project: null         # no native skill system
+      scope: project
+      format: null
+      required_frontmatter: null
+      supports_companion_files: false
+      supports_progressive_disclosure: false
+    agents:
+      dir: null                 # agent mode is implicit
+      format: null
+    mcp_config: ".cursor/mcp.json"
+    install_method: null
+    notes: >
+      Flat rules only. ~2k token limit for always-on rules. No skill directory
+      concept. Cursor 3 marketplace has vendor-controlled plugins, not
+      user-authored skills. Revisit when user-authored skills ship.
+
+  windsurf:
+    status: deferred
+    instructions: ".windsurf/rules/*.md"  # activation modes
+    skills:
+      dir_global: null
+      dir_project: ".windsurf/workflows/*.md"  # slash-command workflows
+      scope: project
+      format: "*.md"
+      required_frontmatter: null
+      supports_companion_files: false
+      supports_progressive_disclosure: false
+    agents:
+      dir: null                 # Agent Command Center is UI-only
+      format: null
+    mcp_config: ".windsurf/mcp_config.json"
+    install_method: copy
+    notes: >
+      Project-level only. Workflows are flat markdown files invoked as
+      slash commands. No global install path.

@@ -28,7 +28,7 @@ Mark each `in_progress` when starting, `completed` when done.
 
 ## Wrong-Tool Detection
 
-- **Skill-shaped topic** (mentions "skill," "SKILL.md," slash command, agentic behavior, "make this a skill") → redirect to `/skill-brainstorm`
+- **Skill-shaped topic** (mentions "skill," "SKILL.md," slash command, agentic behavior, "make this a skill") → redirect to `/synapse-brainstorm`
 - **User has a clear spec/plan/direction already** (nothing left to decide) → redirect to the appropriate implementation skill. *Direction-based, not verb-based: "build a dashboard" with no direction IS a brainstorm; "implement this spec" with a concrete spec is not.*
 - **Factual question with a definite answer** → answer directly; do not brainstorm
 - **Specific concrete bug with a clear failure trace** → debug directly; brainstorm only fires when root cause is architectural

@@ -1,6 +1,7 @@
 # SKILLS_REGISTRY.yaml — v2
-# Complete inventory of all skills. Single source of truth for pipeline metadata.
-# Skills without a pipeline: block are present for inventory purposes only.
+# Pipeline routing metadata only. Full skill catalog: registry/SKILL_REGISTRY.md.
+# Only pipeline-routable skills are listed here (those consumed by the autonomous-orchestrator).
+# Non-pipeline skills belong in registry/SKILL_REGISTRY.md only.
 # Files without version: 2 are rejected by the autonomous-orchestrator with a clear error.
 
 version: 2
@@ -8,8 +9,6 @@ version: 2
 # Built-in stages: executed directly by the orchestrator, not dispatched as skills.
 # Only stage_name and output_type are required — input_type is absent (no predecessor).
 # Listed here so the dependency resolver can find them when walking requires chains.
-# context_types for brainstorm (approach_selection, design_approval) are defined
-# in brainstorm-phase.md, not here — built_ins entries are for the dependency resolver only.
 built_ins:
   - stage_name: brainstorm
     output_type: design_sketch
@@ -21,24 +20,10 @@ registry:
       - name: planning
         summary: "Pre-code artifacts that define what to build and how"
         children:
-          - name: scope
-            summary: "Define what to build, what to defer, and how to phase delivery"
-            skills:
-              - name: write-scope-docs
-                description: "Scope document with phase plan, scope boundary, and readiness gate"
-                # Not pipeline-routable: conversational and iterative, not a dispatch stage
-          - name: architecture
-            summary: "System-level technology decisions and component boundaries"
-            skills:
-              - name: write-architecture-docs
-                description: "Architecture doc with technology decisions, component boundaries, and data flow patterns"
-                # Not pipeline-routable: conversational, incremental — not a single-shot dispatch stage
           - name: requirements
             summary: "Capture and formalize what the system must do"
             skills:
               - name: write-spec-docs
-                description: "Formal requirements spec with FRs, NFRs, acceptance criteria"
-                # Companion artifact: _SPEC_MAP.md (document map + knowledge graph index)
                 pipeline:
                   stage_name: spec
                   input_type: design_sketch
@@ -47,7 +32,6 @@ registry:
                   requires_all: [brainstorm]
                   skippable: true
               - name: write-spec-summary
-                description: "Concise spec digest synced with companion spec"
                 pipeline:
                   stage_name: spec-summary
                   input_type: formal_spec
@@ -59,7 +43,6 @@ registry:
             summary: "Decompose requirements into tasks, contracts, and implementation plans"
             skills:
               - name: write-design-docs
-                description: "Technical design with task decomposition and code contracts"
                 pipeline:
                   stage_name: design
                   input_type: formal_spec
@@ -68,7 +51,6 @@ registry:
                   requires_all: [spec]
                   skippable: true
               - name: write-implementation-docs
-                description: "Phased implementation plan from design doc (canonical impl stage)"
                 pipeline:
                   stage_name: impl
                   input_type: technical_design
@@ -76,18 +58,11 @@ registry:
                   context_type: design_approval
                   requires_all: [design]
                   skippable: true
-              - name: build-plan
-                description: "Legacy implementation plan skill — superseded by write-implementation-docs for pipeline use; retained for direct invocation"
-                # No pipeline block — not router-selectable
-              - name: write-commit
-                description: "Writes or improves a git commit message from a diff or change description"
-                # No pipeline block — terminal on-demand helper; output does not feed any pipeline stage
 
       - name: execution
         summary: "Run implementations via parallel and subagent-driven development"
         skills:
           - name: parallel-agents-dispatch
-            description: "Execute implementation plan via parallel subagents (code stage)"
             pipeline:
               stage_name: code
               input_type: implementation_plan | technical_design
@@ -100,7 +75,6 @@ registry:
         summary: "Document what was built: engineering guides"
         skills:
           - name: write-engineering-guide
-            description: "Post-implementation engineering guide"
             pipeline:
               stage_name: eng-guide
               input_type: source_code | spec_digest
@@ -109,7 +83,6 @@ registry:
               requires_any: [code, spec-summary]   # code in normal flow; spec-summary in docs-only
               skippable: true
           - name: patch-docs
-            description: "Diff-driven incremental doc patcher — targeted section updates from git diffs"
             pipeline:
               stage_name: patch-docs
               input_type: source_code | review_output
@@ -125,7 +98,6 @@ registry:
         summary: "Write and implement tests from engineering artifacts"
         skills:
           - name: write-test-docs
-            description: "Test planning document from engineering guide and spec"
             pipeline:
               stage_name: test-docs
               input_type: engineering_guide
@@ -134,7 +106,6 @@ registry:
               requires_all: [eng-guide]
               skippable: true
           - name: write-module-tests
-            description: "Pytest test code from test plan (per-module)"
             pipeline:
               stage_name: tests
               input_type: test_plan
@@ -143,7 +114,6 @@ registry:
               requires_all: [test-docs]
               skippable: true
           - name: write-test-coverage
-            description: "Test coverage register mapping acceptance criteria to test scenarios"
             pipeline:
               stage_name: test-coverage
               input_type: engineering_guide | formal_spec
@@ -151,100 +121,6 @@ registry:
               context_type: doc_review
               requires_any: [eng-guide, spec]
               skippable: true
-
-  - name: integration
-    summary: "External tool integrations for project management, communication, and collaboration"
-    children:
-      - name: project-tracking
-        summary: "Project management tool integrations"
-        skills:
-          - name: jira-reporter
-            description: "JIRA updates as observability/HITL layer during agent workflows"
-            # Not pipeline-routable: side-effect reporting, not an artifact-producing stage
-
-  - name: optimization
-    summary: "Autonomous iterative improvement loops with scorable metrics"
-    skills:
-      - name: auto-research
-        description: "Autonomous iterative improvement loop with subagent-per-iteration execution, for any target with a scorable metric"
-        # Not pipeline-routable: on-demand autonomous loop, not a dev-pipeline stage
-
-  - name: skill
-    summary: "Skill development lifecycle: brainstorm, create, evaluate, improve, certify"
-    children:
-      - name: skill-lifecycle
-        summary: "Build and maintain skills"
-        skills:
-          - name: skill-brainstorm
-            description: "Coaching brainstorm to shape skill ideas before /skill-creator"
-            # Not pipeline-routable: conversational coaching session, not a dispatch stage
-          - name: skill-creator
-            description: "Creates new skills with EVAL.md and registry entry"
-          - name: improve-skill
-            description: "Karpathy-style score-fix-rescore loop for skill quality"
-          - name: write-skill-eval
-            description: "Generates EVAL.md with output criteria and test prompts"
-          - name: synapse-gatekeeper
-            description: "Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria"
-            # Not pipeline-routable: terminal certification gate, no downstream skill depends on its output
-
-  - name: agent
-    summary: "Agent development lifecycle: create and evaluate agent definitions"
-    children:
-      - name: agent-lifecycle
-        summary: "Build and maintain agents"
-        skills:
-          - name: agent-creator
-            description: "Creates new agent definitions with frontmatter and taxonomy alignment"
-            status: draft
-          - name: write-agent-eval
-            description: "Generates evaluation criteria for agent definitions"
-            status: draft
-
-  - name: protocol
-    summary: "Protocol development lifecycle: create and evaluate protocol definitions"
-    children:
-      - name: protocol-lifecycle
-        summary: "Build and maintain protocols"
-        skills:
-          - name: protocol-creator
-            description: "Creates new protocol definitions with frontmatter and taxonomy alignment"
-          - name: write-protocol-eval
-            description: "Generates conformance testing criteria for protocol definitions"
-            status: draft
-
-  - name: meta
-    summary: "Meta-level tools: routing, reasoning, framework utilities, orchestration, creative"
-    children:
-      - name: routing
-        summary: "Intent routing and skill discovery"
-        skills:
-          - name: skill-router
-            description: "Routes user intent to the right skill based on domain matching"
-            # Not pipeline-routable: runtime routing, not an artifact-producing stage
-          - name: doc-authoring
-            description: "Router: directs to write-spec-summary, write-spec-docs, or write-engineering-guide"
-            # Not pipeline-routable: function subsumed by the v2 router for pipeline use.
-            # Retained as a direct-invocation skill for single-artifact documentation requests.
-      - name: reasoning
-        summary: "Structured thinking-through protocols"
-        skills:
-          - name: brainstorm
-            description: "Generic brainstorm protocol with indexed notepad, phase gates, lens rotation, and mentor circuit breaker"
-            # Not pipeline-routable: interactive coaching session; coexists with built-in `brainstorm` stage
-            # (the built-in is orchestrator-internal; this skill is user-invocable and separate).
-      - name: orchestration
-        summary: "Coordinate multi-skill workflows"
-        skills:
-          - name: autonomous-orchestrator
-            description: "Fully autonomous dev pipeline with stakeholder gates"
-          - name: stakeholder-reviewer
-            description: "Evaluates decisions against stakeholder persona (APPROVE/REVISE/ESCALATE)"
-      - name: creative
-        summary: "Non-pipeline creative and visualization tools"
-        skills:
-          - name: create-animation-page
-            description: "Single-page interactive animation as one HTML file with embedded CSS/JS"
 
 presets:
   # Presets are trusted stage sequences — used as-is, bypassing dependency resolution
@@ -258,5 +134,3 @@ presets:
   # test-docs requires eng-guide which is not in bugfix scope.
   docs-only: [brainstorm, spec, spec-summary, eng-guide]
   # docs-only intentionally excludes test-docs — produces no test artifacts.
-  # v2 change: full and feature now include test-docs before tests (new in v2).
-  # v1 full was: [brainstorm, spec, spec-summary, design, impl, code, eng-guide, tests]

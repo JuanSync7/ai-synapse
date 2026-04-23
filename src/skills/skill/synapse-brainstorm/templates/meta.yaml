@@ -1,0 +1,24 @@
+# Brainstorm session metadata — machine-readable for resume support
+# Copy to .brainstorms/<YYYY-MM-DD>-<slug>/meta.yaml
+
+slug: <YYYY-MM-DD>-<slug>          # Must match the directory name
+status: active                      # active | paused | done | abandoned | deferred
+position: "[A] — initial discovery" # Current node + context string
+                                    # Examples:
+                                    #   "[A] — initial discovery"
+                                    #   "[N] — fleshing out artifact #2"
+                                    #   "[B] — lens-boundary on artifact #3"
+                                    #   "[D] — cross-artifact sweep"
+                                    #   "[P] — paused, circuit breaker fired"
+                                    #   "[X] — early exit, not artifact-worthy"
+
+# Populated when status is abandoned/deferred/paused:
+# reason: "<why the session ended without output>"
+
+artifacts_discovered: 0
+artifacts: []
+  # Each artifact entry when discovered at [N]:
+  # - type: <skill | tool | agent | protocol>
+  #   name: <validated-name>          # Confirmed by user, validated against taxonomy
+  #   lens_complete: false            # true when all 5 lenses pass for this artifact
+  #   memo_type: <creation | change_request>  # Set at [O] based on registry lookup

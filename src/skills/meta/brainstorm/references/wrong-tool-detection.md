@@ -10,14 +10,14 @@ The relevant signal: does the user have a concrete, decided answer to "what are 
 
 ## The 5 Collision Points
 
-### 1. Skill-shaped topic → `/skill-brainstorm`
+### 1. Skill-shaped topic → `/synapse-brainstorm`
 
 **Signals:**
 - Mentions "skill," "SKILL.md," "slash command," "Claude command"
 - Topic is "I want Claude to always do X" or "I want a command that does Y"
 - Topic describes agentic behavior extension
 
-**Action:** Redirect with: *"This looks skill-shaped. `/skill-brainstorm` is purpose-built for this — hand off, or keep here?"* Default-keep is valid; user may want to explore the idea before deciding it's a skill.
+**Action:** Redirect with: *"This looks skill-shaped. `/synapse-brainstorm` is purpose-built for this — hand off, or keep here?"* Default-keep is valid; user may want to explore the idea before deciding it's a skill.
 
 ### 2. Clear direction already → implementation skill
 
@@ -73,6 +73,6 @@ If the user's request sits on the line between two collision points (e.g., "help
 
 Wrong-tool detection is primarily Phase A. But if mid-session the topic clearly transforms into a skill-shaped discussion or a purely implementation question, surface the observation to the user:
 
-> "This has turned into a skill-design question — want to pause here and reopen with `/skill-brainstorm`, or keep going?"
+> "This has turned into a skill-design question — want to pause here and reopen with `/synapse-brainstorm`, or keep going?"
 
 Don't silently redirect mid-session. Offer.

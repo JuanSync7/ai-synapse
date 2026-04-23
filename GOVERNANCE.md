@@ -2,7 +2,7 @@
 
 > `synapse-gatekeeper` loads this file when issuing promotion verdicts.
 
-This document defines what belongs in ai-synapse, the criteria a skill must meet to land here, and the lifecycle for submoduled suites. It is the authoritative reference — not loaded at runtime by individual skills except where noted.
+This document defines what belongs in ai-synapse, the criteria an artifact (skill, agent, protocol, tool, or pathway) must meet to land here, and the lifecycle for submoduled suites. It is the authoritative reference — not loaded at runtime by individual skills except where noted.
 
 ---
 
@@ -36,6 +36,32 @@ Protocols (`src/protocols/`) are shared conventions and schemas injected into ag
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
 
 A protocol belongs in `src/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
+
+### Tool Definitions
+
+Tools (`src/tools/`) are mechanical utilities — scripts, wrappers, or external integrations that perform a deterministic action. They contain no judgment or persona; if a tool needs judgment, it should be an agent instead.
+
+- **YAML frontmatter required** — `name`, `description`, `domain`, `action`, `type`, and `tags` fields, with `domain` and `action` values from `TOOL_TAXONOMY.md`
+- **Type classification** — `type` must be one of `external`, `internal`, or `wrapper` (from `TOOL_TAXONOMY.md`) and must match actual content
+- **Gatekeeper review required** — tools land via promotion PRs reviewed by `/synapse-gatekeeper`
+- **No standalone EVAL.md** — tools are tested by the skills or agents that invoke them
+- **Listed in TOOL_REGISTRY.md** — for discovery
+- **Execution model documented** — the TOOL.md must clearly describe inputs, outputs, and how to invoke the tool
+
+A tool belongs in `src/tools/` when it encapsulates a reusable mechanical operation (e.g., score computation, schema validation, format conversion) that 1+ skills or agents need to invoke.
+
+### Pathway Definitions
+
+Pathways (`pathways/`) are curated bundles of synapses (skills, agents, protocols, tools) installed together for a specific harness and use case. They define *what to install*, not *how to execute*.
+
+- **YAML format** — each pathway is a `.yaml` file with `name`, `description`, `harness`, `tags`, and `synapses` fields
+- **Harness value from taxonomy** — `harness` must be a value from `taxonomy/PATHWAY_TAXONOMY.md`
+- **All synapse paths resolve** — every path listed under `synapses:` must point to an existing artifact on disk
+- **Gatekeeper review required** — pathways land via promotion PRs reviewed by `/synapse-gatekeeper`
+- **Listed in PATHWAY_REGISTRY.md** — for discovery
+- **Naming conventions** — documented in `taxonomy/PATHWAY_TAXONOMY.md` and evaluated by gatekeeper at PR review time (not enforced by pre-commit)
+
+A pathway belongs in `pathways/` when it defines a reusable installation bundle — a coherent set of synapses that work together for a specific role, domain, or workflow.
 
 ### Draft Skills
 
@@ -105,7 +131,7 @@ Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agen
 
 #### Tier 1 — Structural
 
-- [ ] Agent `.md` file exists in `src/agents/` and is non-empty
+- [ ] Agent `.md` file exists in `src/agents/<domain>/` and is non-empty
 - [ ] Frontmatter complete: `name`, `description`, `domain`, `role` all present
 - [ ] `domain` value exists in `AGENT_TAXONOMY.md`
 - [ ] `role` value exists in `AGENT_TAXONOMY.md`
@@ -113,6 +139,7 @@ Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agen
 - [ ] Name follows `<domain>-<concern>-<role>` convention
 - [ ] Name is globally unique (no collision in `AGENTS_REGISTRY.md`)
 - [ ] Listed in `AGENTS_REGISTRY.md` with correct description and consumer list
+- [ ] Domain README has a row linking this agent
 
 #### Tier 2 — Quality
 
@@ -128,20 +155,64 @@ Protocols clear two tiers. Evaluated by `synapse-gatekeeper` using `references/p
 
 #### Tier 1 — Structural
 
-- [ ] Protocol `.md` file exists in `src/protocols/` and is non-empty
+- [ ] Protocol `.md` file exists in `src/protocols/<domain>/` and is non-empty
 - [ ] Frontmatter complete: `name`, `description`, `domain`, `type` all present
 - [ ] `domain` value exists in `PROTOCOL_TAXONOMY.md`
 - [ ] `type` value exists in `PROTOCOL_TAXONOMY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
-- [ ] Schema block present (YAML or JSON — machine-parseable, not prose)
-- [ ] Injection instructions present (how an observer injects the protocol)
+- [ ] Mental model paragraph present (explains WHY the protocol exists)
+- [ ] Contract section present (imperative rules: MUST/NEVER/BEFORE/AFTER)
+- [ ] Failure assertion present (`PROTOCOL FAILURE: [protocol-name] — [reason]`)
+- [ ] Domain README has a row linking this protocol
 
 #### Tier 2 — Conformance
 
-- [ ] Schema is machine-parseable (can be validated programmatically)
-- [ ] Injection instructions are self-contained (observer can inject without modification)
-- [ ] At least one filled-in example of the protocol's output
+- [ ] Contract is unambiguous (named trigger moments, commitment language)
+- [ ] Contract uses imperative language (MUST/NEVER/STOP/BEFORE/AFTER/THEN)
+- [ ] Failure assertion is imperative (produces output, not prose description)
 - [ ] Zero-overhead design confirmed (no cost when not injected)
+
+### Tool Promotion
+
+Tools clear two tiers. Evaluated by `synapse-gatekeeper`.
+
+#### Tier 1 — Structural
+
+- [ ] `TOOL.md` file exists in `src/tools/<domain>/` and is non-empty
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `action`, `type` all present
+- [ ] `domain` value exists in `TOOL_TAXONOMY.md`
+- [ ] `action` value exists in `TOOL_TAXONOMY.md`
+- [ ] `type` value is one of `external`, `internal`, `wrapper` (from `TOOL_TAXONOMY.md`)
+- [ ] `tags` is a well-formed array of lowercase hyphenated strings
+- [ ] Domain README has a row linking this tool
+- [ ] Listed in `TOOL_REGISTRY.md`
+
+#### Tier 2 — Quality
+
+- [ ] `type` classification accuracy — `external`/`internal`/`wrapper` matches actual content
+- [ ] Execution model documented — inputs, outputs, and invocation are clearly described
+- [ ] No judgment in the tool definition — tools are mechanical; if it contains judgment, it should be an agent
+- [ ] Under 300 lines
+
+### Pathway Promotion
+
+Pathways clear two tiers. Evaluated by `synapse-gatekeeper`.
+
+#### Tier 1 — Structural
+
+- [ ] Pathway `.yaml` file exists and is valid YAML
+- [ ] Required fields present: `name`, `description`, `harness`, `synapses`
+- [ ] `harness` value exists in `taxonomy/PATHWAY_TAXONOMY.md`
+- [ ] All synapse paths listed under `synapses:` resolve to existing artifacts on disk
+- [ ] If `inherits:` is set, the parent pathway exists
+- [ ] Listed in `PATHWAY_REGISTRY.md`
+
+#### Tier 2 — Quality
+
+- [ ] Naming follows one of the 4 documented patterns in `taxonomy/PATHWAY_TAXONOMY.md` (domain-focused, role-focused, workflow-focused, single-domain)
+- [ ] Description is meaningful (not empty or placeholder)
+- [ ] Composition coherence — the synapses listed make sense together for the stated purpose
+- [ ] Tags are relevant to the pathway's stated purpose
 
 ---
 
@@ -172,6 +243,14 @@ Examples:
 **Protocol-specific:**
 - REVISE: missing example, injection instructions unclear, zero-overhead not confirmed
 - REJECT: frontmatter absent, domain/type not in PROTOCOL_TAXONOMY.md, no schema block
+
+**Tool-specific:**
+- REVISE: missing TOOL_REGISTRY.md entry, execution model undocumented, type classification doesn't match content
+- REJECT: frontmatter absent, domain/action not in TOOL_TAXONOMY.md, contains judgment (should be an agent)
+
+**Pathway-specific:**
+- REVISE: naming doesn't follow taxonomy patterns, description is placeholder, tags irrelevant, composition incoherent
+- REJECT: harness not in PATHWAY_TAXONOMY.md, synapse paths don't resolve, missing required fields
 
 ---
 
@@ -227,11 +306,11 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 
 ## Change Requests
 
-When brainstorming or improving a skill reveals that another skill, agent, or protocol needs updating, drop a change request file in the affected target's `change_requests/` folder rather than expanding scope.
+When brainstorming or improving a skill reveals that another skill, agent, protocol, tool, or pathway needs updating, drop a change request file in the affected target's `change_requests/` folder rather than expanding scope.
 
 - **One file per change**, named `YYYY-MM-DD-short-description.md`
 - **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template.
-- **Consumed by** `/skill-brainstorm` — it checks for `change_requests/` on entry and incorporates pending requests as context.
+- **Consumed by** `/synapse-brainstorm` — it checks for `change_requests/` on entry and incorporates pending requests as context.
 - **Deleted** after the change is implemented. An empty folder means no pending obligations.
 
 ---
@@ -252,5 +331,5 @@ When brainstorming or improving a skill reveals that another skill, agent, or pr
 ### Protocol naming
 
 - **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
-- Protocols live in subdirectories of `src/protocols/` organized by concern (e.g., `traces/`, `schemas/`)
-- The directory name groups related protocols; the file name identifies the specific protocol
+- Protocols live in subdirectories of `src/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
+- The directory name groups related protocols by domain; the file name identifies the specific protocol

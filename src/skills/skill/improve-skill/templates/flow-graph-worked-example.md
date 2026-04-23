@@ -1,0 +1,1 @@
+../../skill-creator/templates/flow-graph-worked-example.md

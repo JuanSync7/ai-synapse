@@ -8,11 +8,13 @@ user-invocable: true
 argument-hint: "<agent-name> [--domain <domain>]"
 ---
 
+> **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
+
 # Agent Creator
 
 > **Status: Draft stub.** This skill will be built when 5+ agents exist in `src/agents/`. See GOVERNANCE.md for agent promotion criteria.
 
-Creates new agent definitions (`src/agents/*.md`) with proper frontmatter, taxonomy alignment, and AGENTS_REGISTRY.md entry.
+Creates new agent definitions (`src/agents/<domain>/<agent>.md`) with proper frontmatter, taxonomy alignment, domain README row, and AGENTS_REGISTRY.md entry.
 
 ## Wrong-Tool Detection
 
