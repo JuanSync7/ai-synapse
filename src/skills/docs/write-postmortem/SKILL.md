@@ -54,7 +54,7 @@ Gather facts in this order — earlier items unlock later ones:
 - [ ] At least one contributing factor identified (not just the proximate trigger)
 - [ ] At least one action item drafted
 
-If gate fails: name the missing items and ask for them specifically. Do not proceed silently.
+DO NOT proceed to Phase 2 if the gate fails. Name the missing items and ask for them specifically.
 
 ## Phase 2: Write
 
@@ -62,7 +62,7 @@ If gate fails: name the missing items and ask for them specifically. Do not proc
 
 Produce the document by filling in the template. Rules:
 
-**Blameless language:** Every sentence in Contributing Factors and Timeline must pass this test: could this sentence appear unmodified in a report to the engineer named? If it assigns fault to a person, rewrite it to assign fault to the condition. "The on-call engineer didn't notice the alert" → "The alert threshold was set above the noise floor, which masked the signal until degradation was severe."
+**Blameless language:** Every sentence in Contributing Factors and Timeline must pass this test: does the sentence require a named or implied individual to feel at fault for it to be true? If yes, rewrite it to assign fault to the condition, not the person. "The on-call engineer didn't notice the alert" → "The alert threshold was set above the noise floor, which masked the signal until degradation was severe." Check for these phrases as red flags: "didn't notice," "failed to," "neglected to," "forgot to."
 
 **Action item quality:** Each action item MUST have: (1) a specific owner role (not "team"), (2) a deadline or sprint target, (3) a definition of done that a third party could verify. Vague action items ("improve monitoring") are not acceptable — ask for specifics or flag them as `[NEEDS OWNER + DEFINITION OF DONE]`.
 
