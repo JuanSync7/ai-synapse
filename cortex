@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# @name: cortex
+# @description: Top-level dispatcher for ai-synapse — routes to scripts by subcommand
+# @audience: consumer
+# @action: inspect
+# @scope: repo
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+SCRIPTS="$REPO_ROOT/scripts"
+
+# ---------------------------------------------------------------------------
+# Help
+# ---------------------------------------------------------------------------
+
+usage() {
+    cat <<'EOF'
+Usage: ./cortex <command> [args...]
+
+Consumer — load and manage synapses:
+  install <targets...>                Install synapses to Claude Code
+  codex <targets...>                  Install synapses to Codex CLI
+  codex-project <targets...>          Install synapses to Codex project
+  gemini <targets...>                 Install synapses to Gemini CLI
+  agents                              Install agent definitions
+  identity                            Install identity files
+  list                                List installed synapses
+  available                           Show all available synapses
+  pathway <subcommand>                Manage pathways (list, show, install, create, export)
+
+Contributor — create and validate artifacts:
+  scaffold <type> <domain> <name>     Create a new synapse (skill, agent, protocol, tool)
+  validate [<path>]                   Run structural checks without committing
+
+Maintainer — repo hygiene and repair:
+  sync [--fix]                        Sync registries and READMEs from disk state
+  audit                               Companion artifact audit
+  doctor                              Check for broken symlinks
+  clean                               Remove all installed symlinks
+  check-links                         Validate relative markdown links
+  reorganize <subcommand>             Domain-based artifact reorganization
+
+Help:
+  help [<command>]                    Show help for a command
+  --version                           Show version
+
+EOF
+}
+
+show_help() {
+    local cmd="${1:-}"
+
+    if [ -z "$cmd" ]; then
+        usage
+        return
+    fi
+
+    local doc="$REPO_ROOT/docs/cli/${cmd}.md"
+    if [ -f "$doc" ]; then
+        # Render markdown doc to terminal (plain cat — pager if available)
+        if command -v less >/dev/null 2>&1; then
+            less "$doc"
+        else
+            cat "$doc"
+        fi
+    else
+        echo "No detailed help for '$cmd'."
+        echo ""
+        echo "Run './cortex help' for a list of all commands."
+    fi
+}
+
+show_version() {
+    echo "cortex (ai-synapse) 0.1.0"
+}
+
+# ---------------------------------------------------------------------------
+# Command routing
+# ---------------------------------------------------------------------------
+
+case "${1:-}" in
+    # --- Consumer: install ---
+    install)        shift; "$SCRIPTS/install.sh" install "$@" ;;
+    codex)          shift; "$SCRIPTS/install.sh" codex "$@" ;;
+    codex-project)  shift; "$SCRIPTS/install.sh" codex-project "$@" ;;
+    gemini)         shift; "$SCRIPTS/install.sh" gemini "$@" ;;
+    agents)         "$SCRIPTS/install.sh" agents ;;
+    identity)       "$SCRIPTS/install.sh" identity ;;
+
+    # --- Consumer: query ---
+    list)           "$SCRIPTS/install.sh" list ;;
+    available)      "$SCRIPTS/install.sh" available ;;
+
+    # --- Consumer: pathways ---
+    pathway)
+        shift
+        if [ ! -f "$SCRIPTS/pathway.sh" ]; then
+            echo "Error: pathway.sh not yet implemented"
+            exit 1
+        fi
+        "$SCRIPTS/pathway.sh" "$@"
+        ;;
+
+    # --- Consumer: package ---
+    zip)            shift; "$SCRIPTS/install.sh" zip "$@" ;;
+
+    # --- Contributor: create ---
+    scaffold)
+        shift
+        if [ ! -f "$SCRIPTS/scaffold.sh" ]; then
+            echo "Error: scaffold.sh not yet implemented"
+            exit 1
+        fi
+        "$SCRIPTS/scaffold.sh" "$@"
+        ;;
+
+    # --- Contributor: validate ---
+    validate)
+        shift
+        if [ ! -f "$SCRIPTS/validate.sh" ]; then
+            echo "Error: validate.sh not yet implemented"
+            exit 1
+        fi
+        "$SCRIPTS/validate.sh" "$@"
+        ;;
+
+    # --- Maintainer: repair ---
+    sync)
+        shift
+        if [ ! -f "$SCRIPTS/sync-registry.sh" ]; then
+            echo "Error: sync-registry.sh not yet implemented"
+            exit 1
+        fi
+        "$SCRIPTS/sync-registry.sh" "$@"
+        ;;
+
+    clean)          "$SCRIPTS/install.sh" clean ;;
+
+    # --- Maintainer: inspect ---
+    audit)          "$SCRIPTS/audit-artifacts.sh" "${@:2}" ;;
+    doctor)         "$SCRIPTS/install.sh" doctor ;;
+    check-links)    "$SCRIPTS/check-links.sh" ;;
+    reorganize)     shift; "$SCRIPTS/reorganize.sh" "$@" ;;
+
+    # --- Help ---
+    help)           shift; show_help "${1:-}" ;;
+    --help|-h)      usage ;;
+    --version|-V)   show_version ;;
+    "")             usage ;;
+
+    *)
+        echo "Unknown command: $1"
+        echo ""
+        usage
+        exit 1
+        ;;
+esac
