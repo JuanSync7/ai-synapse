@@ -13,9 +13,32 @@
 
 ## What is AI-Synapse?
 
-AI-Synapse is a central library of [Claude Code](https://claude.ai/code) skills — reusable, composable units of agent behavior that can be invoked by name from any conversation. Skills are installed as symlinks into `~/.claude/skills/` and discovered automatically by Claude Code. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
+AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
 
-The repo serves two roles: a **home for standalone skills** (self-contained, no shared infrastructure) and a **registry that submodules skill suites** from external repos (multi-skill projects with shared config and their own CI). Both are installed the same way via `scripts/install.sh`.
+The repo serves two roles: a **home for standalone artifacts** (self-contained, no shared infrastructure) and a **registry that submodules artifact suites** from external repos (multi-artifact projects with shared config and their own CI). Both are installed the same way via the `cortex` CLI.
+
+### Metaphor
+
+The repo uses two metaphor layers: a **kitchen** metaphor for what artifacts are, and a **brain** metaphor for how they're organized.
+
+**What things are — the kitchen**
+
+| Kitchen | Artifact | What it is |
+|---|---|---|
+| Equipment | **Tool** | Mechanical capability — scripts, MCP servers, CLI wrappers, external integrations |
+| Recipe | **Skill** | Step-by-step procedure that uses tools |
+| Cook | **Agent** | Executor with judgment that follows recipes |
+| Kitchen rules | **Protocol** | Behavioral contract everyone obeys |
+
+**How they're organized — the brain**
+
+| Brain concept | Maps to | Why it fits |
+|---|---|---|
+| **Cortex** | The repo | Organized processing system; contains everything |
+| **Synapse** | Individual artifact | A specialized junction — each skill, agent, protocol, or tool is a synapse |
+| **Pathway** | Profile / bundle | A specific route through the cortex that activates specific synapses together |
+
+A synapse is a set of artifacts you load together. A pathway is a named bundle that installs a specific combination of synapses for a use case.
 
 ### End-to-End Skill Development
 
@@ -23,7 +46,7 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/skill-brainstorm`](src/skills/skill/skill-brainstorm/) | Coaching session to shape a vague idea into a concrete skill spec — decides if it's a skill, config, or not needed |
+| **Brainstorm** | [`/synapse-brainstorm`](src/skills/skill/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
 | **Create** | [`/skill-creator`](src/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
 | **Evaluate** | [`/write-skill-eval`](src/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
 | **Improve** | [`/improve-skill`](src/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
@@ -34,29 +57,84 @@ The flow is: **brainstorm → create → improve → certify → PR**. Each stag
 
 ---
 
+## Roadmap
+
+### Next
+
+- [ ] Pre-commit hook coverage for tools, pathways, and scripts (taxonomy + registry checks)
+- [ ] Shared validation library between `validate.sh` and `.githooks/pre-commit`
+- [ ] Example pathways — starter bundles for common use cases
+- [ ] `cortex.ps1` — native PowerShell dispatcher for Windows (no WSL required)
+- [ ] Protocol and tool lifecycle skills (create → evaluate → certify)
+- [ ] Agent creator improvements — companion scaffolding, symlink wiring
+
+### Future
+
+- [ ] Pathway wizard — interactive `./cortex pathway create` with guided synapse selection
+- [ ] Artifact dependency graph visualization
+- [ ] CI integration — run `./cortex validate` + gatekeeper in GitHub Actions
+- [ ] Marketplace / discovery — searchable artifact index beyond flat registry tables
+- [ ] Cross-repo pathway sharing — install pathways from remote cortex repos
+
+---
+
 ## Repository Structure
 
 ```
 ai-synapse/
 │
-├── src/
+├── cortex                           # Top-level CLI dispatcher (./cortex help)
+│
+├── src/                             # ai-synapse-owned artifacts
 │   ├── skills/
 │   │   └── <domain>/               # Skills organized by domain (docs, code, orchestration, etc.)
 │   │       └── <skill-name>/       # Each skill: SKILL.md + EVAL.md + companions
-│   ├── agents/                     # Internal recipes dispatched by skills (not user-invocable)
-│   ├── protocols/                  # Shared conventions/schemas (e.g., execution traces)
+│   ├── agents/
+│   │   └── <domain>/               # Agents organized by domain (skill-eval, docs, protocol-eval)
+│   ├── protocols/
+│   │   └── <domain>/               # Protocols organized by domain (observability, memory)
+│   ├── tools/
+│   │   └── <domain>/               # Tools organized by domain (integration, testing, etc.)
+│   │       └── <tool-name>/        # Each tool: TOOL.md + optional scripts
 │   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
 │
-├── AGENTS_REGISTRY.md              # Agent discovery table
-├── SKILL_TAXONOMY.md               # Controlled vocabulary for skill domain/intent fields
-├── AGENT_TAXONOMY.md               # Controlled vocabulary for agent domain/role fields
-├── PROTOCOL_TAXONOMY.md            # Controlled vocabulary for protocol domain/type fields
+├── external/                        # Externally-owned submodule suites
+│   └── jira-suite/                 # git submodule — may contain skills/, agents/, protocols/
+│
+├── pathways/                        # Named bundles of synapses (pathway YAML files)
+│
+├── registry/
+│   ├── SKILL_REGISTRY.md           # Skill discovery table
+│   ├── AGENTS_REGISTRY.md          # Agent discovery table
+│   ├── PROTOCOL_REGISTRY.md        # Protocol discovery table
+│   ├── TOOL_REGISTRY.md            # Tool discovery table
+│   ├── PATHWAY_REGISTRY.md         # Pathway discovery table
+│   └── SCRIPT_REGISTRY.md          # Script discovery table
+│
+├── taxonomy/
+│   ├── SKILL_TAXONOMY.md           # Controlled vocabulary for skill domain/intent
+│   ├── AGENT_TAXONOMY.md           # Controlled vocabulary for agent domain/role
+│   ├── PROTOCOL_TAXONOMY.md        # Controlled vocabulary for protocol domain/type
+│   ├── TOOL_TAXONOMY.md            # Controlled vocabulary for tool domain/action/type
+│   ├── PATHWAY_TAXONOMY.md         # Controlled vocabulary for pathway harness + naming guide
+│   └── SCRIPT_TAXONOMY.md          # Controlled vocabulary for script audience/action/scope
+│
+├── docs/cli/                        # Per-command help docs (./cortex help <command>)
+│
+├── scripts/
+│   ├── install.sh                  # Synapse installation across harnesses
+│   ├── scaffold.sh                 # Artifact scaffolding with taxonomy validation
+│   ├── pathway.sh                  # Pathway bundle management
+│   ├── validate.sh                 # Standalone structural checks
+│   ├── sync-registry.sh            # Registry/README drift detection and repair
+│   ├── audit-artifacts.sh          # Companion artifact audit
+│   ├── check-links.sh              # Markdown link validation
+│   ├── reorganize.sh               # Domain-based artifact reorganization
+│   └── zip-skills.ps1              # PowerShell ZIP packaging (Windows)
+│
 ├── GOVERNANCE.md                   # Promotion criteria, contribution workflow
 ├── CLAUDE.md                       # Claude Code instructions for this repo
-├── scripts/
-│   ├── install.sh                  # CLI for installing and managing skill/agent symlinks
-│   └── zip-skills.ps1              # PowerShell ZIP packaging for Claude Desktop (Windows)
-├── Makefile                        # Setup shortcuts (init, install, list, clean)
+├── Makefile                        # Repo setup shortcuts (init, clean, test)
 └── .githooks/pre-commit            # Structural validation on every commit
 ```
 
@@ -64,29 +142,38 @@ ai-synapse/
 
 ## Key Files
 
+### [`cortex`](cortex)
+Top-level CLI dispatcher. Routes all commands to scripts under `scripts/`. Run `./cortex help` for the full command reference, or `./cortex help <command>` to view detailed docs for any subcommand.
+
 ### [`src/SKILLS_REGISTRY.yaml`](src/SKILLS_REGISTRY.yaml)
-The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines. Named presets (`full`, `feature`, `bugfix`, `docs-only`) are defined here as trusted stage sequences that bypass dependency resolution.
+The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
 
-### [`AGENTS_REGISTRY.md`](AGENTS_REGISTRY.md)
-Discovery table for agent definitions — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`. Check this registry before creating a new agent to see if one already covers the capability you need.
+### Registries (`registry/`)
+Discovery tables for all artifact types. Check these before creating a new artifact:
+- [`SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md) — skills with domain, pipeline stage, and status
+- [`AGENTS_REGISTRY.md`](registry/AGENTS_REGISTRY.md) — agent definitions dispatched by skills
+- [`PROTOCOL_REGISTRY.md`](registry/PROTOCOL_REGISTRY.md) — behavioral contracts injected into agents
+- [`TOOL_REGISTRY.md`](registry/TOOL_REGISTRY.md) — mechanical capabilities (scripts, MCP servers, CLI wrappers)
+- [`PATHWAY_REGISTRY.md`](registry/PATHWAY_REGISTRY.md) — named bundles of synapses
+- [`SCRIPT_REGISTRY.md`](registry/SCRIPT_REGISTRY.md) — repo management scripts
 
-### [`SKILL_TAXONOMY.md`](SKILL_TAXONOMY.md)
-Controlled vocabulary for the `domain` and `intent` frontmatter fields in every `SKILL.md`. Enforced by the pre-commit hook — committing a skill with a value not listed here will fail. When nothing in the taxonomy fits a new skill, the convention is to propose an addition here rather than invent ad hoc values. This keeps skill metadata consistent and makes routing and filtering predictable.
-
-### [`AGENT_TAXONOMY.md`](AGENT_TAXONOMY.md)
-Controlled vocabulary for the `domain` and `role` fields in agent definitions. Agents follow the `<domain>-<concern>-<role>` naming convention. Enforced by the pre-commit hook when committing changes to `src/agents/`.
-
-### [`PROTOCOL_TAXONOMY.md`](PROTOCOL_TAXONOMY.md)
-Controlled vocabulary for the `domain` and `type` fields in protocol definitions. Enforced by the pre-commit hook when committing changes to `src/protocols/`.
+### Taxonomies (`taxonomy/`)
+Controlled vocabularies for artifact metadata. Enforced by the pre-commit hook — committing an artifact with a value not listed in its taxonomy will fail:
+- [`SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) — `domain` and `intent` for skills
+- [`AGENT_TAXONOMY.md`](taxonomy/AGENT_TAXONOMY.md) — `domain` and `role` for agents
+- [`PROTOCOL_TAXONOMY.md`](taxonomy/PROTOCOL_TAXONOMY.md) — `domain` and `type` for protocols
+- [`TOOL_TAXONOMY.md`](taxonomy/TOOL_TAXONOMY.md) — `domain`, `action`, and `type` for tools
+- [`PATHWAY_TAXONOMY.md`](taxonomy/PATHWAY_TAXONOMY.md) — `harness` for pathways + naming convention guide
+- [`SCRIPT_TAXONOMY.md`](taxonomy/SCRIPT_TAXONOMY.md) — `audience`, `action`, and `scope` for scripts
 
 ### [`GOVERNANCE.md`](GOVERNANCE.md)
-Authoritative rules for the doc-authoring skill suite — layer hierarchy, cross-skill coherence gates, and propagation rules for when specs change. Not loaded at runtime; it is the human-readable source from which rules are inlined into each doc skill's `SKILL.md`. When a rule changes, update `GOVERNANCE.md` first, then propagate to each affected skill. This separation keeps skills self-contained (no runtime file dependency) while providing a single place to reason about suite-level consistency.
+Promotion criteria and contribution workflow for all five synapse types (skills, agents, protocols, tools, pathways). Defines the two-tier validation model and gatekeeper scope.
 
 ### [`CLAUDE.md`](CLAUDE.md)
-Project-level instructions for Claude Code. Explains the repo structure, submodule architecture, skill anatomy, and the two-layer validation model (pre-commit structural checks + PR-time quality evaluation). Claude reads this automatically when working in this repo. Changes here affect how Claude interprets tasks and structures contributions.
+Project-level instructions for Claude Code. Claude reads this automatically when working in this repo.
 
 ### [`.githooks/pre-commit`](.githooks/pre-commit)
-Runs automatically on every commit touching a skill directory. Checks: required frontmatter fields present, `domain` and `intent` values exist in `SKILL_TAXONOMY.md`, the domain `README.md` has a row for the skill, and `EVAL.md` exists alongside every `SKILL.md`. Fails loudly with actionable errors. Activated via `make init`.
+Structural validation on every commit. Checks frontmatter fields, taxonomy values, registry entries, README rows, and EVAL.md presence. Fails loudly with actionable errors. Activated via `make init`.
 
 ---
 
@@ -122,30 +209,35 @@ argument-hint: "[args]"
 
 The `description` field is a **routing contract**: it specifies when the skill fires, not what it does. Claude Code matches user intent against this field to select the right skill.
 
-### Agents and protocols
+### Agents, protocols, and tools
 
-Beyond skills, two supporting concepts live under `src/`:
+Beyond skills, three supporting artifact types live under `src/`:
 
-- **Agent definitions** (`src/agents/`) — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder. See [`AGENTS_REGISTRY.md`](AGENTS_REGISTRY.md) for discovery.
-- **Protocols** (`src/protocols/`) — shared conventions and schemas injected into agent prompts by observers. The first protocol is the [execution trace](src/protocols/traces/execution-trace.md) — a self-reported observability format that skills like `improve-skill` inject when grading workflow behavior.
+- **Agent definitions** (`src/agents/<domain>/`) — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder. See [`registry/AGENTS_REGISTRY.md`](registry/AGENTS_REGISTRY.md).
+- **Protocols** (`src/protocols/<domain>/`) — shared conventions and schemas injected into agent prompts by observers. See [`registry/PROTOCOL_REGISTRY.md`](registry/PROTOCOL_REGISTRY.md).
+- **Tools** (`src/tools/<domain>/`) — mechanical capabilities with no judgment. Scripts, MCP servers, CLI wrappers, and external integrations. Each tool has a `TOOL.md` and optionally ships code. See [`registry/TOOL_REGISTRY.md`](registry/TOOL_REGISTRY.md).
 
-### Two kinds of skills
+### Pathways
 
-- **Standalone** — self-contained `SKILL.md` + `EVAL.md`, no shared infrastructure. Lives directly in this repo under `src/skills/<domain>/`.
-- **Submoduled suites** — multi-skill projects with shared config and their own CI. Live in external repos, wired in as git submodules under `src/skills/<domain>/`. `scripts/install.sh` follows symlinks regardless of source — standalone and submoduled skills install identically. The `integration/jira-suite` is the current example.
+Pathways (`pathways/`) are named bundles of synapses — a YAML file listing which skills, agents, protocols, and tools to install together. Pathways are harness-aware (claude, codex, gemini, multi) and support single-level inheritance. See [`taxonomy/PATHWAY_TAXONOMY.md`](taxonomy/PATHWAY_TAXONOMY.md) for naming conventions.
 
-Submoduled suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to a submoduled skill are made in the skill's own repo; this repo only tracks the submodule pointer.
+### src/ vs external/
+
+- **`src/`** — standalone artifacts owned by ai-synapse. Convention-enforced, managed by `scripts/reorganize.sh`.
+- **`external/`** — submodule suites from external repos. Each suite may contain `skills/`, `agents/`, `protocols/`. The `jira-suite` is the current example.
+
+External suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to an external artifact are made in the suite's own repo; this repo only tracks the submodule pointer.
 
 ### Registration is intentional, not automatic
 
-Skills land in ai-synapse only after review — via `/skill-creator` or `/improve-skill` — with an `EVAL.md`, via a PR that adds the submodule (or local directory) and a `src/SKILLS_REGISTRY.yaml` entry. Standalone repos are where free iteration happens; ai-synapse is where you promote to. Anything in this repo is trusted quality.
+Artifacts land in ai-synapse only after review, with proper frontmatter, taxonomy-valid metadata, and registry entries. Use `./cortex scaffold` to create artifacts with correct structure, and `/synapse-gatekeeper` to certify before merging. Standalone repos are where free iteration happens; ai-synapse is where you promote to.
 
-### Two-layer validation
+### Two-tier validation
 
-Every commit touching a skill directory runs two layers of checks:
+Every artifact goes through two tiers of checks:
 
-1. **Pre-commit (structural)** — frontmatter fields, taxonomy values, domain README entry, EVAL.md presence. Fast, no LLM.
-2. **PR-time (quality)** — new skills run `/skill-creator`; modified skills run `/improve-skill`. Trivial changes (typos, formatting) need only layer 1.
+1. **Structural (pre-commit, shell)** — frontmatter fields, taxonomy values, registry entries, domain README rows, EVAL.md presence. Fast, deterministic, no LLM. Run standalone via `./cortex validate`.
+2. **Quality (PR-time, LLM)** — `/synapse-gatekeeper` evaluates naming, composition, documentation quality. Covers all five synapse types: skills, agents, protocols, tools, pathways.
 
 ---
 
@@ -154,47 +246,78 @@ Every commit touching a skill directory runs two layers of checks:
 ```bash
 git clone https://github.com/JuanSync7/ai-synapse.git
 cd ai-synapse
-make init            # configure git hooks + initialize submodules (first-time only)
-make install         # install all skills to ~/.claude/skills/
+make init                          # configure git hooks + submodules (first-time only)
+./cortex install all               # install all skills to Claude Code
+./cortex agents                    # install agent definitions
+./cortex pathway install <name>    # install a pathway bundle
 ```
 
 ---
 
-## Install
+## The `cortex` CLI
 
-`scripts/install.sh` is the full CLI. `make` provides shortcuts for the common cases.
+`./cortex` is the top-level dispatcher for all synapse management. Run `./cortex help` for the full reference.
+
+> **Windows:** `cortex` and `make` both require bash. Use WSL (recommended) or Git Bash. Native PowerShell support is on the roadmap.
+
+### Consumer — load and manage synapses
 
 ```bash
-make install                       # install all skills
-make install docs                  # install src/docs domain only
-make install docs code             # install multiple domains
-make install meta/skill-creator    # install a single skill
-make list                          # show installed skills
-make available                     # show all available skills
-make clean                         # remove all installed symlinks
+./cortex install all                        # install all skills to Claude Code
+./cortex install src/skills/docs            # install one domain
+./cortex codex all                          # install to Codex CLI
+./cortex gemini all                         # install to Gemini CLI
+./cortex agents                             # install agent definitions
+./cortex identity                           # install identity files
+./cortex list                               # list installed synapses
+./cortex available                          # show all available synapses
+./cortex pathway list                       # list available pathways
+./cortex pathway install <name>             # install a pathway bundle
 ```
 
-`make` with no args prints a help message. Discovery is automatic — any directory under `src/` containing a `SKILL.md` is a valid install target. No config needed when adding new skills or domains.
+### Contributor — create and validate artifacts
 
-Install target: `$CLAUDE_SKILLS_DIR` (default: `~/.claude/skills/`).
+```bash
+./cortex scaffold skill docs my-skill       # scaffold a new skill
+./cortex scaffold agent ml monitor          # scaffold a new agent
+./cortex scaffold tool integration my-mcp   # scaffold a new tool
+./cortex validate                           # run all structural checks
+./cortex validate src/skills/docs/my-skill  # validate one artifact
+```
+
+### Maintainer — repo hygiene and repair
+
+```bash
+./cortex sync                               # detect registry/README drift
+./cortex sync fix                           # auto-repair stale entries
+./cortex audit                              # companion artifact audit
+./cortex doctor                             # check for broken symlinks
+./cortex clean                              # remove all installed symlinks
+./cortex check-links                        # validate markdown links
+./cortex reorganize status                  # check artifact placement
+```
+
+### Help
+
+```bash
+./cortex help                               # full command reference
+./cortex help scaffold                      # detailed help for a command
+```
+
+See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
+
+### Make shortcuts
+
+`Makefile` provides shortcuts for repo setup: `make init`, `make claude`, `make codex`, `make clean`. For full CLI, use `./cortex`.
 
 ### Claude Desktop (ZIP packaging)
 
-For team members using Claude Desktop instead of Claude Code CLI, skills can be packaged as `.zip` files and uploaded via Claude Desktop's skill upload:
-
 ```bash
-# Mac / Linux
-make zip                           # package all skills
-make zip docs/patch-docs           # package one skill
-
-# Windows (PowerShell)
-.\scripts\zip-skills.ps1                   # package all skills
-.\scripts\zip-skills.ps1 patch-docs       # package one skill
+./cortex zip all                            # package all skills as .zip
+./cortex zip src/skills/docs/patch-docs     # package one skill
 ```
 
-Zips are output to `dist/` (gitignored). Each skill gets its own `.zip` containing only execution files — EVAL.md and research artifacts are excluded.
-
-→ See **[src/README.md](src/README.md)** for the full skill catalog with per-domain tables.
+→ See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.
 
 ---
 
