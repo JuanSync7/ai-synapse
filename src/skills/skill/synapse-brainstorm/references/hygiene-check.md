@@ -25,7 +25,7 @@ Hygiene refreshes the agent's awareness of accumulated state by forcing a delibe
 
 ## Cadence
 
-- **During [B] rotation:** ~every 10 turns
+- **During [B] rotation:** ~every 10 turns sets a flag. On the next user reply, process the reply normally (update notepad, note findings), then run [H] before composing the next coaching response. Never interrupt mid-exchange — finish the current turn's work first, then checkpoint.
 - **Before Done Signal:** Mandatory final hygiene check (part of Done Signal checklist)
 
 ---

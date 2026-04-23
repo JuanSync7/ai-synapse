@@ -49,7 +49,10 @@ Pull relevant items from the session-level Cross-cutting section that affect thi
 
 ### 4. Place output
 
-Write to `<artifact_dir>/change_requests/<YYYY-MM-DD>-<slug>.md`:
+Write to `<artifact_dir>/change_requests/<YYYY-MM-DD>-<username>-<slug>.md`:
+
+- `<username>` = `git config user.name`, kebab-cased (e.g., "Juan Sync" → `juan-sync`)
+- If file already exists (collision), append `-2`, `-3`, etc.
 
 - **Existing artifacts:** `artifact_dir` = the artifact's current directory
 - **New artifacts:** `artifact_dir` = where the artifact will live based on type:

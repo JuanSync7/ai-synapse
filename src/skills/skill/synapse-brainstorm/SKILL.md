@@ -185,7 +185,11 @@ Exit: → [END]
 Do:
   1. Update meta.yaml: status → done
   2. Present summary: design doc path, memo list (path + memo type per artifact), any warnings
-  3. Suggest next steps (prose, not deterministic routing)
+  3. Call synapse-cr-dispatcher tool (see `tools/synapse-cr-dispatcher`) to create per-artifact feature branches from the placed CRs:
+     `synapse-cr-dispatcher.sh --date <YYYY-MM-DD> --slug <session-slug> [--design <design-doc-path>]`
+     This creates `feature/<synapse>/<artifact-name>/<cr-slug>` branches from develop, commits each CR + design doc copy, and pushes to remote.
+  4. Suggest next steps (prose, not deterministic routing)
 Don't:
   - End without presenting full output summary
   - Auto-route to next skill
+  - Skip branch creation — contributors need branches to open PRs
