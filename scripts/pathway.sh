@@ -31,7 +31,7 @@ USAGE
 extract_field() {
     local file="$1" field="$2"
     sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d' \
-        | grep "^${field}:" | head -1 \
+        | { grep "^${field}:" || true; } | head -1 \
         | sed "s/^${field}: *//" | tr -d '"' | tr -d "'"
 }
 

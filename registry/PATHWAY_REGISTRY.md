@@ -4,5 +4,4 @@ Named bundles of synapses. Each pathway installs a specific combination of skill
 
 | Pathway | Harness | Description |
 |---------|---------|-------------|
-
-(no pathways yet)
+| [synapse-skill](../pathways/synapse-skill.yaml) | claude | Full skill-creation pipeline — brainstorm through certification |
