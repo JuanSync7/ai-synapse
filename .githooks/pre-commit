@@ -386,6 +386,45 @@ for file in "${staged_files[@]+"${staged_files[@]}"}"; do
 done
 
 # =============================================================================
+# Tool tests: run tests for changed tools that have a test/ directory
+# =============================================================================
+changed_tool_dirs=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -q '^src/tools/.*' && ! echo "$file" | grep -q '/test/'; then
+        # Walk up to find the tool directory (contains TOOL.md)
+        dir="$(dirname "$file")"
+        while [ "$dir" != "." ] && [ "$dir" != "src/tools" ]; do
+            if [ -f "$REPO_ROOT/$dir/TOOL.md" ]; then
+                found=false
+                for t in "${changed_tool_dirs[@]+"${changed_tool_dirs[@]}"}"; do
+                    if [ "$t" = "$dir" ]; then found=true; break; fi
+                done
+                if ! $found; then
+                    changed_tool_dirs+=("$dir")
+                fi
+                break
+            fi
+            dir="$(dirname "$dir")"
+        done
+    fi
+done
+
+for tool_dir in "${changed_tool_dirs[@]+"${changed_tool_dirs[@]}"}"; do
+    test_dir="$REPO_ROOT/$tool_dir/test"
+    if [ -d "$test_dir" ]; then
+        tool_name="$(basename "$tool_dir")"
+        echo "  TEST  $tool_name: running tests..."
+        shopt -s nullglob
+        for test_file in "$test_dir"/test-*.sh; do
+            if ! bash "$test_file"; then
+                errors+=("$tool_dir: test failed — $(basename "$test_file")")
+            fi
+        done
+        shopt -u nullglob
+    fi
+done
+
+# =============================================================================
 # Report errors
 # =============================================================================
 
