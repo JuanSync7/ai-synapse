@@ -14,7 +14,7 @@ Applies the autoresearch loop (modify → measure → keep if improved → repea
 
 ## MUST (every turn)
 - Record position: `Position: [node-id] — <context>`
-- Update task progress at phase transitions
+- Create tasks at session start (per Progress Tracking) and update at phase transitions
 - Set `model:` explicitly on every subagent dispatch
 - Apply structure-preserving edit rules when fixing flow-graph targets
 
