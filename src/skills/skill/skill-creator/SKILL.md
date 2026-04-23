@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Use when asked to create a new skill, build a skill for X, or write a skill.
+description: Use when asked to create a new skill, build a skill, or edit an existing skill's SKILL.md and companions.
 domain: skill.create
 intent: write
 tags: [skill, SKILL.md, scaffold]
@@ -8,9 +8,10 @@ user-invocable: true
 argument-hint: "[what the skill should do]"
 ---
 
-Enforcement agent for skill creation. Takes brainstorm memos and enforces design principles,
-flow-graph structure, and writing conventions — producing compliant SKILL.md + companion files.
-When no memo exists, does both reasoning and enforcement.
+Enforcement agent for skill creation and editing. Two modes: **creation** takes brainstorm memos
+and produces compliant SKILL.md + companion files; **edit** applies targeted changes to existing
+skills while respecting structural rules. Both enforce design principles, flow-graph structure,
+and writing conventions.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
@@ -28,17 +29,22 @@ When no memo exists, does both reasoning and enforcement.
 - Skip /improve-skill validation ("the skill looks correct" is not validation)
 
 ## Wrong-Tool Detection
-- **User wants to improve an existing skill** → redirect to `/improve-skill [path]`
+- **User wants to improve an existing skill (score-fix loop)** → redirect to `/improve-skill [path]`
 - **User wants to evaluate or re-evaluate a skill** → redirect to `/write-skill-eval [path]`
 - **User wants to run a skill** → invoke the skill directly, not skill-creator
-- **User wants to edit SKILL.md without the creation workflow** → let them; skill-creator is for *new* skills
 
 ## Entry
 
 ### [NEW] Fresh session
-Do: Check for decision memo from `/synapse-brainstorm`. If present, evaluate against [U] gate conditions — fill gaps only.
+Do:
+  1. Check for wrong-tool redirects
+  2. Determine mode:
+     - **Target skill exists on disk** + edit description provided → **edit mode** → [ED]
+     - **Target skill does not exist** → **creation mode** → check for decision memo from `/synapse-brainstorm`, evaluate against [U] gate conditions — fill gaps only → [U]
 Don't: Skip wrong-tool check.
-Exit: → [U]
+Exit:
+  → [ED] : skill exists + edit description
+  → [U] : new skill
 
 ### [RESUME] Paused session
 Do: Read task list for position + progress state.
@@ -46,6 +52,24 @@ Don't: Assume previous context — always re-read task state fresh.
 Exit: → resume at last active node
 
 ## Flow
+
+### [ED] Edit
+Load: references/flow-graph-pattern.md, references/skill-design-principles.md, references/writing-conventions.md, references/structure-preserving-edits.md, references/companion-dispatch-protocol.md
+Brief: Apply targeted changes to an existing skill while respecting structural rules.
+Do:
+  1. Read existing SKILL.md + all companion files in the skill directory
+  2. Apply described changes — use structure-preserving edit rules for flow-graph targets
+  3. If companion files are affected by the edit, dispatch `skill-companion-file-writer` (model: sonnet; Load: `agents/skill-companion-file-writer.md`)
+  4. Re-validate against structural checklist — confirm no rules broken by the edit
+  5. If edit changes registry-relevant metadata (name, domain, intent, pipeline status) → update registry entries
+  6. If edit changes behavior that invalidates existing EVAL.md criteria → flag for user ("EVAL.md may need updating — run `/write-skill-eval` to regenerate")
+Don't:
+  - Rewrite content beyond the described edit — touch only what was requested
+  - Skip structural re-validation after applying changes
+  - Auto-regenerate EVAL.md — flag and let user decide
+Exit:
+  → [ED] : structural validation found issues from the edit — fix and re-check
+  → [V] : edit applied, structure valid
 
 ### [U] Understand
 Brief: Self-loops until all gate conditions pass.
