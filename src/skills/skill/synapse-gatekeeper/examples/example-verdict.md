@@ -25,7 +25,7 @@ VERDICT: APPROVE
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-name> [--domain <domain>]"
 - [x] Domain README (src/skills/skill/README.md) has row for skill-creator
-- [x] Name globally unique — no collision in SKILLS_REGISTRY.yaml
+- [x] Name globally unique — no collision in registry/SKILL_REGISTRY.md
 
 ### Quality                       ✓
 - [x] Description is routing contract ("Use when building a new skill from scratch...")
@@ -63,7 +63,7 @@ VERDICT: REVISE
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-path>"
 - [x] Domain README (src/skills/skill/README.md) has row for write-skill-eval
-- [x] Name globally unique — no collision in SKILLS_REGISTRY.yaml
+- [x] Name globally unique — no collision in registry/SKILL_REGISTRY.md
 
 ### Quality                       ✗
 - [x] Description is routing contract
@@ -100,7 +100,7 @@ VERDICT: REJECT
 - [x] SKILL.md exists
 - [ ] EVAL.md exists — ABSENT (REJECT)
 - [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `engineering.planning` in SKILL_TAXONOMY.md
+- [x] domain `docs.scope` in SKILL_TAXONOMY.md
 - [x] intent `write` in SKILL_TAXONOMY.md
 - [x] tags well-formed
 - [x] user-invocable: true

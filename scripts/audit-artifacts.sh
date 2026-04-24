@@ -158,7 +158,9 @@ cmd_signals() {
     done
 
     # --- Duplicate detection ---
-    # Group non-symlink companions by basename; flag any name appearing in 2+ skill dirs
+    # Group companions by basename; flag any name appearing in 2+ skill dirs.
+    # Skip cases where every instance is a symlink resolving to the same canonical
+    # path — that's the correct shared-agent pattern, not a promotion signal.
     declare -A name_locations
     for i in "${!PATHS[@]}"; do
         local name="${BASENAMES[$i]}"
@@ -174,15 +176,36 @@ cmd_signals() {
         local count
         count="$(echo "$locations" | wc -l)"
 
-        if [[ "$count" -ge 2 ]]; then
-            echo "DUPLICATE: $name found in $count skill directories:"
-            while IFS= read -r loc; do
-                echo "  $loc"
-            done <<< "$locations"
-            echo "  → Promotion candidate ($count consumers)"
-            echo ""
-            promotion_candidates=$((promotion_candidates + 1))
-        fi
+        [[ "$count" -lt 2 ]] && continue
+
+        # Check if all locations are symlinks resolving to one canonical file.
+        local canonical=""
+        local all_share_canonical=true
+        while IFS= read -r loc; do
+            local abs="$REPO_ROOT/$loc"
+            if [[ ! -L "$abs" ]]; then
+                all_share_canonical=false
+                break
+            fi
+            local resolved
+            resolved="$(readlink -f "$abs")"
+            if [[ -z "$canonical" ]]; then
+                canonical="$resolved"
+            elif [[ "$resolved" != "$canonical" ]]; then
+                all_share_canonical=false
+                break
+            fi
+        done <<< "$locations"
+
+        $all_share_canonical && continue
+
+        echo "DUPLICATE: $name found in $count skill directories:"
+        while IFS= read -r loc; do
+            echo "  $loc"
+        done <<< "$locations"
+        echo "  → Promotion candidate ($count consumers)"
+        echo ""
+        promotion_candidates=$((promotion_candidates + 1))
     done
 
     # --- Summary ---

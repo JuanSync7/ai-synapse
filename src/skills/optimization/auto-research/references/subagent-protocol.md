@@ -99,7 +99,7 @@ When dispatching, every sub-subagent must receive:
 
 Sub-subagents are always leaf nodes. They never dispatch further. If a sub-subagent can't complete its work, the subtask is scoped wrong — re-decompose at this level rather than adding depth.
 
-> **Read [`references/dispatch-patterns.md`](references/dispatch-patterns.md)** for scope boundary specs, slot tables, and good/bad dispatch examples for each trigger.
+> **Read [`dispatch-patterns.md`](dispatch-patterns.md)** for scope boundary specs, slot tables, and good/bad dispatch examples for each trigger.
 
 ## Your output format
 

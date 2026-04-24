@@ -8,6 +8,7 @@ Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.
 
 | Domain | Description |
 |--------|-------------|
+| `skill` | Skill authoring and companion-file generation |
 | `skill-eval` | Skill evaluation and quality assessment |
 | `docs` | Document authoring, review, and maintenance |
 | `protocol-eval` | Protocol evaluation, signal-strength review, conformance testing |

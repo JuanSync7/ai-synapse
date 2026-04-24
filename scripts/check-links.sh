@@ -10,6 +10,16 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 total=0
 broken=0
 
+# Strip fenced code blocks (``` ... ```) and inline code spans (`...`) so that
+# documentation showing example link syntax doesn't trigger false positives.
+strip_code() {
+  awk '
+    /^[[:space:]]*```/ { in_fence = !in_fence; next }
+    in_fence { next }
+    { gsub(/`[^`]*`/, ""); print }
+  ' "$1"
+}
+
 while IFS= read -r file; do
   filedir="$(dirname "$file")"
   while IFS= read -r link; do
@@ -26,7 +36,7 @@ while IFS= read -r file; do
       echo ""
       broken=$((broken + 1))
     fi
-  done < <(grep -oP '\[[^\]]*\]\(\K[^)]+' "$file" 2>/dev/null)
+  done < <(strip_code "$file" | grep -oP '\[[^\]]*\]\(\K[^)]+' 2>/dev/null)
 done < <(find "$ROOT/src/skills" "$ROOT/src/agents" "$ROOT/src/protocols" \
   -name '*.md' -type f 2>/dev/null | sort)
 

@@ -13,4 +13,4 @@ Repo management scripts. Before creating a new script, check if one already cove
 | [scaffold](../scripts/scaffold.sh) | contributor | create | synapse | Create a new synapse with correct structure and registry entries |
 | [pathway](../scripts/pathway.sh) | consumer | install | pathway | Manage pathway bundles — list, show, install, create, export |
 | [validate](../scripts/validate.sh) | contributor | inspect | repo | Run structural checks without committing |
-| [sync](../scripts/sync-registry.sh) | maintainer | repair | repo | Sync registries and READMEs from disk state |
+| [sync-registry](../scripts/sync-registry.sh) | maintainer | repair | repo | Sync registries and READMEs from disk state |

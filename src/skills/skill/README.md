@@ -11,6 +11,6 @@ End-to-end skill development lifecycle — brainstorm, create, evaluate, improve
 | [skill-creator](skill-creator/) | write | Scaffolds new skills with SKILL.md and EVAL.md |
 | [improve-skill](improve-skill/) | improve | Score-fix-rescore loop to improve skill quality |
 | [write-skill-eval](write-skill-eval/) | generate | Generates EVAL.md with output criteria and test prompts |
-| [skill-eval-judge](skill-eval-judge/) | generate | Binary output quality criteria for skill evaluation |
-| [skill-eval-prompter](skill-eval-prompter/) | generate | Blind test prompt generation across personas |
 | [synapse-gatekeeper](synapse-gatekeeper/) | validate | Certifies promotion readiness — APPROVE / REVISE / REJECT verdict against governance criteria |
+
+> Skill evaluation logic — `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor` — lives as agents under [`src/agents/skill-eval/`](../../agents/skill-eval/), dispatched by `skill-creator`, `write-skill-eval`, and `improve-skill`.

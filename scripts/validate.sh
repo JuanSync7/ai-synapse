@@ -173,6 +173,16 @@ check_readme_entry() {
   grep -q "\[${name}\]" "$file" 2>/dev/null || grep -q "\[${name}\.sh\]" "$file" 2>/dev/null
 }
 
+# Check if a skill is marked draft in SKILL_REGISTRY.md.
+# A draft row ends with `| draft |` (status column).
+# Usage: is_draft_skill <skill_name>
+# Returns 0 if draft, 1 otherwise.
+is_draft_skill() {
+  local name="$1"
+  [ -f "$SKILL_REGISTRY" ] || return 1
+  grep "\[${name}\]" "$SKILL_REGISTRY" 2>/dev/null | grep -q '|[[:space:]]*draft[[:space:]]*|'
+}
+
 # =============================================================================
 # Frontmatter existence check
 # =============================================================================
@@ -227,9 +237,13 @@ validate_skill() {
     fi
   fi
 
-  # 5. EVAL.md exists
+  # 5. EVAL.md exists (skipped for draft skills — they predate the EVAL requirement)
   if [ ! -f "$skill_dir/EVAL.md" ]; then
-    report_error "$rel_path" "missing EVAL.md alongside SKILL.md"
+    if is_draft_skill "$skill_name"; then
+      report_warn "$rel_path" "missing EVAL.md (skill marked draft — required before promotion to stable)"
+    else
+      report_error "$rel_path" "missing EVAL.md alongside SKILL.md"
+    fi
   fi
 
   # 6. Listed in SKILL_REGISTRY.md
