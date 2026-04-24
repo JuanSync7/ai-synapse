@@ -189,7 +189,10 @@ is_draft_skill() {
 
 has_frontmatter() {
   local file="$1"
-  head -1 "$file" | grep -q '^---$' && sed -n '2,$ p' "$file" | grep -q '^---$'
+  # Single-pass awk avoids a SIGPIPE race: with `set -o pipefail`, `grep -q`
+  # exiting on first match could kill `head`/`sed` mid-write and propagate
+  # exit 141, producing false "missing frontmatter" errors.
+  awk 'NR==1 && $0!="---" {exit 1} NR>1 && $0=="---" {found=1; exit 0} END {exit !found}' "$file"
 }
 
 # =============================================================================
