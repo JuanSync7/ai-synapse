@@ -124,7 +124,7 @@ Every protocol MUST have this. When the trigger fires but preconditions aren't m
 PROTOCOL FAILURE: <protocol-name> — [specific reason]
 ```
 
-This follows the tag format in `src/protocols/observability/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the output naturally.
+This follows the tag format in `synapse/protocols/observability/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the output naturally.
 
 ### Section 5: Configuration (optional)
 

@@ -22,7 +22,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/write-scope-docs
+/synapse-gatekeeper synapse/skills/skill/write-scope-docs
 ```
 *(Assume write-scope-docs has a SKILL.md but no EVAL.md in this test scenario)*
 
@@ -38,7 +38,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/skill-creator --score 84
+/synapse-gatekeeper synapse/skills/skill/skill-creator --score 84
 ```
 
 **Expected behavior:**
@@ -53,7 +53,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/write-skill-eval --score 76
+/synapse-gatekeeper synapse/skills/skill/write-skill-eval --score 76
 ```
 
 **Expected behavior:**
@@ -69,7 +69,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/stakeholder-reviewer
+/synapse-gatekeeper synapse/skills/skill/stakeholder-reviewer
 ```
 *(Assume a second skill named `stakeholder-reviewer` is being evaluated for promotion, but that name already exists in SKILLS_REGISTRY.yaml)*
 
@@ -85,7 +85,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper src/skills/skill/skill-eval-judge
+/synapse-gatekeeper synapse/skills/skill/skill-eval-judge
 ```
 *(No --score argument provided)*
 

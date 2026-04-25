@@ -4,25 +4,22 @@ This file provides guidance to OpenAI Codex when working with code in this repos
 
 ## What This Repo Is
 
-A central library of reusable agent skills — composable units of behavior for autonomous doc authoring, code generation, testing, and multi-agent pipelines. Skills are organized into domain directories under `src/`.
+A central library of reusable agent skills — composable units of behavior for autonomous doc authoring, code generation, testing, and multi-agent pipelines. Framework artifacts live under `synapse/`; adopter artifacts under `src/`.
 
 ## Repository Layout
 
 ```
-src/
-  skills/
-    <domain>/
-      <skill-name>/           # Each skill directory
-        SKILL.md              # The skill definition (YAML frontmatter + behavior body)
-        EVAL.md               # Test prompts + pass/fail output criteria
-        references/           # Companion files loaded on-demand during specific phases
-        templates/            # Output templates
-        agents/               # Symlinks to src/agents/ definitions used by this skill
-  agents/
-    <domain>/                 # Agents organized by domain (skill-eval, docs, protocol-eval)
-  protocols/
-    <domain>/                 # Protocols organized by domain (observability, memory)
+synapse/                      # Framework artifacts (meta-tools shipped by ai-synapse)
+  skills/<domain>/<name>/     # SKILL.md + EVAL.md + references/ + templates/ + agents/
+  agents/<domain>/            # Internal agents dispatched by framework skills
+  protocols/<domain>/         # Shared schemas (observability, memory)
+  tools/<domain>/             # Mechanical capabilities
   SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependencies
+src/                          # Adopter artifacts (this repo's own skills/agents/...)
+  skills/<domain>/<name>/     # Same shape as synapse/skills/<domain>/<name>/
+  agents/<domain>/
+  protocols/<domain>/
+  tools/<domain>/
 ```
 
 Root files: `AGENTS_REGISTRY.md` (agent discovery), `SKILL_TAXONOMY.md` (domain/intent vocabulary), `GOVERNANCE.md` (promotion criteria).
@@ -49,15 +46,15 @@ The `description` field is a routing contract: it specifies when the skill fires
 
 | Concept | Location | Frontmatter | Taxonomy | Purpose |
 |---------|----------|-------------|----------|---------|
-| **Skills** | `src/skills/<domain>/<skill-name>/SKILL.md` | name, description, domain, intent | `SKILL_TAXONOMY.md` | User-facing recipes — invoked by name |
-| **Agents** | `src/agents/<domain>/<agent>.md` | name, description, domain, role | `AGENT_TAXONOMY.md` | Internal recipes dispatched by skills — not user-invocable |
-| **Protocols** | `src/protocols/<domain>/<protocol>.md` | name, description, domain, type | `PROTOCOL_TAXONOMY.md` | Shared conventions injected into agents by observers |
+| **Skills** | `{synapse,src}/skills/<domain>/<skill-name>/SKILL.md` | name, description, domain, intent | `SKILL_TAXONOMY.md` | User-facing recipes — invoked by name |
+| **Agents** | `{synapse,src}/agents/<domain>/<agent>.md` | name, description, domain, role | `AGENT_TAXONOMY.md` | Internal recipes dispatched by skills — not user-invocable |
+| **Protocols** | `{synapse,src}/protocols/<domain>/<protocol>.md` | name, description, domain, type | `PROTOCOL_TAXONOMY.md` | Shared conventions injected into agents by observers |
 
-All three artifact types require YAML frontmatter, taxonomy-validated metadata, and gatekeeper review for promotion. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `src/agents/`.
+All three artifact types require YAML frontmatter, taxonomy-validated metadata, and gatekeeper review for promotion. Skills declare agent dependencies via symlinks in their `agents/` folder pointing to `{synapse,src}/agents/`.
 
 ## Pipeline System
 
-The autonomous orchestrator (`src/skills/orchestration/autonomous-orchestrator/`) drives end-to-end pipelines using stages defined in `src/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences.
+The autonomous orchestrator (`synapse/skills/orchestration/autonomous-orchestrator/`) drives end-to-end pipelines using stages defined in `synapse/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences.
 
 ## Skill Design Principles
 
@@ -79,5 +76,5 @@ Two validation layers apply:
 
 - Skill names must be globally unique (flat discovery directory, no namespacing)
 - EVAL.md files contain structural criteria, output criteria, and test prompts
-- Pipeline-routable skills must be registered in `src/SKILLS_REGISTRY.yaml`
+- Pipeline-routable skills must be registered in `synapse/SKILLS_REGISTRY.yaml`
 - Domain and intent values must come from `SKILL_TAXONOMY.md`

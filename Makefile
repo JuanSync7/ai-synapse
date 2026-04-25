@@ -13,7 +13,7 @@ all:
 	@echo "Claude Code:"
 	@echo "  make claude               install all skills + agents to ~/.claude/"
 	@echo "  make install              alias for 'make claude'"
-	@echo "  make install docs         install src/skills/docs only"
+	@echo "  make install docs         install src/skills/docs only (adopter)"
 	@echo "  make install docs code    install multiple domains"
 	@echo "  make agents               install agent definitions only"
 	@echo "  make zip                  package all skills as .zip for Claude Desktop"
@@ -38,8 +38,9 @@ claude:
 	./scripts/install.sh agents
 
 # make install           → alias for make claude (backwards compat)
-# make install docs      → install src/skills/docs only
+# make install docs      → install src/skills/docs (adopter shortcut)
 # make install docs code → install src/skills/docs and src/skills/code
+# Framework skills under synapse/ are installed via 'make install' (no args = all).
 _INSTALL_TARGETS := $(filter-out install, $(MAKECMDGOALS))
 install:
 	@if [ -z "$(_INSTALL_TARGETS)" ]; then \

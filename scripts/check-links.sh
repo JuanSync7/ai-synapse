@@ -37,7 +37,8 @@ while IFS= read -r file; do
       broken=$((broken + 1))
     fi
   done < <(strip_code "$file" | grep -oP '\[[^\]]*\]\(\K[^)]+' 2>/dev/null)
-done < <(find "$ROOT/src/skills" "$ROOT/src/agents" "$ROOT/src/protocols" \
+done < <(find "$ROOT/synapse/skills" "$ROOT/synapse/agents" "$ROOT/synapse/protocols" \
+  "$ROOT/src/skills" "$ROOT/src/agents" "$ROOT/src/protocols" \
   -name '*.md' -type f 2>/dev/null | sort)
 
 echo "$total links checked, $broken broken"

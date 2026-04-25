@@ -46,7 +46,7 @@ done
 # --- Identify changed agent files ---
 changed_agent_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/agents/.*\.md$' && ! echo "$file" | grep -q 'README\.md$'; then
+    if echo "$file" | grep -qE '^(src|synapse)/agents/.*\.md$' && ! echo "$file" | grep -q 'README\.md$'; then
         found=false
         for a in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             if [ "$a" = "$file" ]; then
@@ -63,7 +63,7 @@ done
 # --- Identify changed protocol files ---
 changed_protocol_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
+    if echo "$file" | grep -qE '^(src|synapse)/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
         found=false
         for p in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
             if [ "$p" = "$file" ]; then
@@ -361,10 +361,10 @@ done
 # When SKILLS_REGISTRY.yaml is staged, every pipeline skill must have a row
 # in registry/SKILL_REGISTRY.md.
 # =============================================================================
-yaml_registry="$REPO_ROOT/src/SKILLS_REGISTRY.yaml"
+yaml_registry="$REPO_ROOT/synapse/SKILLS_REGISTRY.yaml"
 skill_registry_md="$REPO_ROOT/registry/SKILL_REGISTRY.md"
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if [ "$file" = "src/SKILLS_REGISTRY.yaml" ] && [ -f "$yaml_registry" ] && [ -f "$skill_registry_md" ]; then
+    if [ "$file" = "synapse/SKILLS_REGISTRY.yaml" ] && [ -f "$yaml_registry" ] && [ -f "$skill_registry_md" ]; then
         while IFS= read -r yaml_skill; do
             [ -z "$yaml_skill" ] && continue
             if ! grep -qF "$yaml_skill" "$skill_registry_md"; then
@@ -390,10 +390,10 @@ done
 # =============================================================================
 changed_tool_dirs=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -q '^src/tools/.*' && ! echo "$file" | grep -q '/test/'; then
+    if echo "$file" | grep -qE '^(src|synapse)/tools/.*' && ! echo "$file" | grep -q '/test/'; then
         # Walk up to find the tool directory (contains TOOL.md)
         dir="$(dirname "$file")"
-        while [ "$dir" != "." ] && [ "$dir" != "src/tools" ]; do
+        while [ "$dir" != "." ] && [ "$dir" != "src/tools" ] && [ "$dir" != "synapse/tools" ]; do
             if [ -f "$REPO_ROOT/$dir/TOOL.md" ]; then
                 found=false
                 for t in "${changed_tool_dirs[@]+"${changed_tool_dirs[@]}"}"; do

@@ -1,10 +1,7 @@
-# agents
+# src/agents
 
-Internal agent definitions dispatched by skills — not user-invocable. Organized by domain.
+Adopter agent definitions. Framework agents (skill, skill-eval, protocol-eval) live in [`../../synapse/agents/`](../../synapse/agents/).
 
 | Domain | Description |
 |--------|-------------|
 | [docs/](docs/) | Document authoring, review, and coherence checking |
-| [protocol-eval/](protocol-eval/) | Protocol signal-strength review and conformance testing |
-| [skill/](skill/) | Skill authoring — companion-file generation |
-| [skill-eval/](skill-eval/) | Skill quality evaluation — judges, prompters, and execution auditors |

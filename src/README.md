@@ -1,49 +1,37 @@
 # src
 
-Source artifacts for AI-Synapse. Four artifact types live here:
+Adopter artifacts for AI-Synapse. Framework artifacts live in [`synapse/`](../synapse/) — this directory holds the artifacts owned by this specific repo (or by an adopter that uses ai-synapse as a framework).
 
 ## [skills/](skills/)
 
-User-invocable recipes organized by domain. Each domain has its own README with a skill catalog.
+User-invocable recipes organized by domain.
 
 | Domain | Description |
 |--------|-------------|
-| [agent/](skills/agent/) | Agent definition lifecycle — create and evaluate agent recipes |
 | [code/](skills/code/) | Code generation and testing |
 | [creative/](skills/creative/) | Visual and interactive output |
 | [docs/](skills/docs/) | Documentation authoring pipeline |
 | [frameworks/](skills/frameworks/) | Technology-specific skills |
 | [integration/](skills/integration/) | External service integrations (submoduled suites) |
-| [meta/](skills/meta/) | Framework utilities and routing |
+| [meta/](skills/meta/) | Adopter meta-utilities (e.g. brainstorm) |
 | [optimization/](skills/optimization/) | Iterative improvement loops |
-| [orchestration/](skills/orchestration/) | Multi-agent coordination |
-| [protocol/](skills/protocol/) | Protocol development lifecycle — create and evaluate protocols |
-| [skill/](skills/skill/) | Skill development lifecycle — create, evaluate, improve, certify |
 
 ## [agents/](agents/)
 
-Internal recipes dispatched by skills — not user-invocable. Organized by domain.
+Internal recipes dispatched by skills — not user-invocable.
 
 | Domain | Description |
 |--------|-------------|
 | [docs/](agents/docs/) | Agents for documentation review and writing |
-| [protocol-eval/](agents/protocol-eval/) | Agents for protocol evaluation |
-| [skill-eval/](agents/skill-eval/) | Agents for skill quality evaluation |
 
 ## [protocols/](protocols/)
 
-Shared conventions and schemas injected into agent prompts by observers.
+Shared conventions and schemas. Adopter protocols only — framework protocols (memory, observability) live in [`synapse/protocols/`](../synapse/protocols/).
 
-| Domain | Description |
-|--------|-------------|
-| [memory/](protocols/memory/) | External memory conventions |
-| [observability/](protocols/observability/) | Execution tracing and failure reporting |
+(no adopter protocols yet)
 
 ## [tools/](tools/)
 
-Mechanical capabilities — scripts, MCP servers, CLI wrappers, and external integrations. Organized by domain.
+Mechanical capabilities. Adopter tools only — framework tools live in [`synapse/tools/`](../synapse/tools/).
 
-| Domain | Description |
-|--------|-------------|
-
-(no tool domains yet)
+(no adopter tools yet)

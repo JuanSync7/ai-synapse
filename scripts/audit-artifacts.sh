@@ -44,7 +44,7 @@ discover() {
     DISCOVERED=true
 
     local search_dirs=()
-    for base in src/skills external; do
+    for base in synapse/skills src/skills external; do
         local abs="$REPO_ROOT/$base"
         [[ -d "$abs" ]] && search_dirs+=("$abs")
     done
@@ -132,7 +132,7 @@ cmd_signals() {
 
     # --- Should-be-symlink detection ---
     # For each non-symlink companion, check if a same-name file exists in promoted dirs
-    local promoted_dirs=("$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
+    local promoted_dirs=("$REPO_ROOT/synapse/agents" "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
 
     for i in "${!PATHS[@]}"; do
         [[ "${IS_SYMLINK[$i]}" == "yes" ]] && continue
@@ -225,7 +225,7 @@ cmd_fix() {
     local fixed=0
     local drifted=0
 
-    local promoted_dirs=("$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
+    local promoted_dirs=("$REPO_ROOT/synapse/agents" "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
 
     for i in "${!PATHS[@]}"; do
         [[ "${IS_SYMLINK[$i]}" == "yes" ]] && continue

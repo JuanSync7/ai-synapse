@@ -1,7 +1,7 @@
 # Pipeline Contracts & Fallback Rules
 
 Stage metadata (stage names, skill mappings, pipeline declarations, presets) is now in
-`src/SKILLS_REGISTRY.yaml`. This file contains only:
+`synapse/SKILLS_REGISTRY.yaml`. This file contains only:
 - Inter-stage artifact contracts (what each stage produces and what the next expects)
 - Fallback rules for skipped stages
 - Stage skip validation rules (superseded by SKILLS_REGISTRY.yaml `requires` — kept for reference)

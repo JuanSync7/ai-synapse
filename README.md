@@ -48,12 +48,12 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/synapse-brainstorm`](src/skills/skill/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
-| **Create** | [`/skill-creator`](src/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
-| **Evaluate** | [`/write-skill-eval`](src/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
-| **Improve** | [`/improve-skill`](src/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
+| **Brainstorm** | [`/synapse-brainstorm`](synapse/skills/skill/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
+| **Create** | [`/skill-creator`](synapse/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
+| **Evaluate** | [`/write-skill-eval`](synapse/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
+| **Improve** | [`/improve-skill`](synapse/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
 | **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
-| **Certify** | [`/synapse-gatekeeper`](src/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
+| **Certify** | [`/synapse-gatekeeper`](synapse/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
 
@@ -150,7 +150,7 @@ ai-synapse/
 ### [`cortex`](cortex)
 Top-level CLI dispatcher. Routes all commands to scripts under `scripts/`. Run `./cortex help` for the full command reference, or `./cortex help <command>` to view detailed docs for any subcommand.
 
-### [`src/SKILLS_REGISTRY.yaml`](src/SKILLS_REGISTRY.yaml)
+### [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml)
 The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
 
 ### Registries (`registry/`)
@@ -186,17 +186,17 @@ Structural validation on every commit. Checks frontmatter fields, taxonomy value
 
 ### Skill anatomy
 
-Every skill lives at `src/skills/<domain>/<skill-name>/` and follows this layout:
+Every skill lives at `{synapse,src}/skills/<domain>/<skill-name>/` and follows this layout:
 
 ```
-src/skills/<domain>/<skill-name>/
+{synapse,src}/skills/<domain>/<skill-name>/
   SKILL.md        # (required) YAML frontmatter + behavior body — the skill definition
   EVAL.md         # (required) Test prompts and pass/fail output criteria for quality evaluation
   references/     # Companion files loaded on-demand during specific phases
   templates/      # Output templates referenced by the skill
 ```
 
-`SKILL.md` is the install discovery marker — `scripts/install.sh` walks `src/` looking for files with that name, so any directory without one is invisible to the installer. The file must exist; contents are not validated at install time (that happens at commit via the pre-commit hook). `EVAL.md` is also required by the pre-commit hook, which will reject a skill directory missing it. `references/` and `templates/` are optional.
+`SKILL.md` is the install discovery marker — `scripts/install.sh` walks `synapse/` and `src/` looking for files with that name, so any directory without one is invisible to the installer. The file must exist; contents are not validated at install time (that happens at commit via the pre-commit hook). `EVAL.md` is also required by the pre-commit hook, which will reject a skill directory missing it. `references/` and `templates/` are optional.
 
 `SKILL.md` frontmatter carries routing metadata:
 
@@ -216,19 +216,20 @@ The `description` field is a **routing contract**: it specifies when the skill f
 
 ### Agents, protocols, and tools
 
-Beyond skills, three supporting artifact types live under `src/`:
+Beyond skills, three supporting artifact types live under both `synapse/` (framework) and `src/` (adopter):
 
-- **Agent definitions** (`src/agents/<domain>/`) — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder. See [`registry/AGENTS_REGISTRY.md`](registry/AGENTS_REGISTRY.md).
-- **Protocols** (`src/protocols/<domain>/`) — shared conventions and schemas injected into agent prompts by observers. See [`registry/PROTOCOL_REGISTRY.md`](registry/PROTOCOL_REGISTRY.md).
-- **Tools** (`src/tools/<domain>/`) — mechanical capabilities with no judgment. Scripts, MCP servers, CLI wrappers, and external integrations. Each tool has a `TOOL.md` and optionally ships code. See [`registry/TOOL_REGISTRY.md`](registry/TOOL_REGISTRY.md).
+- **Agent definitions** (`{synapse,src}/agents/<domain>/`) — internal recipes dispatched by skills, not user-invocable. Skills declare agent dependencies via symlinks in their `agents/` folder. See [`registry/AGENTS_REGISTRY.md`](registry/AGENTS_REGISTRY.md).
+- **Protocols** (`{synapse,src}/protocols/<domain>/`) — shared conventions and schemas injected into agent prompts by observers. See [`registry/PROTOCOL_REGISTRY.md`](registry/PROTOCOL_REGISTRY.md).
+- **Tools** (`{synapse,src}/tools/<domain>/`) — mechanical capabilities with no judgment. Scripts, MCP servers, CLI wrappers, and external integrations. Each tool has a `TOOL.md` and optionally ships code. See [`registry/TOOL_REGISTRY.md`](registry/TOOL_REGISTRY.md).
 
 ### Pathways
 
 Pathways (`pathways/`) are named bundles of synapses — a YAML file listing which skills, agents, protocols, and tools to install together. Pathways are harness-aware (claude, codex, gemini, multi) and support single-level inheritance. See [`taxonomy/PATHWAY_TAXONOMY.md`](taxonomy/PATHWAY_TAXONOMY.md) for naming conventions.
 
-### src/ vs external/
+### synapse/ vs src/ vs external/
 
-- **`src/`** — standalone artifacts owned by ai-synapse. Convention-enforced, managed by `scripts/reorganize.sh`.
+- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (skill-creator, gatekeeper, eval generators, orchestration, tooling).
+- **`src/`** — adopter artifacts owned by this specific repo. Convention-enforced, managed by `scripts/reorganize.sh`. May be empty in a pure framework distribution.
 - **`external/`** — submodule suites from external repos. Each suite may contain `skills/`, `agents/`, `protocols/`. The `jira-suite` is the current example.
 
 External suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to an external artifact are made in the suite's own repo; this repo only tracks the submodule pointer.

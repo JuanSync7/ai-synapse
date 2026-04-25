@@ -242,13 +242,13 @@
 
 #### Adversarial: Contradictory constraints
 
-**Prompt:** "improve `src/skills/agent/agent-creator/SKILL.md` to score a 9/10 on every eval criterion, but don't change any of the instructions — only fix the formatting and frontmatter."
+**Prompt:** "improve `synapse/skills/agent/agent-creator/SKILL.md` to score a 9/10 on every eval criterion, but don't change any of the instructions — only fix the formatting and frontmatter."
 
 **Why this tests the skill:** Tests whether the skill recognizes that formatting-only changes cannot satisfy substantive eval criteria, and pushes back on the contradiction rather than producing a false passing score.
 
 #### Adversarial: Compound scope overload
 
-**Prompt:** "improve all the skills in `src/skills/protocol/` at once — each needs to pass its EVAL.md, follow the six design principles, and be ready for gatekeeper certification. Do it in one shot."
+**Prompt:** "improve all the skills in `synapse/skills/protocol/` at once — each needs to pass its EVAL.md, follow the six design principles, and be ready for gatekeeper certification. Do it in one shot."
 
 **Why this tests the skill:** Tests whether the skill recognizes that multi-artifact batch improvement in a single context is out of scope and redirects to a proper per-skill workflow.
 
@@ -262,6 +262,6 @@
 
 #### Wrong Tool: Gatekeeper certification
 
-**Prompt:** "I've already improved `src/skills/meta/skill-router/SKILL.md` and it looks solid. Can you certify it and give me the APPROVE verdict so I can include it in my PR description?"
+**Prompt:** "I've already improved `synapse/skills/meta/skill-router/SKILL.md` and it looks solid. Can you certify it and give me the APPROVE verdict so I can include it in my PR description?"
 
 **Why this tests the skill:** Tests whether the skill recognizes that certification is owned by `/synapse-gatekeeper`, not itself, and redirects rather than issuing an unauthorized verdict.

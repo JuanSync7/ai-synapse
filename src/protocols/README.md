@@ -1,8 +1,5 @@
-# protocols
+# src/protocols
 
-Shared behavioral contracts and schemas injected into agent prompts by consuming skills. Organized by domain.
+Adopter protocols. Framework protocols (memory, observability) live in [`../../synapse/protocols/`](../../synapse/protocols/).
 
-| Domain | Description |
-|--------|-------------|
-| [memory/](memory/) | Working memory patterns and state externalization contracts |
-| [observability/](observability/) | Execution traces, failure reporting, and telemetry schemas |
+(no adopter protocols yet)

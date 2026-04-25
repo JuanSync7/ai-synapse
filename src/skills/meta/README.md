@@ -7,4 +7,3 @@ Meta-level skills — routing, reasoning, framework utilities, and tools that op
 | Skill | Intent | Description |
 |-------|--------|-------------|
 | [brainstorm](brainstorm/) | plan | Structured brainstorm protocol with indexed notepad, phase gates, lens rotation, mentor circuit breaker |
-| [skill-router](skill-router/) | route | Routes user intent to the right skill |
