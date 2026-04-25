@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unit tests for synapse-cr-dispatcher
-# Run from repo root: bash src/tools/synapse/synapse-cr-dispatcher/test/test-synapse-cr-dispatcher.sh
+# Run from repo root: bash synapse/tools/synapse/synapse-cr-dispatcher/test/test-synapse-cr-dispatcher.sh
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"

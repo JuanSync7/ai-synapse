@@ -27,10 +27,12 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Artifact type configs
 # Each type: source dir, frontmatter domain field, file discovery pattern
+# Framework reorganization defaults to synapse/. Override with REORG_ROOT=src for adopter content.
+REORG_ROOT="${REORG_ROOT:-synapse}"
 declare -A TYPE_SOURCE=(
-    [skills]="src/skills"
-    [agents]="src/agents"
-    [protocols]="src/protocols"
+    [skills]="${REORG_ROOT}/skills"
+    [agents]="${REORG_ROOT}/agents"
+    [protocols]="${REORG_ROOT}/protocols"
 )
 
 # External suites directory
@@ -922,7 +924,7 @@ update_symlinks() {
                 updated=true
             fi
         fi
-    done < <(find "$REPO_ROOT/src/skills" -type l 2>/dev/null)
+    done < <(find "$REPO_ROOT/synapse/skills" "$REPO_ROOT/src/skills" -type l 2>/dev/null)
 
     if [ "$updated" = false ]; then
         echo "  symlinks  (no updates needed)"

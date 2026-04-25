@@ -1,6 +1,6 @@
 # Good Protocol Example — failure-reporting
 
-This is `src/protocols/observability/failure-reporting.md`, annotated to show why each section works. Use this as a reference when drafting new protocols.
+This is `synapse/protocols/observability/failure-reporting.md`, annotated to show why each section works. Use this as a reference when drafting new protocols.
 
 ---
 

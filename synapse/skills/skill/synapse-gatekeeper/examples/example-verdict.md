@@ -6,7 +6,7 @@ Five worked examples — three for skills, one for an agent, one for a protocol.
 
 ## Example 1 — APPROVE
 
-**Input:** `/synapse-gatekeeper src/skills/skill/skill-creator --score 84`
+**Input:** `/synapse-gatekeeper synapse/skills/skill/skill-creator --score 84`
 
 ---
 
@@ -24,7 +24,7 @@ VERDICT: APPROVE
 - [x] tags well-formed: [skill, creation, scaffolding, eval]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-name> [--domain <domain>]"
-- [x] Domain README (src/skills/skill/README.md) has row for skill-creator
+- [x] Domain README (synapse/skills/skill/README.md) has row for skill-creator
 - [x] Name globally unique — no collision in registry/SKILL_REGISTRY.md
 
 ### Quality                       ✓
@@ -44,7 +44,7 @@ VERDICT: APPROVE
 
 ## Example 2 — REVISE
 
-**Input:** `/synapse-gatekeeper src/skills/skill/write-skill-eval --score 76`
+**Input:** `/synapse-gatekeeper synapse/skills/skill/write-skill-eval --score 76`
 
 ---
 
@@ -62,7 +62,7 @@ VERDICT: REVISE
 - [x] tags well-formed: [eval, skill, test-prompts, output-criteria]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-path>"
-- [x] Domain README (src/skills/skill/README.md) has row for write-skill-eval
+- [x] Domain README (synapse/skills/skill/README.md) has row for write-skill-eval
 - [x] Name globally unique — no collision in registry/SKILL_REGISTRY.md
 
 ### Quality                       ✗
@@ -78,14 +78,14 @@ VERDICT: REVISE
 
 ## Gaps
 
-1. **Eval score below threshold (76/80):** Run `/improve-skill src/skills/skill/write-skill-eval` to identify and fix quality gaps. Re-run `/synapse-gatekeeper` with the updated score once it reaches ≥ 80.
+1. **Eval score below threshold (76/80):** Run `/improve-skill synapse/skills/skill/write-skill-eval` to identify and fix quality gaps. Re-run `/synapse-gatekeeper` with the updated score once it reaches ≥ 80.
 ```
 
 ---
 
 ## Example 3 — REJECT
 
-**Input:** `/synapse-gatekeeper src/skills/skill/write-scope-docs`
+**Input:** `/synapse-gatekeeper synapse/skills/skill/write-scope-docs`
 
 *(EVAL.md is absent in this scenario)*
 
@@ -114,14 +114,14 @@ VERDICT: REJECT
 
 ## Gaps
 
-1. **EVAL.md missing:** No certification is possible without an EVAL.md. Run `/write-skill-eval src/skills/skill/write-scope-docs` to generate one, then re-run `/synapse-gatekeeper` with a measured eval score.
+1. **EVAL.md missing:** No certification is possible without an EVAL.md. Run `/write-skill-eval synapse/skills/skill/write-scope-docs` to generate one, then re-run `/synapse-gatekeeper` with a measured eval score.
 ```
 
 ---
 
 ## Example 4 — Agent APPROVE
 
-**Input:** `/synapse-gatekeeper src/agents/skill-eval/skill-eval-judge.md`
+**Input:** `/synapse-gatekeeper synapse/agents/skill-eval/skill-eval-judge.md`
 
 ---
 
@@ -139,7 +139,7 @@ VERDICT: APPROVE
 - [x] Name follows `<domain>-<concern>-<role>` convention
 - [x] Name globally unique in AGENTS_REGISTRY.md
 - [x] Listed in AGENTS_REGISTRY.md with correct description and consumers
-- [x] Domain README (src/agents/skill-eval/README.md) has row for skill-eval-judge
+- [x] Domain README (synapse/agents/skill-eval/README.md) has row for skill-eval-judge
 
 ### Quality                       ✓
 - [x] Clear persona ("impartial judge" mindset in opening paragraph)
@@ -155,7 +155,7 @@ VERDICT: APPROVE
 
 ## Example 5 — Protocol REVISE
 
-**Input:** `/synapse-gatekeeper src/protocols/observability/execution-trace.md`
+**Input:** `/synapse-gatekeeper synapse/protocols/observability/execution-trace.md`
 
 ---
 
@@ -173,7 +173,7 @@ VERDICT: REVISE
 - [x] Mental model paragraph present
 - [x] Contract section present
 - [x] Failure assertion present
-- [x] Domain README (src/protocols/observability/README.md) has row for execution-trace
+- [x] Domain README (synapse/protocols/observability/README.md) has row for execution-trace
 
 ### Conformance                   ✗
 - [x] Contract is unambiguous
@@ -185,5 +185,5 @@ VERDICT: REVISE
 
 ## Gaps
 
-1. **Failure assertion not imperative:** The failure assertion describes what goes wrong but does not instruct the agent to output the standardized `PROTOCOL FAILURE: execution-trace — [reason]` tag. Rewrite as an imperative instruction per `src/protocols/observability/failure-reporting.md`.
+1. **Failure assertion not imperative:** The failure assertion describes what goes wrong but does not instruct the agent to output the standardized `PROTOCOL FAILURE: execution-trace — [reason]` tag. Rewrite as an imperative instruction per `synapse/protocols/observability/failure-reporting.md`.
 ```

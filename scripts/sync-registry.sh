@@ -97,12 +97,12 @@ extract_readme_entries() {
 scan_skills() {
     local outfile="$1"
     > "$outfile"
-    # Scan src/skills
+    # Scan synapse/skills (framework) and src/skills (adopter)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/src/skills" -name "SKILL.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/skills" "$REPO_ROOT/src/skills" -name "SKILL.md" -type f 2>/dev/null || true)
     # Scan external/*/skills
     while IFS= read -r f; do
         local name
@@ -118,7 +118,7 @@ scan_agents() {
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/src/agents" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/agents" "$REPO_ROOT/src/agents" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")
@@ -133,7 +133,7 @@ scan_protocols() {
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/src/protocols" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/protocols" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")
@@ -148,7 +148,7 @@ scan_tools() {
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/src/tools" -name "TOOL.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/tools" "$REPO_ROOT/src/tools" -name "TOOL.md" -type f 2>/dev/null || true)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")

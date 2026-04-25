@@ -141,19 +141,19 @@
 
 ### Experienced User: Partial eval request with explicit scope
 
-**Prompt:** "generate only the output criteria for src/skills/skill/skill-creator/ — I already have test prompts"
+**Prompt:** "generate only the output criteria for synapse/skills/skill/skill-creator/ — I already have test prompts"
 
 **Why this tests the skill:** Tests whether the skill correctly dispatches only the output-criteria agent (skipping test-prompt and execution-criteria agents) and assembles a partial EVAL.md.
 
 ### Experienced User: Orchestrating skill with explicit execution criteria request
 
-**Prompt:** "Write a full EVAL.md for src/skills/orchestration/parallel-agents-dispatch/. This skill dispatches many sub-agents and has strict ordering rules — make sure the execution criteria capture the wave gating and model selection requirements."
+**Prompt:** "Write a full EVAL.md for synapse/skills/orchestration/parallel-agents-dispatch/. This skill dispatches many sub-agents and has strict ordering rules — make sure the execution criteria capture the wave gating and model selection requirements."
 
 **Why this tests the skill:** Tests whether the skill generates EVAL-E criteria that reflect the target skill's specific orchestration patterns rather than generic agent-dispatch checks.
 
 ### Adversarial: Skill with no clear outputs
 
-**Prompt:** "write eval for src/skills/meta/skill-router/ — this skill just routes to other skills, it doesn't produce a file artifact. I'm not sure what output criteria would even mean here."
+**Prompt:** "write eval for synapse/skills/meta/skill-router/ — this skill just routes to other skills, it doesn't produce a file artifact. I'm not sure what output criteria would even mean here."
 
 **Why this tests the skill:** Tests whether the skill generates output criteria that are meaningful for a routing skill (e.g., redirect accuracy, wrong-tool recognition) rather than forcing artifact-style criteria that don't apply.
 
@@ -171,6 +171,6 @@
 
 ### Wrong Tool: User wants to run the eval, not generate it
 
-**Prompt:** "Run the EVAL.md for src/skills/skill/skill-creator/ against the current skill and tell me which criteria pass."
+**Prompt:** "Run the EVAL.md for synapse/skills/skill/skill-creator/ against the current skill and tell me which criteria pass."
 
 **Why this tests the skill:** Tests whether the skill recognizes this is an evaluation execution request (needs `/improve-skill`'s behavioral pass) rather than an EVAL.md generation request.

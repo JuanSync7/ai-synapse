@@ -74,7 +74,7 @@ When a protocol's trigger fires but the precondition isn't met (e.g., README-fir
 PROTOCOL FAILURE: [protocol-name] — [specific reason]
 ```
 
-This follows the tag format defined in `src/protocols/observability/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the agent's output naturally. No separate parsing needed. This is the equivalent of an assertion failure in hardware.
+This follows the tag format defined in `synapse/protocols/observability/failure-reporting.md`. The agent follows this like any other imperative instruction — the failure becomes part of the agent's output naturally. No separate parsing needed. This is the equivalent of an assertion failure in hardware.
 
 **Why not skip silently?** Silent failures propagate through multi-agent workflows. The consuming skill or orchestrator never knows the protocol didn't apply. The user gets output that looks correct but wasn't validated.
 
