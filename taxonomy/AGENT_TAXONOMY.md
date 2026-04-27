@@ -8,6 +8,7 @@ Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.
 
 | Domain | Description |
 |--------|-------------|
+| `skill` | Skill authoring and companion-file generation |
 | `skill-eval` | Skill evaluation and quality assessment |
 | `docs` | Document authoring, review, and maintenance |
 | `protocol-eval` | Protocol evaluation, signal-strength review, conformance testing |
@@ -22,6 +23,7 @@ Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.
 | `auditor` | Evaluates execution/workflow behavior |
 | `writer` | Produces content from a brief or specification |
 | `reviewer` | Validates output against input contract and quality criteria |
+| `maintainer` | Enforces invariants across existing artifacts; reads current state, applies surgical edits, writes updated state. |
 
 ## Tags
 

@@ -7,30 +7,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A **central library** for Claude Code skills — both a home for standalone skills and a registry that submodules skill suites from external repos. Skills are organized into domain directories and installed as symlinks into `~/.claude/skills/`.
 
 Two kinds of artifacts live here:
-- **Standalone** — self-contained skills, agents, and protocols with no shared infrastructure. These live under `src/`.
+- **Framework artifacts** — the meta-tools that build, evaluate, and govern artifacts (skill-creator, gatekeeper, eval generators, orchestrator, etc.). These live under `synapse/`.
+- **Adopter artifacts** — repo-specific skills, agents, protocols, and tools. These live under `src/`.
 - **External suites** — multi-artifact projects with shared config, templates, and CI. These live in their own repos and are wired in as git submodules under `external/`.
 
 ## Repository Layout
 
 ```
 identity/                     # Personal identity files (SOUL.md, STAKEHOLDER.md)
-src/                          # ai-synapse-owned artifacts
-  skills/
-    <domain>/
-      <skill-name>/           # Each skill: SKILL.md + EVAL.md + companions
-        SKILL.md              # The skill definition (frontmatter + body)
-        EVAL.md               # Test prompts + output criteria (optional)
-        references/           # Companion files loaded on-demand during specific phases
-        templates/            # Output templates
-        agents/               # Symlinks to src/agents/ definitions used by this skill
-  agents/
-    <domain>/                 # Agents organized by domain (skill-eval, docs, protocol-eval)
-  protocols/
-    <domain>/                 # Protocols organized by domain (observability, memory)
+synapse/                      # Framework artifacts (the meta-tools shipped by ai-synapse)
+  skills/<domain>/<name>/     # Framework skills (skill-creator, gatekeeper, ...)
+  agents/<domain>/            # Framework agents (skill-eval, protocol-eval, ...)
+  protocols/<domain>/         # Framework protocols (observability, memory)
+  tools/<domain>/             # Framework tools (synapse-cr-dispatcher)
   SKILLS_REGISTRY.yaml        # Pipeline routing metadata (pipeline-routable skills only)
+src/                          # Adopter artifacts (this repo's own skills/agents/...)
+  skills/<domain>/<name>/     # Adopter skills (docs, code, frameworks, ...)
+  agents/<domain>/            # Adopter agents
+  protocols/<domain>/         # Adopter protocols (typically empty)
+  tools/<domain>/             # Adopter tools (typically empty)
 external/                     # Externally-owned submodule suites
   <suite-name>/               # git submodule — may contain skills/, agents/, protocols/
 ```
+
+Each skill directory has the same shape under either root: `SKILL.md`, optional `EVAL.md`, `references/`, `templates/`, and `agents/` (symlinks to agent definitions used by this skill).
 
 **Identity files (`identity/`):**
 - `SOUL.md` — personal identity file: background, worldview, opinions, thinking style, blind spots, tensions, boundaries
@@ -53,9 +53,10 @@ external/                     # Externally-owned submodule suites
 - `Makefile` — repo setup (`make init` configures git hooks)
 - `.githooks/` — git hooks for structural validation on commit
 
-## src/ vs external/
+## synapse/ vs src/ vs external/
 
-- **`src/`** — ai-synapse-owned artifacts. Convention-enforced (pre-commit hook, `reorganize.sh`). Skills, agents, and protocols organized by domain.
+- **`synapse/`** — framework artifacts. The meta-tools (skill-creator, gatekeeper, eval generators, orchestration) that ship with ai-synapse. Convention-enforced and consumed by adopters as a dependency.
+- **`src/`** — adopter artifacts owned by this specific repo. Convention-enforced (pre-commit hook). Skills, agents, and protocols organized by domain. May be empty in a pure framework distribution.
 - **`external/`** — externally-owned submodule suites. Each suite is a git submodule with its own structure (may contain `skills/`, `agents/`, `protocols/`). Their internal layout is owned by the external repo.
 
 **When to keep an artifact in `src/`:** It's standalone — no shared config, no multi-artifact coordination.
@@ -84,7 +85,7 @@ After cloning, run `make init` to configure git hooks.
 
 ```bash
 ./scripts/install.sh install all                          # install all skills
-./scripts/install.sh install src/skills/docs src/skills/code/build-plan # install specific domains
+./scripts/install.sh install synapse/skills/skill synapse/skills/protocol # install specific domains
 ./scripts/install.sh agents                               # install agent definitions
 ./scripts/install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./scripts/install.sh list                                 # show installed skills
@@ -127,11 +128,11 @@ The `description` field is a **routing contract**: it specifies when the skill f
 
 ## Pipeline System
 
-The autonomous orchestrator drives end-to-end pipelines using stages defined in `src/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (e.g., `full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. A stakeholder-reviewer gates stage transitions.
+The autonomous orchestrator drives end-to-end pipelines using stages defined in `synapse/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (e.g., `full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. A stakeholder-reviewer gates stage transitions.
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `src/skills/skill/skill-creator/references/skill-design-principles.md`):
+These are the core principles for writing and modifying skills (full reference: `synapse/skills/skill/skill-creator/references/skill-design-principles.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
@@ -155,13 +156,13 @@ These run automatically on every commit — no LLM needed:
 - EVAL.md exists alongside SKILL.md
 - Listed in `registry/SKILL_REGISTRY.md`
 
-**Agents** (`src/agents/<domain>/<agent>.md`):
+**Agents** (`{synapse,src}/agents/<domain>/<agent>.md`):
 - Frontmatter has required fields (`name`, `description`, `domain`, `role`)
 - `domain` and `role` values exist in `AGENT_TAXONOMY.md`
 - Domain README.md has a row matching the agent
 - Listed in `registry/AGENTS_REGISTRY.md`
 
-**Protocols** (`src/protocols/<domain>/<protocol>.md`):
+**Protocols** (`{synapse,src}/protocols/<domain>/<protocol>.md`):
 - Frontmatter has required fields (`name`, `description`, `domain`, `type`)
 - `domain` and `type` values exist in `PROTOCOL_TAXONOMY.md`
 - Domain README.md has a row matching the protocol
@@ -186,7 +187,7 @@ Every directory in the repo must have a README.md. Exceptions: dot-directories (
 **Leaf directories** (domain directories that contain artifact files directly):
 - One-line description of the domain at the top
 - A catalog table of all artifacts in that directory (name → link, role/intent, one-line description)
-- Example: `src/agents/docs/README.md` lists every agent file in that folder
+- Example: `synapse/agents/skill-eval/README.md` lists every agent file in that folder
 
 **Parent directories** (directories that contain subdirectories):
 - One-line description of what lives here
@@ -202,5 +203,5 @@ Every directory in the repo must have a README.md. Exceptions: dot-directories (
 - Skills with 3+ phases include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when the user's intent doesn't match.
 - EVAL.md files are generated artifacts containing structural criteria, output criteria, and test prompts.
-- All skills must have a row in `registry/SKILL_REGISTRY.md`. Pipeline-routable skills also register a stage entry in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
+- All skills must have a row in `registry/SKILL_REGISTRY.md`. Pipeline-routable skills also register a stage entry in `synapse/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`.
 - Domain and intent values must come from `SKILL_TAXONOMY.md`. If nothing fits, propose an addition there — don't invent ad hoc values.

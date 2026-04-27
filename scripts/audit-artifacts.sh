@@ -44,7 +44,7 @@ discover() {
     DISCOVERED=true
 
     local search_dirs=()
-    for base in src/skills external; do
+    for base in synapse/skills src/skills external; do
         local abs="$REPO_ROOT/$base"
         [[ -d "$abs" ]] && search_dirs+=("$abs")
     done
@@ -132,7 +132,7 @@ cmd_signals() {
 
     # --- Should-be-symlink detection ---
     # For each non-symlink companion, check if a same-name file exists in promoted dirs
-    local promoted_dirs=("$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
+    local promoted_dirs=("$REPO_ROOT/synapse/agents" "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
 
     for i in "${!PATHS[@]}"; do
         [[ "${IS_SYMLINK[$i]}" == "yes" ]] && continue
@@ -158,7 +158,9 @@ cmd_signals() {
     done
 
     # --- Duplicate detection ---
-    # Group non-symlink companions by basename; flag any name appearing in 2+ skill dirs
+    # Group companions by basename; flag any name appearing in 2+ skill dirs.
+    # Skip cases where every instance is a symlink resolving to the same canonical
+    # path — that's the correct shared-agent pattern, not a promotion signal.
     declare -A name_locations
     for i in "${!PATHS[@]}"; do
         local name="${BASENAMES[$i]}"
@@ -174,15 +176,36 @@ cmd_signals() {
         local count
         count="$(echo "$locations" | wc -l)"
 
-        if [[ "$count" -ge 2 ]]; then
-            echo "DUPLICATE: $name found in $count skill directories:"
-            while IFS= read -r loc; do
-                echo "  $loc"
-            done <<< "$locations"
-            echo "  → Promotion candidate ($count consumers)"
-            echo ""
-            promotion_candidates=$((promotion_candidates + 1))
-        fi
+        [[ "$count" -lt 2 ]] && continue
+
+        # Check if all locations are symlinks resolving to one canonical file.
+        local canonical=""
+        local all_share_canonical=true
+        while IFS= read -r loc; do
+            local abs="$REPO_ROOT/$loc"
+            if [[ ! -L "$abs" ]]; then
+                all_share_canonical=false
+                break
+            fi
+            local resolved
+            resolved="$(readlink -f "$abs")"
+            if [[ -z "$canonical" ]]; then
+                canonical="$resolved"
+            elif [[ "$resolved" != "$canonical" ]]; then
+                all_share_canonical=false
+                break
+            fi
+        done <<< "$locations"
+
+        $all_share_canonical && continue
+
+        echo "DUPLICATE: $name found in $count skill directories:"
+        while IFS= read -r loc; do
+            echo "  $loc"
+        done <<< "$locations"
+        echo "  → Promotion candidate ($count consumers)"
+        echo ""
+        promotion_candidates=$((promotion_candidates + 1))
     done
 
     # --- Summary ---
@@ -202,7 +225,7 @@ cmd_fix() {
     local fixed=0
     local drifted=0
 
-    local promoted_dirs=("$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
+    local promoted_dirs=("$REPO_ROOT/synapse/agents" "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/agents" "$REPO_ROOT/src/protocols")
 
     for i in "${!PATHS[@]}"; do
         [[ "${IS_SYMLINK[$i]}" == "yes" ]] && continue

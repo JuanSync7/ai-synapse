@@ -16,7 +16,7 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 
 ### Agent Definitions
 
-Agent definitions (`src/agents/`) are internal recipes dispatched by skills — never user-invocable. They follow the same governance rigor as skills, adapted for their role:
+Agent definitions (`{synapse,src}/agents/`) are internal recipes dispatched by skills — never user-invocable. They follow the same governance rigor as skills, adapted for their role:
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
 - **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-gatekeeper`, same as skills
@@ -24,22 +24,22 @@ Agent definitions (`src/agents/`) are internal recipes dispatched by skills — 
 - **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
 - **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
 
-An agent belongs in `src/agents/` when it is dispatched by 1+ skills and encapsulates a distinct persona or capability (e.g., impartial judge, blind prompt author). If only one skill uses it and it's short, inline it in the skill instead.
+An agent belongs in `{synapse,src}/agents/` when it is dispatched by 1+ skills and encapsulates a distinct persona or capability (e.g., impartial judge, blind prompt author). If only one skill uses it and it's short, inline it in the skill instead.
 
 ### Protocol Definitions
 
-Protocols (`src/protocols/`) are shared conventions and schemas injected into agents by observers — never executed directly. They define structured formats for inter-agent communication and observability.
+Protocols (`{synapse,src}/protocols/`) are shared conventions and schemas injected into agents by observers — never executed directly. They define structured formats for inter-agent communication and observability.
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
 - **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-gatekeeper`
 - **No standalone EVAL.md** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). A standalone eval format will be defined when `write-protocol-eval` is built (currently a draft stub)
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
 
-A protocol belongs in `src/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
+A protocol belongs in `{synapse,src}/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
 
 ### Tool Definitions
 
-Tools (`src/tools/`) are mechanical utilities — scripts, wrappers, or external integrations that perform a deterministic action. They contain no judgment or persona; if a tool needs judgment, it should be an agent instead.
+Tools (`{synapse,src}/tools/`) are mechanical utilities — scripts, wrappers, or external integrations that perform a deterministic action. They contain no judgment or persona; if a tool needs judgment, it should be an agent instead.
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `action`, `type`, and `tags` fields, with `domain` and `action` values from `TOOL_TAXONOMY.md`
 - **Type classification** — `type` must be one of `external`, `internal`, or `wrapper` (from `TOOL_TAXONOMY.md`) and must match actual content
@@ -48,7 +48,7 @@ Tools (`src/tools/`) are mechanical utilities — scripts, wrappers, or external
 - **Listed in TOOL_REGISTRY.md** — for discovery
 - **Execution model documented** — the TOOL.md must clearly describe inputs, outputs, and how to invoke the tool
 
-A tool belongs in `src/tools/` when it encapsulates a reusable mechanical operation (e.g., score computation, schema validation, format conversion) that 1+ skills or agents need to invoke.
+A tool belongs in `{synapse,src}/tools/` when it encapsulates a reusable mechanical operation (e.g., score computation, schema validation, format conversion) that 1+ skills or agents need to invoke.
 
 ### Pathway Definitions
 
@@ -79,7 +79,7 @@ Draft skills are usable but carry no quality guarantee. To track draft status, t
 
 | Type | Description | Lives in |
 |------|-------------|----------|
-| Standalone | One SKILL.md + EVAL.md, no shared config, no multi-skill coordination | Directly in `src/skills/<domain>/<skill-name>/` |
+| Standalone | One SKILL.md + EVAL.md, no shared config, no multi-skill coordination | Directly in `{synapse,src}/skills/<domain>/<skill-name>/` |
 | Submodule suite | Multiple related skills with shared templates, config, or CI | Own repo, wired in as a git submodule |
 
 **Keep standalone** when the skill has no infrastructure dependencies and doesn't need its own CI.
@@ -105,7 +105,7 @@ Checked automatically by the pre-commit hook. No LLM required.
 - [ ] `user-invocable` field is present
 - [ ] `argument-hint` is present when `user-invocable: true`
 - [ ] Domain `README.md` has a row for this skill
-- [ ] Skill name is globally unique (no collision in `src/SKILLS_REGISTRY.yaml` or `~/.claude/skills/`)
+- [ ] Skill name is globally unique (no collision in `synapse/SKILLS_REGISTRY.yaml` or `~/.claude/skills/`)
 
 ### Tier 2 — Quality
 
@@ -120,7 +120,7 @@ Evaluated by `synapse-gatekeeper` against skill design principles.
 
 ### Tier 3 — Registry
 
-- [ ] Pipeline-routable skills have a `pipeline:` block in `src/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_all`/`requires_any`
+- [ ] Pipeline-routable skills have a `pipeline:` block in `synapse/SKILLS_REGISTRY.yaml` with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_all`/`requires_any`
 - [ ] Non-pipeline-routable skills are listed in the registry for inventory (no `pipeline:` block, with a comment explaining why)
 - [ ] If registered: `stage_name` is unique across the registry
 - [ ] If registered: `requires_all`/`requires_any` entries resolve to real stage names
@@ -131,7 +131,7 @@ Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agen
 
 #### Tier 1 — Structural
 
-- [ ] Agent `.md` file exists in `src/agents/<domain>/` and is non-empty
+- [ ] Agent `.md` file exists in `{synapse,src}/agents/<domain>/` and is non-empty
 - [ ] Frontmatter complete: `name`, `description`, `domain`, `role` all present
 - [ ] `domain` value exists in `AGENT_TAXONOMY.md`
 - [ ] `role` value exists in `AGENT_TAXONOMY.md`
@@ -155,7 +155,7 @@ Protocols clear two tiers. Evaluated by `synapse-gatekeeper` using `references/p
 
 #### Tier 1 — Structural
 
-- [ ] Protocol `.md` file exists in `src/protocols/<domain>/` and is non-empty
+- [ ] Protocol `.md` file exists in `{synapse,src}/protocols/<domain>/` and is non-empty
 - [ ] Frontmatter complete: `name`, `description`, `domain`, `type` all present
 - [ ] `domain` value exists in `PROTOCOL_TAXONOMY.md`
 - [ ] `type` value exists in `PROTOCOL_TAXONOMY.md`
@@ -178,7 +178,7 @@ Tools clear two tiers. Evaluated by `synapse-gatekeeper`.
 
 #### Tier 1 — Structural
 
-- [ ] `TOOL.md` file exists in `src/tools/<domain>/` and is non-empty
+- [ ] `TOOL.md` file exists in `{synapse,src}/tools/<domain>/` and is non-empty
 - [ ] Frontmatter complete: `name`, `description`, `domain`, `action`, `type` all present
 - [ ] `domain` value exists in `TOOL_TAXONOMY.md`
 - [ ] `action` value exists in `TOOL_TAXONOMY.md`
@@ -294,7 +294,7 @@ A PR without an APPROVE verdict in the description will not be merged.
    git submodule add <repo-url> src/skills/<domain>/<suite-name>
    ```
 3. Run `make init` to configure git hooks.
-4. Register the skill(s) in `src/SKILLS_REGISTRY.yaml` and the domain `README.md`.
+4. Register the skill(s) in `synapse/SKILLS_REGISTRY.yaml` and the domain `README.md`.
 5. `scripts/install.sh` works unchanged — it follows symlinks regardless of submodule vs. local source.
 
 ### Updating a submodule
@@ -311,7 +311,7 @@ Never edit submoduled skill files directly in this repo — the changes will be 
 
 ### Removing a submodule
 
-1. Add a `# DEPRECATED:` comment to the skill's entry in `src/SKILLS_REGISTRY.yaml` and `README.md`.
+1. Add a `# DEPRECATED:` comment to the skill's entry in `synapse/SKILLS_REGISTRY.yaml` and `README.md`.
 2. Uninstall the symlink: `./scripts/install.sh clean` (or remove the specific symlink).
 3. After one full release cycle with no active use:
    ```bash
@@ -352,5 +352,5 @@ When brainstorming or improving a skill reveals that another skill, agent, proto
 ### Protocol naming
 
 - **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
-- Protocols live in subdirectories of `src/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
+- Protocols live in subdirectories of `{synapse,src}/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
 - The directory name groups related protocols by domain; the file name identifies the specific protocol

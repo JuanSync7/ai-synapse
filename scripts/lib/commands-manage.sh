@@ -32,7 +32,7 @@ cmd_available() {
         local desc
         desc="$(grep '^description:' "$skill_md" | head -1 | sed 's/^description: //' | cut -c1-60)"
         printf "  %-35s %s\n" "$rel" "$desc"
-    done < <(find "$SKILLS_DIR/src/skills" -name "SKILL.md" -type f 2>/dev/null | sort)
+    done < <(find "$SKILLS_DIR/synapse/skills" "$SKILLS_DIR/src/skills" -name "SKILL.md" -type f 2>/dev/null | sort)
 
     local external_dir="$SKILLS_DIR/external"
     if [ -d "$external_dir" ]; then
@@ -206,8 +206,8 @@ cmd_install_identity() {
 }
 
 cmd_install_agents() {
-    if [ ! -d "$AGENTS_SOURCE" ]; then
-        echo "Error: src/agents/ directory not found"
+    if [ ! -d "$AGENTS_SOURCE" ] && [ ! -d "$AGENTS_SOURCE_ALT" ]; then
+        echo "Error: neither synapse/agents/ nor src/agents/ directory found"
         exit 1
     fi
 
@@ -215,7 +215,8 @@ cmd_install_agents() {
 
     local count=0
 
-    for src in "$AGENTS_SOURCE"/*.md; do
+    # Recurse into domain subdirs across both framework and adopter agent roots.
+    while IFS= read -r src; do
         [ -f "$src" ] || continue
         local name
         name="$(basename "$src")"
@@ -239,7 +240,7 @@ cmd_install_agents() {
         ln -s "$src" "$target"
         echo "  add   $name"
         count=$((count + 1))
-    done
+    done < <(find "$AGENTS_SOURCE" "$AGENTS_SOURCE_ALT" -name '*.md' -not -name 'README.md' -type f 2>/dev/null | sort)
 
     echo ""
     echo "Installed $count agent(s) → $AGENTS_TARGET"

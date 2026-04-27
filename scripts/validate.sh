@@ -42,32 +42,36 @@ Options:
 
 Examples:
   validate.sh                                        # validate all artifacts
-  validate.sh src/skills/docs/write-spec-docs        # validate one skill
-  validate.sh src/skills/docs/write-spec-docs/SKILL.md  # same, via file path
-  validate.sh src/skills/                            # validate all skills
-  validate.sh src/agents/                            # validate all agents
+  validate.sh synapse/skills/skill/skill-creator     # validate one framework skill
+  validate.sh src/skills/docs/write-spec-docs        # validate one adopter skill
+  validate.sh synapse/skills/                        # validate framework skills
+  validate.sh src/agents/                            # validate adopter agents
   validate.sh scripts/install.sh                     # validate one script
 
+Artifact roots:
+  Framework artifacts live under  synapse/{skills,agents,protocols,tools}/
+  Adopter artifacts live under    src/{skills,agents,protocols,tools}/
+
 Checks performed:
-  Skills (src/skills/**/SKILL.md):
+  Skills ({synapse,src}/skills/**/SKILL.md):
     - Frontmatter exists with required fields (name, description, domain, intent)
     - domain/intent values exist in taxonomy/SKILL_TAXONOMY.md
     - EVAL.md exists alongside SKILL.md
     - Skill listed in registry/SKILL_REGISTRY.md
     - Domain README.md has a matching row
 
-  Agents (src/agents/**/*.md, excluding README.md):
+  Agents ({synapse,src}/agents/**/*.md, excluding README.md):
     - Frontmatter exists with required fields (name, description, domain, role)
     - domain/role values exist in taxonomy/AGENT_TAXONOMY.md
     - Agent listed in registry/AGENTS_REGISTRY.md
     - Domain README.md has a matching row
 
-  Protocols (src/protocols/**/*.md, excluding README.md, change_requests/):
+  Protocols ({synapse,src}/protocols/**/*.md, excluding README.md, change_requests/):
     - Frontmatter exists with required fields (name, description, domain, type)
     - domain/type values exist in taxonomy/PROTOCOL_TAXONOMY.md
     - Domain README.md has a matching row
 
-  Tools (src/tools/**/TOOL.md):
+  Tools ({synapse,src}/tools/**/TOOL.md):
     - Frontmatter exists with required fields (name, description, domain, action, type)
     - domain/action/type values exist in taxonomy/TOOL_TAXONOMY.md
     - Tool listed in registry/TOOL_REGISTRY.md
@@ -173,13 +177,26 @@ check_readme_entry() {
   grep -q "\[${name}\]" "$file" 2>/dev/null || grep -q "\[${name}\.sh\]" "$file" 2>/dev/null
 }
 
+# Check if a skill is marked draft in SKILL_REGISTRY.md.
+# A draft row ends with `| draft |` (status column).
+# Usage: is_draft_skill <skill_name>
+# Returns 0 if draft, 1 otherwise.
+is_draft_skill() {
+  local name="$1"
+  [ -f "$SKILL_REGISTRY" ] || return 1
+  grep "\[${name}\]" "$SKILL_REGISTRY" 2>/dev/null | grep -q '|[[:space:]]*draft[[:space:]]*|'
+}
+
 # =============================================================================
 # Frontmatter existence check
 # =============================================================================
 
 has_frontmatter() {
   local file="$1"
-  head -1 "$file" | grep -q '^---$' && sed -n '2,$ p' "$file" | grep -q '^---$'
+  # Single-pass awk avoids a SIGPIPE race: with `set -o pipefail`, `grep -q`
+  # exiting on first match could kill `head`/`sed` mid-write and propagate
+  # exit 141, producing false "missing frontmatter" errors.
+  awk 'NR==1 && $0!="---" {exit 1} NR>1 && $0=="---" {found=1; exit 0} END {exit !found}' "$file"
 }
 
 # =============================================================================
@@ -227,9 +244,13 @@ validate_skill() {
     fi
   fi
 
-  # 5. EVAL.md exists
+  # 5. EVAL.md exists (skipped for draft skills — they predate the EVAL requirement)
   if [ ! -f "$skill_dir/EVAL.md" ]; then
-    report_error "$rel_path" "missing EVAL.md alongside SKILL.md"
+    if is_draft_skill "$skill_name"; then
+      report_warn "$rel_path" "missing EVAL.md (skill marked draft — required before promotion to stable)"
+    else
+      report_error "$rel_path" "missing EVAL.md alongside SKILL.md"
+    fi
   fi
 
   # 6. Listed in SKILL_REGISTRY.md
@@ -504,20 +525,34 @@ validate_script() {
 # Discovery functions — find all artifacts of a type
 # =============================================================================
 
+# Roots: synapse/ holds framework artifacts; src/ holds adopter artifacts (may be empty stub).
+ART_SKILL_ROOTS=("$REPO_ROOT/synapse/skills" "$REPO_ROOT/src/skills")
+ART_AGENT_ROOTS=("$REPO_ROOT/synapse/agents" "$REPO_ROOT/src/agents")
+ART_PROTO_ROOTS=("$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/protocols")
+ART_TOOL_ROOTS=("$REPO_ROOT/synapse/tools" "$REPO_ROOT/src/tools")
+
 find_all_skills() {
-  find "$REPO_ROOT/src/skills" -name "SKILL.md" -type f 2>/dev/null | sort
+  for root in "${ART_SKILL_ROOTS[@]}"; do
+    [ -d "$root" ] && find "$root" -name "SKILL.md" -type f 2>/dev/null
+  done | sort
 }
 
 find_all_agents() {
-  find "$REPO_ROOT/src/agents" -name "*.md" -type f ! -name "README.md" 2>/dev/null | sort
+  for root in "${ART_AGENT_ROOTS[@]}"; do
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" 2>/dev/null
+  done | sort
 }
 
 find_all_protocols() {
-  find "$REPO_ROOT/src/protocols" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null | sort
+  for root in "${ART_PROTO_ROOTS[@]}"; do
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
+  done | sort
 }
 
 find_all_tools() {
-  find "$REPO_ROOT/src/tools" -name "TOOL.md" -type f 2>/dev/null | sort
+  for root in "${ART_TOOL_ROOTS[@]}"; do
+    [ -d "$root" ] && find "$root" -name "TOOL.md" -type f 2>/dev/null
+  done | sort
 }
 
 find_all_scripts() {
@@ -586,11 +621,11 @@ validate_path() {
       */SKILL.md)   validate_skill "$target" ;;
       */TOOL.md)    validate_tool "$target" ;;
       */scripts/*.sh) validate_script "$target" ;;
-      */src/agents/*/README.md) ;; # skip READMEs
-      */src/protocols/*/README.md) ;; # skip READMEs
-      */src/agents/*.md)
+      */src/agents/*/README.md|*/synapse/agents/*/README.md) ;; # skip READMEs
+      */src/protocols/*/README.md|*/synapse/protocols/*/README.md) ;; # skip READMEs
+      */src/agents/*.md|*/synapse/agents/*.md)
         validate_agent "$target" ;;
-      */src/protocols/*.md)
+      */src/protocols/*.md|*/synapse/protocols/*.md)
         # Skip change_requests
         if [[ "$target" != */change_requests/* ]]; then
           validate_protocol "$target"
@@ -611,7 +646,7 @@ validate_path() {
     done < <(find "$target" -name "SKILL.md" -type f 2>/dev/null | sort)
 
     # Agents
-    if [[ "$target" == *src/agents* ]]; then
+    if [[ "$target" == *src/agents* || "$target" == *synapse/agents* ]]; then
       while IFS= read -r f; do
         validate_agent "$f"
         found=true
@@ -619,7 +654,7 @@ validate_path() {
     fi
 
     # Protocols
-    if [[ "$target" == *src/protocols* ]]; then
+    if [[ "$target" == *src/protocols* || "$target" == *synapse/protocols* ]]; then
       while IFS= read -r f; do
         validate_protocol "$f"
         found=true
@@ -670,35 +705,27 @@ else
 
   # Skills
   echo "--- Skills ---"
-  if [ -d "$REPO_ROOT/src/skills" ]; then
-    while IFS= read -r f; do
-      validate_skill "$f"
-    done < <(find_all_skills)
-  fi
+  while IFS= read -r f; do
+    [ -n "$f" ] && validate_skill "$f"
+  done < <(find_all_skills)
 
   # Agents
   echo "--- Agents ---"
-  if [ -d "$REPO_ROOT/src/agents" ]; then
-    while IFS= read -r f; do
-      validate_agent "$f"
-    done < <(find_all_agents)
-  fi
+  while IFS= read -r f; do
+    [ -n "$f" ] && validate_agent "$f"
+  done < <(find_all_agents)
 
   # Protocols
   echo "--- Protocols ---"
-  if [ -d "$REPO_ROOT/src/protocols" ]; then
-    while IFS= read -r f; do
-      validate_protocol "$f"
-    done < <(find_all_protocols)
-  fi
+  while IFS= read -r f; do
+    [ -n "$f" ] && validate_protocol "$f"
+  done < <(find_all_protocols)
 
   # Tools
   echo "--- Tools ---"
-  if [ -d "$REPO_ROOT/src/tools" ]; then
-    while IFS= read -r f; do
-      validate_tool "$f"
-    done < <(find_all_tools)
-  fi
+  while IFS= read -r f; do
+    [ -n "$f" ] && validate_tool "$f"
+  done < <(find_all_tools)
 
   # Scripts
   echo "--- Scripts ---"

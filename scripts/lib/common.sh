@@ -6,7 +6,10 @@ SKILLS_DIR="$REPO_ROOT"
 
 # Claude Code targets
 TARGET="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
-AGENTS_SOURCE="$SKILLS_DIR/src/agents"
+# Framework agents live in synapse/agents; adopter agents in src/agents.
+# Default to synapse/ for the framework repo; cmd_install_agents iterates both.
+AGENTS_SOURCE="$SKILLS_DIR/synapse/agents"
+AGENTS_SOURCE_ALT="$SKILLS_DIR/src/agents"
 AGENTS_TARGET="${CLAUDE_AGENTS_DIR:-$HOME/.claude/agents}"
 
 # Codex CLI targets
@@ -45,7 +48,7 @@ usage() {
     echo "  ai-skills codex all             # Codex CLI: install everything (global)"
     echo "  ai-skills codex-project all     # Codex CLI: install to current project"
     echo "  ai-skills gemini all            # Gemini CLI: install everything"
-    echo "  ai-skills install src/skills/docs src/skills/code/build-plan"
+    echo "  ai-skills install synapse/skills/skill synapse/skills/orchestration"
     echo "  ai-skills zip all"
 }
 

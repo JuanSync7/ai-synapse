@@ -8,6 +8,11 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Where new artifacts get scaffolded.
+# Default: synapse/ (framework artifacts).
+# Override with SCAFFOLD_ROOT=src to scaffold adopter artifacts.
+SCAFFOLD_ROOT="${SCAFFOLD_ROOT:-synapse}"
+
 usage() {
   cat <<'USAGE'
 Usage: scaffold.sh <type> <domain> <name>
@@ -15,10 +20,13 @@ Usage: scaffold.sh <type> <domain> <name>
 Creates a new artifact with correct structure, frontmatter, README row, and registry entry.
 
 Types:
-  skill      Create src/skills/<domain>/<name>/SKILL.md + EVAL.md
-  agent      Create src/agents/<domain>/<name>.md
-  protocol   Create src/protocols/<domain>/<name>.md
-  tool       Create src/tools/<domain>/<name>/TOOL.md
+  skill      Create <root>/skills/<domain>/<name>/SKILL.md + EVAL.md
+  agent      Create <root>/agents/<domain>/<name>.md
+  protocol   Create <root>/protocols/<domain>/<name>.md
+  tool       Create <root>/tools/<domain>/<name>/TOOL.md
+
+  <root> defaults to "synapse" (framework artifacts).
+  Set SCAFFOLD_ROOT=src to scaffold adopter artifacts under src/.
 
 Examples:
   scaffold.sh skill docs my-new-skill
@@ -101,7 +109,7 @@ case "$TYPE" in
     validate_domain "$TYPE" "$DOMAIN" "$taxonomy_file"
 
     top_dom="$(top_domain "$DOMAIN")"
-    skill_dir="$REPO_ROOT/src/skills/${top_dom}/${NAME}"
+    skill_dir="$REPO_ROOT/${SCAFFOLD_ROOT}/skills/${top_dom}/${NAME}"
 
     if [[ -d "$skill_dir" ]]; then
       echo "Error: Artifact '${NAME}' already exists at ${skill_dir}" >&2
@@ -137,7 +145,7 @@ EOF
     CREATED_FILES+=("$skill_dir/EVAL.md")
 
     # Domain README
-    readme_path="$REPO_ROOT/src/skills/${top_dom}/README.md"
+    readme_path="$REPO_ROOT/${SCAFFOLD_ROOT}/skills/${top_dom}/README.md"
     ensure_domain_readme "$readme_path" "$top_dom" "skill" "Intent"
     append_table_row "$readme_path" "| [${NAME}](${NAME}/) | write | |"
     if [[ ! " ${CREATED_FILES[*]} " =~ " ${readme_path} " ]]; then
@@ -146,7 +154,7 @@ EOF
 
     # Registry
     registry="$REPO_ROOT/registry/SKILL_REGISTRY.md"
-    append_table_row "$registry" "| [${NAME}](../src/skills/${top_dom}/${NAME}/SKILL.md) | | ${DOMAIN} | — | draft |"
+    append_table_row "$registry" "| [${NAME}](../${SCAFFOLD_ROOT}/skills/${top_dom}/${NAME}/SKILL.md) | | ${DOMAIN} | — | draft |"
     CREATED_FILES+=("$registry (updated)")
     ;;
 
@@ -154,7 +162,7 @@ EOF
     taxonomy_file="$REPO_ROOT/taxonomy/AGENT_TAXONOMY.md"
     validate_domain "$TYPE" "$DOMAIN" "$taxonomy_file"
 
-    agent_dir="$REPO_ROOT/src/agents/${DOMAIN}"
+    agent_dir="$REPO_ROOT/${SCAFFOLD_ROOT}/agents/${DOMAIN}"
     agent_file="$agent_dir/${NAME}.md"
 
     if [[ -f "$agent_file" ]]; then
@@ -189,7 +197,7 @@ EOF
 
     # Registry
     registry="$REPO_ROOT/registry/AGENTS_REGISTRY.md"
-    append_table_row "$registry" "| [${NAME}](src/agents/${DOMAIN}/${NAME}.md) | | |"
+    append_table_row "$registry" "| [${NAME}](${SCAFFOLD_ROOT}/agents/${DOMAIN}/${NAME}.md) | | |"
     CREATED_FILES+=("$registry (updated)")
     ;;
 
@@ -197,7 +205,7 @@ EOF
     taxonomy_file="$REPO_ROOT/taxonomy/PROTOCOL_TAXONOMY.md"
     validate_domain "$TYPE" "$DOMAIN" "$taxonomy_file"
 
-    proto_dir="$REPO_ROOT/src/protocols/${DOMAIN}"
+    proto_dir="$REPO_ROOT/${SCAFFOLD_ROOT}/protocols/${DOMAIN}"
     proto_file="$proto_dir/${NAME}.md"
 
     if [[ -f "$proto_file" ]]; then
@@ -232,7 +240,7 @@ EOF
 
     # Registry
     registry="$REPO_ROOT/registry/PROTOCOL_REGISTRY.md"
-    append_table_row "$registry" "| [${NAME}](src/protocols/${DOMAIN}/${NAME}.md) | | ${DOMAIN} | contract | |"
+    append_table_row "$registry" "| [${NAME}](${SCAFFOLD_ROOT}/protocols/${DOMAIN}/${NAME}.md) | | ${DOMAIN} | contract | |"
     CREATED_FILES+=("$registry (updated)")
     ;;
 
@@ -240,7 +248,7 @@ EOF
     taxonomy_file="$REPO_ROOT/taxonomy/TOOL_TAXONOMY.md"
     validate_domain "$TYPE" "$DOMAIN" "$taxonomy_file"
 
-    tool_dir="$REPO_ROOT/src/tools/${DOMAIN}/${NAME}"
+    tool_dir="$REPO_ROOT/${SCAFFOLD_ROOT}/tools/${DOMAIN}/${NAME}"
 
     if [[ -d "$tool_dir" ]]; then
       echo "Error: Artifact '${NAME}' already exists at ${tool_dir}" >&2
@@ -266,7 +274,7 @@ EOF
     CREATED_FILES+=("$tool_dir/TOOL.md")
 
     # Domain README
-    readme_path="$REPO_ROOT/src/tools/${DOMAIN}/README.md"
+    readme_path="$REPO_ROOT/${SCAFFOLD_ROOT}/tools/${DOMAIN}/README.md"
     ensure_domain_readme "$readme_path" "$DOMAIN" "tool" "Action"
     append_table_row "$readme_path" "| [${NAME}](${NAME}/) | generator | |"
     if [[ ! " ${CREATED_FILES[*]} " =~ " ${readme_path} " ]]; then
@@ -275,7 +283,7 @@ EOF
 
     # Registry
     registry="$REPO_ROOT/registry/TOOL_REGISTRY.md"
-    append_table_row "$registry" "| [${NAME}](../src/tools/${DOMAIN}/${NAME}/TOOL.md) | | ${DOMAIN} | generator | draft |"
+    append_table_row "$registry" "| [${NAME}](../${SCAFFOLD_ROOT}/tools/${DOMAIN}/${NAME}/TOOL.md) | | ${DOMAIN} | generator | draft |"
     CREATED_FILES+=("$registry (updated)")
     ;;
 
