@@ -1,0 +1,47 @@
+# Persistent state file for docs-write-story.
+# Lives at: docs/<initiative>/epics/<epic>/meta.yaml
+# Seeded at [NEW]; updated before every response (MUST rule in SKILL.md).
+# Read at [RESUME] to restore position, roster, and pending tmp-file inventory.
+
+skill: docs-write-story
+protocol_version: <protocol-version>    # version string from docs-engineering-ticket-shape protocol
+
+initiative: <initiative-name>           # top-level product initiative (from memo frontmatter or --initiative arg)
+epic: <epic-name>                       # epic slug (from memo frontmatter or --epic arg)
+
+# Current node. One of: E | F | G | S | V | R | END
+# Skill sets this before every response so resume is unambiguous.
+position: <E|F|G|S|V|R|END>
+
+status: <active|done>                   # done only when [END] completes cleanly
+
+# --- FR roster ---
+# Written at [F], updated as waves complete at [S].
+# id: three-digit monotonic (FR-001, FR-002, ...). Never reuse retired numbers.
+# phase: which implementation phase this FR belongs to (e.g. phase-1, phase-2)
+# status: pending | in_progress | shipped | skipped
+fr_roster:
+  - id: <FR-NNN>
+    title: <short title>
+    phase: <phase-label>
+    status: <pending|in_progress|shipped|skipped>
+    depends_on: []          # FR-NNN ids this FR waits on within the same phase
+    conflicts_with: []      # FR-NNN ids whose tmp context this FR must not read
+  # repeat for each FR
+
+# --- Tmp-file inventory ---
+# FR ids whose .tmp/fr-context/FR-NNN.md file still exists on disk.
+# A story-writer deletes its own file on success — absence means shipped or never created.
+# At [RESUME], skill re-scans .tmp/fr-context/ and reconciles against this list.
+tmp_files_pending:
+  - <FR-NNN>    # ids only; infer path as .tmp/fr-context/<id>.md
+
+# --- Wave history ---
+# Append-only log. One entry per dispatched wave.
+# Used to detect retry exhaustion and surface skip batches to the user.
+wave_history:
+  - wave: <1>
+    fr_ids: [<FR-NNN>, <FR-NNN>]   # FRs dispatched in this wave
+    status: <complete|partial|failed>
+    retried: false                  # true if this wave was re-dispatched after a failure
+    skipped: []                     # FR ids that failed after retry and were surface-skipped

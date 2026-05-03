@@ -7,6 +7,7 @@ Full inventory of all skills. Before creating a new skill, check if one already 
 | [write-scope-docs](../src/skills/docs/write-scope-docs/SKILL.md) | Scope document with phase plan, scope boundary, and readiness gate | docs | — | stable |
 | [write-architecture-docs](../src/skills/docs/write-architecture-docs/SKILL.md) | Architecture doc with technology decisions, component boundaries, and data flow patterns | docs | — | stable |
 | [write-spec-docs](../src/skills/docs/write-spec-docs/SKILL.md) | Formal requirements spec with FRs, NFRs, acceptance criteria | docs | `spec` | stable |
+| [docs-write-story](../src/skills/docs/docs-write-story/SKILL.md) | Materializes a brainstorm memo into ticket-shape FR directories — vertical slices (story/design/impl/test) + regenerated engineering guide | docs | — | stable |
 | [write-spec-summary](../src/skills/docs/write-spec-summary/SKILL.md) | Concise spec digest synced with companion spec | docs | `spec-summary` | stable |
 | [write-design-docs](../src/skills/docs/write-design-docs/SKILL.md) | Technical design with task decomposition and code contracts | docs | `design` | stable |
 | [write-implementation-docs](../src/skills/docs/write-implementation-docs/SKILL.md) | Phased implementation plan from design doc (canonical impl stage) | docs | `impl` | stable |

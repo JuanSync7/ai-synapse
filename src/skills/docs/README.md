@@ -10,6 +10,7 @@ Documentation authoring skills. Produces scope docs, architecture docs, specs, s
 | [write-scope-docs](write-scope-docs/) | write | Scope document — what to build, what to defer, how to phase delivery |
 | [write-architecture-docs](write-architecture-docs/) | write | Architecture doc with technology decisions, component boundaries, and data flow patterns |
 | [write-spec-docs](write-spec-docs/) | write | Formal requirements specification with FR/NFR traceability |
+| [docs-write-story](docs-write-story/) | write | Ticket-shape engineering specs from a brainstorm memo — vertical-slice FR directories + regenerated engineering guide |
 | [write-spec-summary](write-spec-summary/) | summarize | Concise spec summary synced with companion spec |
 | [write-design-docs](write-design-docs/) | write | Design document with task decomposition and code contracts |
 | [write-implementation-docs](write-implementation-docs/) | write | Implementation source-of-truth before touching code |

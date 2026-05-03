@@ -1,0 +1,1 @@
+../../../../agents/docs/docs-fr-decomposer.md

@@ -2,4 +2,7 @@
 
 Adopter tools. Framework tools live in [`../../synapse/tools/`](../../synapse/tools/).
 
-(no adopter tools yet — use `SCAFFOLD_ROOT=src ./cortex scaffold tool <domain> <name>` to create the first one)
+| Domain | Description |
+|--------|-------------|
+| [docs/](docs/) | Doc validation, regeneration, lineage, and forensic queries over engineering docs |
+| [testing/](testing/) | Test generation, scoring, coverage analysis |

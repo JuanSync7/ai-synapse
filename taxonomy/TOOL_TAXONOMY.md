@@ -14,6 +14,7 @@ Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention.
 | `analysis` | Code analysis, metric computation |
 | `integration` | External service interaction tooling |
 | `synapse` | Synapse ecosystem tooling — branching, registry sync, validation |
+| `docs` | Doc validation, regeneration, lineage, and forensic queries over engineering docs |
 
 ## Actions
 
