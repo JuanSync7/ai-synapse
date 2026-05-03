@@ -9,3 +9,4 @@ Framework skills — the meta-tools used to build, evaluate, and govern artifact
 | [orchestration/](orchestration/) | Multi-agent coordination |
 | [protocol/](protocol/) | Protocol development lifecycle — create and evaluate protocols |
 | [skill/](skill/) | Skill development lifecycle — create, evaluate, improve, certify |
+| [synapse/](synapse/) | Framework meta-skills spanning artifact types (consolidated creators, improvers, eval-writers) |

@@ -1,9 +1,9 @@
 ---
 name: write-skill-eval
-description: Generates EVAL.md files containing structural criteria, execution criteria, output criteria, and test prompts for any Claude Code skill. Dispatches agent definitions for blind prompt generation, judge-based criteria writing, and execution criteria extraction. Triggered by "write eval for skill", "create skill evaluation", "generate EVAL.md", "evaluate this skill".
+description: Use when asked to write an eval for a skill, create skill evaluation criteria, generate an EVAL.md, or produce test prompts for a Claude Code skill.
 domain: synapse
 intent: route
-tags: [EVAL.md, criteria, test prompts]
+tags: [eval-md, criteria, test-prompts]
 user-invocable: true
 argument-hint: "[path to skill directory]"
 ---

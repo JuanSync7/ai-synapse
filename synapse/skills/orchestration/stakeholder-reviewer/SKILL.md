@@ -13,6 +13,13 @@ Evaluates content on behalf of the project owner using their persona document. R
 
 Acts as a domain-expert proxy that evaluates decisions against a stakeholder persona. Dispatched as a subagent by workflow skills — never invoked directly by the user. Catches misalignment early (during design) rather than late (during implementation), when changes are expensive.
 
+## Wrong-Tool Detection
+
+- **User wants to interactively review a design with them** → redirect to `/synapse-brainstorm` (collaborative pressure-testing)
+- **User wants to certify an artifact for promotion** → redirect to `/synapse-gatekeeper <path>` (governance review, not persona review)
+- **User wants to define or update their stakeholder persona** → instruct them to edit `~/.claude/stakeholder.md` or `<project-root>/stakeholder.md` directly; this skill consumes those files, it does not author them
+- **User invokes this directly from the CLI** → reject with redirect: this skill is dispatched as a subagent (`user-invocable: false`); direct invocation is not the intended interface
+
 ## Persona Loading
 
 1. Load `~/.claude/stakeholder.md` (global persona) if it exists

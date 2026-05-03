@@ -18,3 +18,4 @@ Full inventory of all skills. Before creating a new skill, check if one already 
 | [skill-router](../synapse/skills/meta/skill-router/SKILL.md) | Routes user intent to the right skill based on domain matching | meta | — | draft |
 | [autonomous-orchestrator](../synapse/skills/orchestration/autonomous-orchestrator/SKILL.md) | Fully autonomous dev pipeline with stakeholder gates | orchestration | — | draft |
 | [stakeholder-reviewer](../synapse/skills/orchestration/stakeholder-reviewer/SKILL.md) | Evaluates decisions against stakeholder persona (APPROVE/REVISE/ESCALATE) | orchestration | — | draft |
+| [synapse-creator](../synapse/skills/synapse/synapse-creator/SKILL.md) | Router-based unified creator for new skills, protocols, agents, or tools — type-specific flows load on demand | synapse | — | stable |
