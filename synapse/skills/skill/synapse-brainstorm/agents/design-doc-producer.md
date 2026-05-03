@@ -1,7 +1,7 @@
 ---
 name: brainstorm-design-doc-producer
 description: Produces a frozen design document from a brainstorm notepad
-domain: skill
+domain: synapse
 role: writer
 ---
 

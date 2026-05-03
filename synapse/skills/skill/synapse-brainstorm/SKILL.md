@@ -1,7 +1,7 @@
 ---
 name: synapse-brainstorm
 description: "Use when exploring an idea for a new artifact (skill, tool, agent, protocol) or reworking an existing one — before committing to build"
-domain: skill.create
+domain: synapse
 intent: plan
 tags: [brainstorm, coaching, multi-artifact]
 user-invocable: true

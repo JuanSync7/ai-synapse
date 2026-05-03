@@ -1,7 +1,7 @@
 ---
 name: skill-eval-judge
 description: "Impartial judge — binary output quality criteria (EVAL-Oxx) from SKILL.md"
-domain: skill-eval
+domain: synapse
 role: judge
 tags: [output-criteria, binary-grading, impartial]
 ---

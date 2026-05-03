@@ -1,7 +1,7 @@
 ---
 name: skill-creator
 description: Use when asked to create a new skill, build a skill, or edit an existing skill's SKILL.md and companions.
-domain: skill.create
+domain: synapse
 intent: write
 tags: [skill, SKILL.md, scaffold]
 user-invocable: true

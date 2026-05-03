@@ -1,7 +1,7 @@
 ---
 name: write-protocol-eval
 description: "Use when asked to generate evaluation criteria for a protocol, or to define conformance tests for a protocol."
-domain: protocol.eval
+domain: synapse
 intent: generate
 tags: [protocol, eval, conformance-testing]
 user-invocable: true

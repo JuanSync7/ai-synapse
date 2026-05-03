@@ -1,7 +1,7 @@
 ---
 name: stakeholder-reviewer
 description: Evaluates a question, design section, or decision against the user's stakeholder persona. Returns APPROVE, REVISE, or ESCALATE with reasoning. Dispatched by autonomous workflow skills as a subagent — never invoked directly by the user.
-domain: orchestration
+domain: synapse
 intent: review
 tags: [stakeholder, persona, gate]
 user-invocable: false

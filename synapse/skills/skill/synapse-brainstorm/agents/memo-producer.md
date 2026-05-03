@@ -1,7 +1,7 @@
 ---
 name: brainstorm-memo-producer
 description: Produces a per-artifact decision memo or change request from a brainstorm notepad
-domain: skill
+domain: synapse
 role: writer
 ---
 

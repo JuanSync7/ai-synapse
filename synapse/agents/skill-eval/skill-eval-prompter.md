@@ -1,7 +1,7 @@
 ---
 name: skill-eval-prompter
 description: "Blind test prompt generation across 4 personas"
-domain: skill-eval
+domain: synapse
 role: prompter
 tags: [test-prompts, blind-generation, personas]
 ---

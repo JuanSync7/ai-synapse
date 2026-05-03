@@ -1,7 +1,7 @@
 ---
 name: protocol-eval-reviewer
 description: "Signal-strength reviewer — validates protocol instructions use commitment language, named trigger moments, and follow universal anatomy"
-domain: protocol-eval
+domain: synapse
 role: reviewer
 tags: [signal-strength, protocol-review, wording-validation]
 ---
