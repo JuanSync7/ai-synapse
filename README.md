@@ -100,6 +100,9 @@ ai-synapse/
 │   ├── tools/
 │   │   └── <domain>/               # Tools organized by domain (integration, testing, etc.)
 │   │       └── <tool-name>/        # Each tool: TOOL.md + optional scripts
+│
+├── synapse/                         # Framework artifacts shipped by ai-synapse
+│   ├── skills/, agents/, protocols/, tools/
 │   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
 │
 ├── external/                        # Externally-owned submodule suites
@@ -324,7 +327,7 @@ See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
 ./cortex zip synapse/skills/skill/skill-creator  # package one skill
 ```
 
-→ See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.
+→ See **[`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md)** for the full skill catalog (and the other registries under [`registry/`](registry/) for agents, protocols, tools, and pathways).
 
 ---
 
