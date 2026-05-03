@@ -1,7 +1,7 @@
 ---
 name: synapse-gatekeeper
 description: "Use when a skill, agent, protocol, tool, or pathway is complete and ready for promotion review, or to check if an artifact meets the bar to land in ai-synapse."
-domain: skill.eval
+domain: synapse
 intent: validate
 tags: [skill, agent, protocol, tool, pathway, promotion, certification, gatekeeper]
 user-invocable: true

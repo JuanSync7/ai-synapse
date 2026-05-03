@@ -1,7 +1,7 @@
 ---
 name: agent-creator
 description: "Use when asked to create a new agent definition, build an agent for X, or write an agent recipe."
-domain: agent.create
+domain: synapse
 intent: write
 tags: [agent, creation, scaffolding]
 user-invocable: true

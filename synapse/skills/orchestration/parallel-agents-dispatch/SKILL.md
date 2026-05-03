@@ -1,7 +1,7 @@
 ---
 name: parallel-agents-dispatch
 description: Use when you have a plan or task list and need to execute the tasks in parallel where possible. Triggered by "execute this plan", "run these tasks", "dispatch the implementation", or any multi-step task list.
-domain: orchestration
+domain: synapse
 intent: execute
 tags: [parallel, waves, dispatch]
 user-invocable: true

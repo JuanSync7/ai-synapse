@@ -1,9 +1,9 @@
 ---
 name: skill-creator
 description: Use when asked to create a new skill, build a skill, or edit an existing skill's SKILL.md and companions.
-domain: skill.create
+domain: synapse
 intent: write
-tags: [skill, SKILL.md, scaffold]
+tags: [skill, skill-md, scaffold]
 user-invocable: true
 argument-hint: "[what the skill should do]"
 ---
@@ -54,7 +54,7 @@ Exit: → resume at last active node
 ## Flow
 
 ### [ED] Edit
-Load: references/flow-graph-pattern.md, references/skill-design-principles.md, references/writing-conventions.md, references/structure-preserving-edits.md, references/companion-dispatch-protocol.md
+Load: references/flow-graph-pattern.md, references/skill-design-principles.md, references/writing-conventions.md, references/companion-dispatch-protocol.md
 Brief: Apply targeted changes to an existing skill while respecting structural rules.
 Do:
   1. Read existing SKILL.md + all companion files in the skill directory

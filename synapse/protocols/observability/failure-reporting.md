@@ -1,7 +1,7 @@
 ---
 name: failure-reporting
 description: "Standardized failure tag format for agents and protocols — enables grepping, aggregation, and surfacing across multi-agent workflows"
-domain: observability
+domain: synapse
 type: schema
 tags: [failure-reporting, agent-failure, protocol-failure, observability]
 ---

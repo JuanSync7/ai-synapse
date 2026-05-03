@@ -13,6 +13,7 @@ Framework skill domains (skill-creator, gatekeeper, brainstorm, eval generators,
 | [orchestration/](skills/orchestration/) | Multi-agent coordination |
 | [protocol/](skills/protocol/) | Protocol development lifecycle — create and evaluate protocols |
 | [skill/](skills/skill/) | Skill development lifecycle — create, evaluate, improve, certify |
+| [synapse/](skills/synapse/) | Framework meta-skills spanning artifact types (consolidated creators, improvers, eval-writers) |
 
 ## [agents/](agents/)
 

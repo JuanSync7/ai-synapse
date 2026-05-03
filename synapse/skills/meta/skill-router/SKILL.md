@@ -1,7 +1,7 @@
 ---
 name: skill-router
 description: "Routes to specialized skills from the ai-skills repository. Use when the user's request matches a known skill domain but no installed skill covers it. Does NOT activate for general coding, debugging, git operations, or conversation."
-domain: meta
+domain: synapse
 intent: route
 tags: [router, discovery, lazy-load]
 user-invocable: false

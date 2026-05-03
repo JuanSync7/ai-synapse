@@ -1,7 +1,7 @@
 ---
 name: skill-brainstorm
 description: "Use when you have an idea for a skill but aren't sure if it should be one, what shape it should take, or how to articulate it for /skill-creator."
-domain: skill.create
+domain: synapse
 intent: plan
 tags: [skill, brainstorm, coaching, ideation]
 user-invocable: true

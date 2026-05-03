@@ -1,7 +1,7 @@
 ---
 name: autonomous-orchestrator
 description: Use when you want to build a feature end-to-end autonomously — from brainstorming through specs, design, code, and documentation with review at every step. Triggered by "build autonomously", "overnight pipeline", "run the full pipeline", "build this overnight".
-domain: orchestration
+domain: synapse
 intent: execute
 tags: [pipeline, autonomous, end-to-end]
 user-invocable: true

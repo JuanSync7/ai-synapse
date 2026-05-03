@@ -1,7 +1,7 @@
 ---
 name: skill-companion-file-writer
 description: Writes a single companion file for a Claude Code skill
-domain: skill
+domain: synapse
 role: writer
 ---
 
