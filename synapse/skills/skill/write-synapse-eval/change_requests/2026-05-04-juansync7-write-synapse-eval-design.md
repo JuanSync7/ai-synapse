@@ -19,29 +19,41 @@ The synapse framework has four artifact classes — skill, protocol, agent, tool
 
 ## 2. Design Principles
 
-### Mirror synapse-creator's architecture exactly
+### Mirror synapse-creator's router architecture — not its flow symmetry
 
-The `synapse-creator` router (SKILL.md + `flow-{type}.md` + `shared-steps.md` + `type-config.md` + `templates/{type}/`) has been proven across four artifact types. Reinventing the structure for a skill with the same routing problem would produce an inconsistent meta-layer. Eval generation has the same type-dispatch problem as artifact creation: one entry point, type-specific logic, shared utility procedures.
+The `synapse-creator` router pattern (SKILL.md + `flow-{type}.md` + `shared-steps.md` + `type-config.md` + `templates/{type}/`) has been proven across four artifact types and is inherited without modification. However, the flow files are NOT symmetric: the actual problem shapes differ by type. `flow-skill.md` is dispatch-rich because skill evaluation requires subjective output grading; `flow-{protocol,agent,tool}.md` are short transcription flows because gatekeeper grading criteria for those types are entirely static checklists. Imposing symmetry where none exists would bloat flows with logic that has no real work to do.
 
-**Implication:** All structural decisions (token-budget invariant, atomic write, EXACTLY ONE flow file per session, `type-config.md` as the canonical per-type field map) are inherited without modification. Pressure-testing during brainstorm focused on per-type tier shape, not the router architecture.
+**Implication:** `flow-skill.md` ≈ 120 LOC (port existing write-skill-eval routing + 3 agent dispatches + assembly); `flow-protocol.md` and `flow-agent.md` ≈ 50 LOC each; `flow-tool.md` ≈ 60 LOC. The router earns its place through a single entry point and a unified MUST/MUST-NOT contract — not through flow-file uniformity.
 
-### Single-source-of-truth for tier checklists
+### Single-source-of-truth for non-skill evaluation criteria
 
-Each flow file could define its own tier criteria inline, but this would create drift risk: the criteria in EVAL.md templates would diverge from what `/synapse-gatekeeper` uses to grade. The canonical source of grading criteria is `synapse-gatekeeper/references/{agent,protocol,tool}-checklist.md`.
+`synapse-gatekeeper/references/{agent,protocol}-checklist.md` are the canonical grading criteria for those artifact types. Baking those criteria into templates or flow files would create dual-maintenance drift: criteria in EVAL.md outputs would diverge from what gatekeeper actually applies. Transcription flows load the checklist files at run-time and adapt them to EVAL-Sxx tier format — they do not reproduce checklist content inline.
 
-**Implication:** Flow files reference the gatekeeper checklists directly. Templates derive tier IDs from those checklists. When a checklist changes, the eval output changes automatically — no dual maintenance.
+**Implication:** If a gatekeeper checklist file is missing or renamed, the transcription flow fails loud with the unresolved Load path. No fallback content is baked into templates. Pre-commit hook check that the Load target resolves is additive structural validation.
 
-### v1 ships skill-flow complete; other types ship as scaffolds
+### Read-only against source artifact — no taxonomy validation
 
-All four flows must exist in v1 to satisfy the routing contract and the "no dead handoffs" goal. However, the dispatch agents for protocol/agent/tool eval (analogous to `skill-eval-{prompter,judge,auditor}`) do not exist yet. Blocking the router on agent availability would delay the T3.6 FAIL fix and the `/write-skill-eval` sunset unnecessarily.
+`write-synapse-eval` reads the source artifact's frontmatter only to extract the artifact name and verify the file exists. It does NOT validate frontmatter field values against taxonomy (e.g., whether `domain` is a known value in `SKILL_TAXONOMY.md`). Taxonomy validation is gatekeeper's responsibility. Duplicating it here creates drift risk: the two validators could diverge in what they accept, producing confusing double-failure signals.
 
-**Implication:** `flow-skill.md` is a near-mechanical port of the existing `write-skill-eval` logic. `flow-{protocol,agent,tool}.md` ship with template scaffolds and clear "needs dispatch agents" markers. Subsequent CRs add the missing dispatch agents; the router itself does not need to change.
+**Implication:** Precondition checks at `[ROUTE]` are path-structural only — `$ARTIFACT_PATH` exists, is readable, and matches the expected path shape for its type. Taxonomy correctness is out of scope.
+
+### Atomic write — assemble in memory, write once
+
+EVAL.md is either fully written or not written at all. Partial writes (e.g., writing structural criteria before dispatch agents finish) leave an artifact in an invalid state that could be picked up by gatekeeper or improve-skill as if it were complete.
+
+**Implication:** Every flow file assembles the full EVAL.md content in memory before issuing a single write. If dispatch fails mid-flow (skill flow only), the file state is zero — no partial output. Users see the error and re-run.
+
+### Default-deny overwrite of existing EVAL.md
+
+Silently overwriting an existing EVAL.md would destroy measurement history and invalidate any improve-skill iteration in progress. The right tool for refining an existing EVAL.md is `/improve-skill`, not regeneration from scratch.
+
+**Implication:** `[ROUTE]` checks for an existing EVAL.md at the target path. If found: fail with a clear message — "EVAL.md exists; use `--force` to overwrite or `/improve-skill` to refine via measurement." `--force` bypasses the check. No silent overwrite.
 
 ### Explicit args only — no natural-language inference
 
-`synapse-creator` requires explicit `$TYPE` and `$ARTIFACT_PATH` arguments and rejects NL inference. `write-synapse-eval` has the same failure mode: ambiguous type inference produces the wrong EVAL.md tier shape. Consistency with the sibling skill also reduces cognitive load for callers who use both.
+Ambiguous type inference produces the wrong EVAL.md tier shape. A protocol artifact evaluated as a skill gets EVAL-O output criteria that have no meaning for a protocol. Consistency with `synapse-creator` (which has the same failure mode) also reduces cognitive load for callers who use both skills.
 
-**Implication:** CLI is `/write-synapse-eval <type> <path>`. No argument guessing. Wrong or missing `$TYPE` fails at `[ROUTE]` with a valid-list error before any file load.
+**Implication:** CLI is `/write-synapse-eval <type> <path>`. No argument guessing. Wrong or missing `$TYPE` fails at `[ROUTE]` with a valid-list error before any file load. Path-pattern hints ("looks like an agent path — did you mean agent?") are allowed but still require explicit confirmation.
 
 ### One artifact per invocation
 
@@ -85,6 +97,7 @@ Wrong-tool redirects:
 - User wants to certify for promotion → `/synapse-gatekeeper`
 - User wants to brainstorm what eval to write → `/synapse-brainstorm`
 - Multi-artifact in one session → reject; dispatch parallel agents
+- User invokes with path to existing EVAL.md (not source artifact) → clarify and redirect
 
 ---
 
@@ -95,34 +108,78 @@ Do:
 1. Confirm `$TYPE ∈ {skill, protocol, agent, tool}` — fail loudly with valid list if not.
 2. Confirm `$ARTIFACT_PATH` exists and is readable — fail loudly if not.
 3. Validate path shape against type-config: `skill`/`tool` expect a directory; `agent`/`protocol` expect a flat `.md` file — fail with "type/path mismatch" if wrong.
-4. Check if EVAL.md already exists at the target path — if yes, fail loudly: "EVAL.md exists; use `--force` to overwrite or `/improve-skill` to refine via measurement".
-5. Load EXACTLY ONE `references/flow-<TYPE>.md`.
+4. Read source frontmatter to extract artifact name — structural check only; do NOT validate taxonomy values.
+5. Check if EVAL.md already exists at the target path — if yes, fail loudly: "EVAL.md exists; use `--force` to overwrite or `/improve-skill` to refine via measurement."
+6. Load EXACTLY ONE `references/flow-<TYPE>.md`.
 
-Don't: load more than one flow file; proceed past this node with any validation failure.
+Don't: load more than one flow file; validate taxonomy values; proceed past this node with any validation failure.
 
 Exit: transfer control to `flow-<TYPE>:[START]`.
 
 ---
 
-**`flow-<TYPE>:[START → END]`** — Type-specific eval lifecycle
+**`flow-skill:[START → END]`** — Dispatch-rich skill eval lifecycle
 
-Each flow file owns its full lifecycle: read artifact → dispatch subagents → assemble → atomic write.
+Load: `references/shared-steps.md`, `templates/skill/eval.md`
+Do:
+1. Read SKILL.md — extract artifact name and invocation signature.
+2. Dispatch `skill-eval-prompter` (blind prompting, no judge bias).
+3. Dispatch `skill-eval-judge` (grades prompter output).
+4. Dispatch `skill-eval-auditor` (audit trail for judge scoring).
+5. Assemble full EVAL.md in memory: EVAL-S (structural) + EVAL-E (orchestration, opt) + EVAL-F (flow-graph, opt) + EVAL-O (output) + Test Prompts.
+6. Write EVAL.md atomically; emit exit signal with tier-count summary.
 
-Do (every flow):
-1. Read the artifact (SKILL.md, agent.md, protocol.md, or tool directory).
-2. Dispatch type-appropriate eval agents (or scaffold placeholders for protocol/agent/tool in v1).
-3. Assemble full EVAL.md in memory using `templates/<type>/eval.md` as the skeleton.
-4. Write EVAL.md atomically — one write, no partial output.
-5. Emit exit signal: file path + tier-count summary.
+Don't: branch on `$TYPE`; modify the source artifact; apply grading; write partial output.
 
-Don't: branch on `$TYPE` inside flow files (type is already resolved); modify the artifact being evaluated; apply grading (that is `/synapse-gatekeeper`'s job).
+---
+
+**`flow-protocol:[START → END]`** — Transcription protocol eval lifecycle
+
+Load: `synapse-gatekeeper/references/protocol-checklist.md`, `templates/protocol/eval.md`
+Do:
+1. Read protocol `.md` file — extract artifact name.
+2. Load gatekeeper `protocol-checklist.md` — Tier 1 → EVAL-S criteria, Tier 2 → EVAL-C (conformance) criteria.
+3. Adapt checklist items to EVAL-Sxx/Cxx tier format.
+4. Assemble full EVAL.md in memory.
+5. Write EVAL.md atomically; emit exit signal.
+
+Don't: reproduce checklist content inline; fall back to baked-in criteria if checklist is missing — fail loud.
+
+---
+
+**`flow-agent:[START → END]`** — Transcription agent eval lifecycle
+
+Load: `synapse-gatekeeper/references/agent-checklist.md`, `templates/agent/eval.md`
+Do:
+1. Read agent `.md` file — extract artifact name.
+2. Load gatekeeper `agent-checklist.md` — Tier 1 → EVAL-S criteria, Tier 2 → EVAL-Q (quality) criteria.
+3. Adapt checklist items to EVAL-Sxx/Qxx tier format.
+4. Assemble full EVAL.md in memory.
+5. Write EVAL.md atomically; emit exit signal.
+
+Don't: reproduce checklist content inline; fall back to baked-in criteria if checklist is missing — fail loud.
+
+---
+
+**`flow-tool:[START → END]`** — Transcription-plus tool eval lifecycle
+
+Load: gatekeeper tool rules, `templates/tool/eval.md`
+Do:
+1. Read tool directory — extract artifact name and `test/` directory structure.
+2. Load gatekeeper tool checklist (currently inline in synapse-gatekeeper SKILL.md; extract or load from inline section).
+3. Produce EVAL-S (structural) criteria from checklist.
+4. Scaffold EVAL-X (exit-codes/side-effects) criteria around tool's existing `test/` directory.
+5. Assemble full EVAL.md in memory.
+6. Write EVAL.md atomically; emit exit signal.
+
+Don't: invent EVAL-X criteria not backed by actual `test/` scripts; fall back silently if tool checklist is missing.
 
 ### 3.3 Entry Gates
 
 | Transition | Gate conditions |
 |---|---|
 | `[NEW] → [ROUTE]` | Single artifact implied; `$TYPE` and `$ARTIFACT_PATH` extractable from invocation |
-| `[ROUTE] → flow-<TYPE>:[START]` | `$TYPE ∈ {skill, protocol, agent, tool}`; `$ARTIFACT_PATH` exists and is readable; path shape matches type-config; no existing EVAL.md (or `--force` flag present) |
+| `[ROUTE] → flow-<TYPE>:[START]` | `$TYPE ∈ {skill, protocol, agent, tool}`; `$ARTIFACT_PATH` exists and is readable; path shape matches type-config; frontmatter readable; no existing EVAL.md (or `--force` flag present) |
 
 ---
 
@@ -144,7 +201,7 @@ synapse/skills/skill/write-synapse-eval/
 └── templates/
     ├── skill/eval.md                 # EVAL-S/E/F/O + Test Prompts skeleton
     ├── protocol/eval.md              # EVAL-S + EVAL-C (conformance) skeleton
-    ├── agent/eval.md                 # EVAL-S + EVAL-D (dispatch/output) skeleton
+    ├── agent/eval.md                 # EVAL-S + EVAL-Q (quality) skeleton
     └── tool/eval.md                  # EVAL-S + EVAL-X (exit-codes/side-effects) skeleton
 ```
 
@@ -172,18 +229,33 @@ argument-hint: "<skill|protocol|agent|tool> <path-to-artifact>"
 
 <!-- VERBATIM -->
 
-| Type     | Tiers                                                          | Test mechanism                                                |
-|----------|----------------------------------------------------------------|---------------------------------------------------------------|
-| skill    | EVAL-S (structural), EVAL-E (orchestration, opt), EVAL-F (flow-graph, opt), EVAL-O (output) + Test Prompts | Run skill on prompts via subagent, judge outputs              |
-| protocol | EVAL-S (structural), EVAL-C (conformance assertions)           | Apply protocol to fixture artifacts, assert compliance        |
-| agent    | EVAL-S (structural), EVAL-D (dispatch contract + output grade) | Dispatch agent with test inputs, judge outputs against role   |
-| tool     | EVAL-S (structural), EVAL-X (exit-codes + side-effects)        | Invoke tool script with fixtures, assert exit codes + state   |
+| Type     | Flow shape       | Tiers (with source)                                                                                              | Generation mechanism                                                                  |
+|----------|------------------|------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| skill    | **dispatch**     | EVAL-S (structural) + EVAL-E (orchestration, opt) + EVAL-F (flow-graph, opt) + EVAL-O (output) + Test Prompts    | Dispatch skill-eval-{prompter,judge,auditor} agents (existing); assemble + write       |
+| protocol | **transcribe**   | EVAL-S (transcribe `protocol-checklist.md` Tier 1) + EVAL-C (transcribe Tier 2 conformance)                       | Read gatekeeper checklist → format as EVAL-Sxx/Cxx criteria → write                    |
+| agent    | **transcribe**   | EVAL-S (transcribe `agent-checklist.md` Tier 1) + EVAL-Q (transcribe Tier 2 quality)                              | Read gatekeeper checklist → format as EVAL-Sxx/Qxx criteria → write                    |
+| tool     | **transcribe+**  | EVAL-S (structural per tool gatekeeper rules) + EVAL-X (script invocation: run `test/` + check exit codes)        | Read gatekeeper tool rules + scaffold EVAL-X around tool's existing `test/` directory  |
 
-Tier ID prefixes are type-scoped to avoid collision when the same criteria name appears across types (e.g., "structural" is EVAL-S for all types, but EVAL-C is protocol-only, EVAL-D is agent-only, EVAL-X is tool-only).
+Tier ID prefixes are type-scoped to avoid collision when the same criteria name appears across types (e.g., "structural" is EVAL-S for all types, but EVAL-C is protocol-only, EVAL-Q is agent-only, EVAL-X is tool-only).
 
 ---
 
-## 7. Behavioral Invariants
+## 7. `shared-steps.md` Scope
+
+`shared-steps.md` contains only operations genuinely shared across all four flows with no type-branching:
+
+- `validate-frontmatter` — extract artifact name from frontmatter header
+- `resolve-output-path` — per type-config: directory `<dir>/EVAL.md` or flat `<name>.eval.md` adjacent
+- `write-eval-atomic` — assemble in memory → single write
+- `existing-eval-guard` — check for collision; `--force` / redirect to `/improve-skill` on conflict
+
+NOT in `shared-steps.md`: registry-row writes, README updates (eval generation is a single file write per session; no registry or README mutations).
+
+`type-config.md` keys: `output-path-shape` (directory|flat), `output-filename` (EVAL.md|<name>.eval.md), `tier-prefixes` (per type), `canonical-checklist-source` (transcription flows), `template-path` (`templates/<type>/eval.md`).
+
+---
+
+## 8. Behavioral Invariants
 
 <!-- VERBATIM -->
 
@@ -202,7 +274,7 @@ Tier ID prefixes are type-scoped to avoid collision when the same criteria name 
 
 ---
 
-## 8. Handoff Contract
+## 9. Handoff Contract
 
 <!-- VERBATIM -->
 
@@ -219,30 +291,32 @@ Tier ID prefixes are type-scoped to avoid collision when the same criteria name 
 
 ---
 
-## 9. Accepted Tensions
+## 10. Accepted Tensions
 
 | Tension | Decision | Revisit when |
-|---|---|---|
-| v1 ships protocol/agent/tool flows as scaffolds without dispatch agents | Accept: unblocks T3.6 FAIL fix and `/write-skill-eval` sunset; dispatch agents added per type in subsequent CRs | When any flow-{protocol,agent,tool}.md scaffold is invoked in production and the "needs dispatch agents" marker triggers a user-facing failure |
-| pathway eval (5th type) is out of scope | Defer: additive when ready — add type-config row + new flow file + new template; no design change required | When the first pathway artifact requires an EVAL.md |
-| Existing `synapse/agents/skill-eval/{prompter,judge,auditor}.md` are skill-specific but informally the model for other types | Accept: new dispatch agents for other types modeled on skill-eval agents, added under `synapse/agents/` per type | When the agent/protocol/tool flows are fully implemented and agents need formal registry entries |
+|---------|----------|--------------|
+| Asymmetric flows (skill ~120 LOC, others ~50 LOC) violate "symmetric router" aesthetic | Accepted — symmetry is not a goal; matching the actual problem shape is. Router earns its place even with asymmetric flows. | Tool flow grows >150 LOC (would suggest tool eval has hidden dispatch needs we missed) |
+| Hard coupling to synapse-gatekeeper checklist filenames | Accepted — single-source-of-truth wins over decoupling. Pre-commit hook will catch breakage. | Gatekeeper's checklist file structure becomes unstable across 2+ releases |
+| `write-skill-eval` sunset deprecates a `stable` skill | Accepted — same pattern as skill-creator → synapse-creator sunset; 1-release deprecation window | Anyone reports a missing migration path during deprecation window |
 
 ---
 
-## 10. Dependencies
+## 11. Dependencies
 
 | Artifact | Direction | Contract |
 |---|---|---|
-| `synapse/skills/skill/write-skill-eval/` | supersedes | `write-synapse-eval` replaces this; `flow-skill.md` is a port of its logic; original deprecated post-merge |
+| `synapse/skills/skill/write-skill-eval/` | supersedes | `write-synapse-eval` replaces this; `flow-skill.md` is a near-mechanical port of its logic; original deprecated post-merge |
 | `synapse/skills/synapse/synapse-creator/references/flow-{skill,agent,protocol,tool}.md` | consumed by (caller) | Post-scaffold handoff: `synapse-creator` calls `/write-synapse-eval <type> <new-artifact-path>`; resolves T3.6 FAIL (dead `/write-agent-eval` reference) |
 | `synapse/skills/skill/improve-skill/` | consumed by (caller) | When EVAL.md missing, `improve-skill` dispatches `/write-synapse-eval skill <path>` (replaces direct `/write-skill-eval` reference; 1-line edit) |
 | `synapse/agents/skill-eval/{prompter,judge,auditor}.md` | consumes | `flow-skill.md` dispatches these existing agents; they stay in place |
-| `synapse-gatekeeper/references/{agent,protocol,tool}-checklist.md` | consumes | Canonical source for tier criteria; flow files reference these rather than defining criteria inline |
+| `synapse-gatekeeper/references/protocol-checklist.md` | consumes | Canonical Tier 1/2 source for `flow-protocol.md` transcription; Load path failure = hard stop |
+| `synapse-gatekeeper/references/agent-checklist.md` | consumes | Canonical Tier 1/2 source for `flow-agent.md` transcription; Load path failure = hard stop |
+| gatekeeper tool rules (inline in synapse-gatekeeper SKILL.md) | consumes | Source for `flow-tool.md` EVAL-S criteria; extract to `tool-checklist.md` in gatekeeper or load inline section |
 | `taxonomy/SKILL_TAXONOMY.md` | consumes | `domain: skill`, `intent: write` validated against taxonomy on commit |
 
 ---
 
-## 11. Sunset Migration
+## 12. Sunset Migration
 
 <!-- VERBATIM -->
 
