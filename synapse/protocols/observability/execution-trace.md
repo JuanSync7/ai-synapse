@@ -8,17 +8,11 @@ tags: [execution-trace, self-reported, subagent-observability]
 
 # Execution Trace Protocol
 
-A structured self-report appended by a subagent to its response when an observer requests execution observability. Zero overhead in normal runs — only injected when someone is watching.
+A structured self-report appended by a subagent to its response when an observer requests execution observability. Zero overhead in normal runs — only injected when someone is watching. An **observer** (improve-skill grading EVAL-E, auto-research optimizing, user debugging) injects this protocol's capture instructions into a subagent's prompt; the subagent executes the skill normally, then appends a trace block describing what it did. The skill itself never references this protocol — it is injected externally.
 
-## When This Protocol Is Used
+## Contract
 
-An **observer** (improve-skill grading EVAL-E, auto-research optimizing, user debugging) injects this protocol's capture instructions into a subagent's prompt. The subagent executes the skill normally, then appends a trace block describing what it did.
-
-The skill itself never references this protocol. It is injected externally.
-
-## Trace Schema
-
-The subagent appends this YAML block at the end of its response:
+The subagent MUST append this YAML block at the end of its response:
 
 ```yaml
 ## Execution Trace
@@ -56,7 +50,7 @@ context_isolation:
   phase1_prompt_contains_spec: false   # another isolation check
 ```
 
-## Field Definitions
+### Field Definitions
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -68,7 +62,17 @@ context_isolation:
 
 Additional fields may be added for skill-specific trace needs. The schema is extensible.
 
-## Nesting Configuration
+## Failure Assertion
+
+If the skill produces no observable execution phases, STOP and output:
+
+```
+PROTOCOL FAILURE: execution-trace — no phases executed, trace cannot be constructed.
+```
+
+## Configuration
+
+### Nesting
 
 | Mode | Behavior | When to use |
 |------|----------|-------------|
@@ -76,43 +80,3 @@ Additional fields may be added for skill-specific trace needs. The schema is ext
 | `deep` | Each subagent also appends its own execution trace (recursive). The top-level trace contains nested traces. | Diagnosing issues in subagent behavior, not just dispatch |
 
 The observer specifies nesting depth when injecting. Default is `shallow`.
-
-## Injection Instructions
-
-The observer appends the following to the subagent prompt that will execute the skill:
-
-```
----
-After completing the task above, append an `## Execution Trace` section to your
-response. Record the following in YAML format:
-
-- phases_executed: list of phases that ran (by number or name)
-- agents_dispatched: for each Agent() call, record phase, purpose, target, and model
-- workflow_decisions: for each key branching decision, record what was decided,
-  what was chosen, and why
-- precondition_checks: for each input validation, record what was checked and
-  whether it passed or failed
-- context_isolation: boolean flags for what was deliberately excluded from
-  subagent prompts (e.g., phase1_prompt_contains_acs: false)
-
-Nesting: [shallow|deep]. [If shallow: do not ask your subagents to produce traces.
-If deep: append these same trace instructions to every Agent() call you make.]
-```
-
-## Persistence
-
-When the observer wants traces saved to disk, it writes the trace YAML to a file after receiving the subagent response. Suggested locations:
-
-- During evaluation: `[workspace]/run-[N]/prompt-[ID]/trace.yaml`
-- During debugging: `[skill-dir]/traces/[timestamp].yaml`
-- During auto-research: `[skill-dir]/research/traces/iteration-[N].yaml`
-
-The trace protocol does not specify where to save — the observer decides.
-
-## Consumers
-
-| Consumer | Reads trace for | Injects when |
-|----------|----------------|--------------|
-| improve-skill | Grading EVAL-E criteria | EVAL.md contains `## Execution Criteria` |
-| auto-research | Optimizing agent dispatch, model selection | Measuring cost/performance per iteration |
-| User (debugging) | Understanding why a skill behaved unexpectedly | On demand |
