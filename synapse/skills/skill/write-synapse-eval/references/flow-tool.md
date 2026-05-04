@@ -80,6 +80,9 @@ Exit:
 Do:
   1. Compute `$TIER_COUNTS` for `EVAL-S` and `EVAL-X`.
   2. → `shared-steps:write-eval-atomic($EVAL_PATH, $EVAL_BODY, $TIER_COUNTS)` with `test_prompts: false`.
+Don't:
+  - Issue more than one Write tool call against `$EVAL_PATH` — atomic invariant
+  - Modify the source TOOL.md, the script, or files in `test/`
 Exit:
   → `[END]`
 
@@ -90,3 +93,6 @@ Do:
   1. Print: `Wrote <EVAL_PATH> with <S> EVAL-S, <X> EVAL-X`.
   2. If `$TEST_FILES` was empty, surface: "Tool has no `test/` directory — EVAL-X tier is empty. Add tests before requesting `/synapse-gatekeeper` certification."
   3. Otherwise remind: to certify, run `/synapse-gatekeeper <tool-path>`.
+Don't:
+  - Auto-dispatch `/synapse-gatekeeper` — suggest, do not dispatch
+  - Execute the test scripts during eval generation — EVAL-X criteria assert that the tests exist and document expected exit codes; running them is gatekeeper / CI work

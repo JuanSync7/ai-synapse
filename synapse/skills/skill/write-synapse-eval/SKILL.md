@@ -1,6 +1,6 @@
 ---
 name: write-synapse-eval
-description: Use when generating an EVAL.md for a skill, protocol, agent, or tool. Routes to the type-specific eval-generation flow.
+description: Use when generating an EVAL.md for a skill, protocol, agent, or tool.
 domain: skill
 intent: write
 tags: [eval-md, criteria, test-prompts, multi-artifact, router]
@@ -109,3 +109,31 @@ Output path semantics (encoded in `references/type-config.md`):
 - `agent`, `protocol`: `<artifact-name>.eval.md` adjacent to the flat `.md` file
 
 Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S, 7 EVAL-O, 4 test prompts").
+
+## Examples
+
+**Valid invocation (skill):**
+```
+/write-synapse-eval skill synapse/skills/skill/improve-skill
+→ Wrote synapse/skills/skill/improve-skill/EVAL.md with 14 EVAL-S, 9 EVAL-O, 6 test prompts
+```
+
+**Invalid `$TYPE`:**
+```
+/write-synapse-eval pathway synapse/pathways/full.yaml
+→ FAIL: $TYPE='pathway' invalid. Expected one of: skill, protocol, agent, tool.
+```
+
+**Type/path mismatch (`$TYPE=skill` but path is a flat .md):**
+```
+/write-synapse-eval skill synapse/agents/skill-eval/skill-eval-judge.md
+→ FAIL: $TYPE='skill' expects a directory containing SKILL.md, got a flat .md file.
+  If this is an agent, use: /write-synapse-eval agent synapse/agents/skill-eval/skill-eval-judge.md
+```
+
+**Existing EVAL.md (no `--force`):**
+```
+/write-synapse-eval skill synapse/skills/skill/synapse-gatekeeper
+→ FAIL: EVAL.md exists at synapse/skills/skill/synapse-gatekeeper/EVAL.md.
+  Use --force to overwrite, or /improve-skill to refine via measurement.
+```

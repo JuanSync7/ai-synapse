@@ -74,6 +74,9 @@ Exit:
 Do:
   1. Compute `$TIER_COUNTS` for `EVAL-S` and `EVAL-C`.
   2. → `shared-steps:write-eval-atomic($EVAL_PATH, $EVAL_BODY, $TIER_COUNTS)` with `test_prompts: false`.
+Don't:
+  - Issue more than one Write tool call against `$EVAL_PATH` — atomic invariant
+  - Modify the source protocol file or any companion file
 Exit:
   → `[END]`
 
@@ -83,3 +86,5 @@ Exit:
 Do:
   1. Print: `Wrote <EVAL_PATH> with <S> EVAL-S, <C> EVAL-C`.
   2. Remind: criteria are transcribed from `synapse-gatekeeper/references/protocol-checklist.md`. To certify, run `/synapse-gatekeeper <protocol-path>`.
+Don't:
+  - Auto-dispatch `/synapse-gatekeeper` — suggest, do not dispatch
