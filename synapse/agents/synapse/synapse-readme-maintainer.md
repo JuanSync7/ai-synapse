@@ -29,7 +29,7 @@ Return a structured report:
   "status": "success" | "taxonomy-update-required" | "error",
   "affected_readmes": [
     {
-      "path": "synapse/skills/skill/README.md",
+      "path": "synapse/skills/README.md",
       "action": "added_row" | "updated_row" | "removed_row" | "updated_one_liner" | "no_change",
       "row_name": "<artifact-name>",
       "diff_summary": "<short human-readable summary>"

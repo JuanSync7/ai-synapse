@@ -1,1 +1,0 @@
-../../../../agents/synapse/skill-eval/synapse-skill-eval-auditor.md

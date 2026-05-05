@@ -20,7 +20,7 @@ Agent definitions (`{synapse,src}/agents/`) are internal recipes dispatched by s
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
 - **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-gatekeeper`, same as skills
-- **No standalone EVAL.md required** — agents are tested indirectly through the skills that dispatch them. To generate an EVAL.md when needed, use `/write-synapse-eval agent <path>` (the unified eval router; the standalone `write-agent-eval` is deprecated)
+- **No standalone EVAL.md required** — agents are tested indirectly through the skills that dispatch them. To generate an EVAL.md when needed, use `/write-synapse-eval agent <path>` (the unified eval router)
 - **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
 - **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
 
@@ -32,7 +32,7 @@ Protocols (`{synapse,src}/protocols/`) are shared conventions and schemas inject
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
 - **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-gatekeeper`
-- **No standalone EVAL.md required** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). To generate an EVAL.md when needed, use `/write-synapse-eval protocol <path>` (the unified eval router; the standalone `write-protocol-eval` is deprecated)
+- **No standalone EVAL.md required** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). To generate an EVAL.md when needed, use `/write-synapse-eval protocol <path>` (the unified eval router)
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
 
 A protocol belongs in `{synapse,src}/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
@@ -274,7 +274,7 @@ Where `<synapse>` is one of: `skill`, `agent`, `protocol`, `tool`.
 
 ### Steps
 
-1. **Build** — use `/skill-creator` to scaffold the skill, or author it manually.
+1. **Build** — use `/synapse-creator skill` to scaffold the skill, or author it manually.
 2. **Improve** — run `/improve-skill` until the eval score reaches ≥ 80.
 3. **Certify** — run `/synapse-gatekeeper <skill-path> --score <score>`. Resolve any REVISE gaps.
 4. **PR to develop** — open a pull request with the APPROVE verdict pasted into the description. Include any `change_requests/` files documenting the rationale. The artifact owner reviews the CR + diff, deletes the CR file on acceptance, and merges.

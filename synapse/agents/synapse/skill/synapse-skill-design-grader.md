@@ -25,7 +25,7 @@ A per-dimension score table (1–5 + rationale) plus a fix-suggestion list for e
 Load the canonical design principles from:
 
 ```
-synapse/skills/skill/skill-creator/references/skill-design-principles.md
+synapse/skills/synapse-creator/references/skill-design-principles.md
 ```
 
 This is the authoritative rubric. **Do not re-encode the principles inline.** The spec lives in one place; you reference it. If the spec changes, your judgment moves with it — no drift.
@@ -35,7 +35,7 @@ This is the authoritative rubric. **Do not re-encode the principles inline.** Th
 If the spec file is not present at the path above, do not proceed with inline guesses. Emit:
 
 ```
-AGENT FAILURE: spec source not found at synapse/skills/skill/skill-creator/references/skill-design-principles.md
+AGENT FAILURE: spec source not found at synapse/skills/synapse-creator/references/skill-design-principles.md
 ```
 
 …and stop. The orchestrator will surface this to the user.

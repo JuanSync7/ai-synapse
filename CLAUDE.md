@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A **central library** for Claude Code skills — both a home for standalone skills and a registry that submodules skill suites from external repos. Skills are organized into domain directories and installed as symlinks into `~/.claude/skills/`.
 
 Two kinds of artifacts live here:
-- **Framework artifacts** — the meta-tools that build, evaluate, and govern artifacts (skill-creator, gatekeeper, eval generators, orchestrator, etc.). These live under `synapse/`.
+- **Framework artifacts** — the meta-tools that build, evaluate, and govern artifacts (synapse-creator, synapse-gatekeeper, write-synapse-eval, autonomous-orchestrator, etc.). These live under `synapse/`.
 - **Adopter artifacts** — repo-specific skills, agents, protocols, and tools. These live under `src/`.
 - **External suites** — multi-artifact projects with shared config, templates, and CI. These live in their own repos and are wired in as git submodules under `external/`.
 
@@ -16,7 +16,7 @@ Two kinds of artifacts live here:
 ```
 identity/                     # Personal identity files (SOUL.md, STAKEHOLDER.md)
 synapse/                      # Framework artifacts (the meta-tools shipped by ai-synapse)
-  skills/<domain>/<name>/     # Framework skills (skill-creator, gatekeeper, ...)
+  skills/<name>/              # Framework skills, flat (synapse-creator, synapse-gatekeeper, ...)
   agents/<domain>/            # Framework agents (skill-eval, protocol-eval, ...)
   protocols/<domain>/         # Framework protocols (observability, memory)
   tools/<domain>/             # Framework tools (synapse-cr-dispatcher)
@@ -30,7 +30,7 @@ external/                     # Externally-owned submodule suites
   <suite-name>/               # git submodule — may contain skills/, agents/, protocols/
 ```
 
-Each skill directory has the same shape under either root: `SKILL.md`, optional `EVAL.md`, `references/`, `templates/`, and `agents/` (symlinks to agent definitions used by this skill).
+Each skill directory has the same shape: `SKILL.md`, optional `EVAL.md`, `references/`, `templates/`, and `agents/` (symlinks to agent definitions used by this skill). Framework skills (`synapse/skills/`) are flat — no per-type subdirs. Adopter skills (`src/skills/`) are organized by domain.
 
 **Identity files (`identity/`):**
 - `SOUL.md` — personal identity file: background, worldview, opinions, thinking style, blind spots, tensions, boundaries
@@ -56,7 +56,7 @@ Each skill directory has the same shape under either root: `SKILL.md`, optional 
 
 ## synapse/ vs src/ vs external/
 
-- **`synapse/`** — framework artifacts. The meta-tools (skill-creator, gatekeeper, eval generators, orchestration) that ship with ai-synapse. Convention-enforced and consumed by adopters as a dependency.
+- **`synapse/`** — framework artifacts. The meta-tools (synapse-creator, synapse-gatekeeper, write-synapse-eval, autonomous-orchestrator) that ship with ai-synapse. Convention-enforced and consumed by adopters as a dependency.
 - **`src/`** — adopter artifacts owned by this specific repo. Convention-enforced (pre-commit hook). Skills, agents, and protocols organized by domain. May be empty in a pure framework distribution.
 - **`external/`** — externally-owned submodule suites. Each suite is a git submodule with its own structure (may contain `skills/`, `agents/`, `protocols/`). Their internal layout is owned by the external repo.
 
@@ -86,7 +86,7 @@ After cloning, run `make init` to configure git hooks.
 
 ```bash
 ./scripts/install.sh install all                          # install all skills
-./scripts/install.sh install synapse/skills/skill synapse/skills/protocol # install specific domains
+./scripts/install.sh install synapse/skills/synapse-creator synapse/skills/synapse-gatekeeper # install specific skills
 ./scripts/install.sh agents                               # install agent definitions
 ./scripts/install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./scripts/install.sh list                                 # show installed skills
@@ -134,7 +134,7 @@ The autonomous orchestrator drives end-to-end pipelines using stages defined in 
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `synapse/skills/synapse/synapse-creator/references/design-principles-skill.md`):
+These are the core principles for writing and modifying skills (full reference: `synapse/skills/synapse-creator/references/design-principles-skill.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
@@ -173,7 +173,7 @@ These run automatically on every commit — no LLM needed:
 
 The evaluation tier depends on the type of change:
 
-- **New skill or external import** → run `/skill-creator` (full pipeline: baseline test, design principles, eval generation, improvement loop), then `/synapse-gatekeeper` for certification
+- **New skill or external import** → run `/synapse-creator skill` (full pipeline: baseline test, design principles, eval generation, improvement loop), then `/synapse-gatekeeper` for certification
 - **Modified existing skill** (SKILL.md, references/, templates/) → run `/improve-skill` (score-fix loop against existing EVAL.md)
 - **New or modified agent/protocol** → run `/synapse-gatekeeper <artifact-path>` for certification
 - **Trivial changes** (typos, formatting-only) → Layer 1 is sufficient

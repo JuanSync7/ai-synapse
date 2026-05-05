@@ -48,11 +48,11 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/synapse-brainstorm`](synapse/skills/skill/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
-| **Create** | [`/skill-creator`](synapse/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
-| **Evaluate** | [`/write-skill-eval`](synapse/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
-| **Improve** | [`/improve-skill`](synapse/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
-| **Certify** | [`/synapse-gatekeeper`](synapse/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
+| **Brainstorm** | [`/synapse-brainstorm`](synapse/skills/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
+| **Create** | [`/synapse-creator`](synapse/skills/synapse-creator/) | Unified creator that routes by artifact type (skill, protocol, agent, tool) — scaffolds with baseline testing and design principles check |
+| **Evaluate** | [`/write-synapse-eval`](synapse/skills/write-synapse-eval/) | Unified EVAL.md generator routed by artifact type — output criteria and test prompts |
+| **Improve** | [`/improve-skill`](synapse/skills/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
+| **Certify** | [`/synapse-gatekeeper`](synapse/skills/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
 
@@ -227,7 +227,7 @@ Pathways (`pathways/`) are named bundles of synapses — a YAML file listing whi
 
 ### synapse/ vs src/ vs external/
 
-- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (skill-creator, gatekeeper, eval generators, orchestration, tooling).
+- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-creator, synapse-gatekeeper, write-synapse-eval, autonomous-orchestrator, tooling).
 - **`src/`** — adopter artifacts owned by this specific repo. Convention-enforced, managed by `scripts/reorganize.sh`. May be empty in a pure framework distribution.
 - **`external/`** — submodule suites from external repos. Each suite may contain `skills/`, `agents/`, `protocols/`. The `jira-suite` is the current example.
 
@@ -287,7 +287,7 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex scaffold agent ml monitor          # scaffold a new agent
 ./cortex scaffold tool integration my-mcp   # scaffold a new tool
 ./cortex validate                           # run all structural checks
-./cortex validate synapse/skills/skill/skill-creator  # validate one artifact
+./cortex validate synapse/skills/synapse-creator  # validate one artifact
 ./cortex test                               # run all tool tests
 ./cortex test src/tools/synapse/my-tool     # test one tool
 ```
@@ -321,7 +321,7 @@ See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
 
 ```bash
 ./cortex zip all                            # package all skills as .zip
-./cortex zip synapse/skills/skill/skill-creator  # package one skill
+./cortex zip synapse/skills/synapse-creator  # package one skill
 ```
 
 → See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.

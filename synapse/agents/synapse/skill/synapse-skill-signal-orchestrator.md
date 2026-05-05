@@ -24,8 +24,8 @@ Dispatch all three sub-agents **in parallel** (single message, three Task calls)
 
 | Sub-agent | Role | Spec source loaded at runtime |
 |-----------|------|-------------------------------|
-| `synapse-skill-anatomy-reviewer` | Binary gate on SKILL.md structural anatomy | `synapse/skills/synapse/synapse-creator/references/skill-anatomy.md` |
-| `synapse-skill-design-grader` | Graded 1-5 per design-quality dimension | `synapse/skills/synapse/synapse-creator/references/design-principles-skill.md` |
+| `synapse-skill-anatomy-reviewer` | Binary gate on SKILL.md structural anatomy | `synapse/skills/synapse-creator/references/skill-anatomy.md` |
+| `synapse-skill-design-grader` | Graded 1-5 per design-quality dimension | `synapse/skills/synapse-creator/references/design-principles-skill.md` |
 | `synapse-skill-companion-auditor` | Audit `references/` + `templates/` progressive disclosure | progressive-disclosure rules in `design-principles-skill.md` |
 
 Pass each sub-agent the skill directory path (or SKILL.md path for design-grader/anatomy-reviewer). Collect their raw outputs and label findings by source: `[anatomy]`, `[design]`, `[companion]`.

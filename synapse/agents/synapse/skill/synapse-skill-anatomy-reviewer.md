@@ -20,7 +20,7 @@ Without a presence-and-format pre-gate, `write-skill-eval` and `/improve-skill` 
 The canonical anatomy spec lives at:
 
 ```
-synapse/skills/synapse/synapse-creator/references/skill-anatomy.md
+synapse/skills/synapse-creator/references/skill-anatomy.md
 ```
 
 You MUST load this file before running any check. The check IDs (e.g. A1–A12), their definitions, and the conditional rules ("required when …", "N/A when …") all come from the spec. Do not re-encode them inline here — single source of truth lives in the spec; this agent applies it.
@@ -28,7 +28,7 @@ You MUST load this file before running any check. The check IDs (e.g. A1–A12),
 If the spec file is missing or unreadable, halt and emit verbatim:
 
 ```
-SPEC SOURCE MISSING: synapse/skills/synapse/synapse-creator/references/skill-anatomy.md
+SPEC SOURCE MISSING: synapse/skills/synapse-creator/references/skill-anatomy.md
 ```
 
 Do not proceed with stale or inferred checks.

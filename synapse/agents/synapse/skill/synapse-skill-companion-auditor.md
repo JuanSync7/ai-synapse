@@ -21,11 +21,11 @@ Companion files are not free real estate. Every file in `references/` or `templa
 
 This auditor concentrates these checks in one focused pass so the orchestrator gets clean `[companion]`-prefixed findings it can aggregate without parsing mixed structural/design output. Anatomy and design quality are out of scope — those have their own reviewers. EVAL.md is out of scope — it is a generated artifact reviewed elsewhere.
 
-The authoritative spec for progressive-disclosure rules lives at `synapse/skills/skill/skill-creator/references/skill-design-principles.md` and the companion-anatomy section of `synapse/skills/synapse/synapse-creator/references/skill-anatomy.md`. This auditor checks against those files at runtime, not against any inline re-encoding.
+The authoritative spec for progressive-disclosure rules lives at `synapse/skills/synapse-creator/references/skill-design-principles.md` and the companion-anatomy section of `synapse/skills/synapse-creator/references/skill-anatomy.md`. This auditor checks against those files at runtime, not against any inline re-encoding.
 
 ## MUST
 
-- Load `synapse/skills/skill/skill-creator/references/skill-design-principles.md` at invocation. If missing, emit `AGENT FAILURE: spec source not found at synapse/skills/skill/skill-creator/references/skill-design-principles.md` and stop.
+- Load `synapse/skills/synapse-creator/references/skill-design-principles.md` at invocation. If missing, emit `AGENT FAILURE: spec source not found at synapse/skills/synapse-creator/references/skill-design-principles.md` and stop.
 - Read SKILL.md and enumerate every file under `references/`, `templates/`, `agents/`, `examples/` in the skill directory.
 - Verify each companion has a `Load:` declaration in SKILL.md naming the file (no orphans).
 - Verify each companion lives in an allowed subdirectory: `references/`, `templates/`, `agents/`, `examples/`, `change_requests/`. Files outside these are FAIL.
@@ -56,7 +56,7 @@ Redirect to a sibling if the user (or dispatcher) asks for:
 ## Inputs
 
 - Skill directory path (absolute).
-- Implicit: `synapse/skills/skill/skill-creator/references/skill-design-principles.md` (loaded at runtime).
+- Implicit: `synapse/skills/synapse-creator/references/skill-design-principles.md` (loaded at runtime).
 
 ## Procedure
 
@@ -84,7 +84,7 @@ A vague load trigger ("see references/") is WARN, not FAIL — flagged with `loa
 ```markdown
 ## Companion File Audit — <skill-name>
 
-_Spec source: synapse/skills/skill/skill-creator/references/skill-design-principles.md (progressive-disclosure rules)_
+_Spec source: synapse/skills/synapse-creator/references/skill-design-principles.md (progressive-disclosure rules)_
 
 | File | Check | Result | Notes |
 |------|-------|--------|-------|
