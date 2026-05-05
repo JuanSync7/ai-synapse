@@ -2,6 +2,7 @@
 name: synapse-skill-companion-auditor
 description: "Audits references/ and templates/ companion files for a skill — checks load triggers, no duplication with SKILL.md body, size-fit-purpose, template concreteness, and reference modularity"
 domain: synapse
+subdomain: skill
 role: auditor
 tags: [companion-files, progressive-disclosure, skill-review]
 ---
