@@ -1,1 +1,0 @@
-../../../../agents/protocol-review/protocol-signal-reviewer.md
