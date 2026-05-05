@@ -2,6 +2,7 @@
 name: synapse-skill-anatomy-reviewer
 description: "Binary anatomy gate — checks SKILL.md structural anatomy (frontmatter, routing contract, required sections) before eval generation"
 domain: synapse
+subdomain: skill
 role: reviewer
 tags: [anatomy, binary-gate, skill-review, structural]
 ---
