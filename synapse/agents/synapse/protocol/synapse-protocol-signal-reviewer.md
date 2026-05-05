@@ -1,5 +1,5 @@
 ---
-name: protocol-signal-reviewer
+name: synapse-protocol-signal-reviewer
 description: "Signal-strength reviewer — validates protocol instructions use commitment language, named trigger moments, and follow universal anatomy"
 domain: synapse
 role: reviewer

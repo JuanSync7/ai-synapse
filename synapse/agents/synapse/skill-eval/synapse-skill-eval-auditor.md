@@ -1,5 +1,5 @@
 ---
-name: skill-eval-auditor
+name: synapse-skill-eval-auditor
 description: "Execution criteria for orchestration patterns (EVAL-Exx)"
 domain: synapse
 role: auditor
