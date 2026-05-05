@@ -85,7 +85,7 @@
 
 **Prompt:**
 ```
-/synapse-gatekeeper synapse/skills/skill/skill-eval-judge
+/synapse-gatekeeper synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md
 ```
 *(No --score argument provided)*
 

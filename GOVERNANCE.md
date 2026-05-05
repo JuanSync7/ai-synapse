@@ -338,19 +338,11 @@ When brainstorming or improving a skill reveals that another skill, agent, proto
 
 ## Naming Conventions
 
-- **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory. No namespacing is possible at runtime.
-- **Lowercase hyphenated** — `write-spec-docs`, not `WriteSpecDocs` or `write_spec_docs`.
-- **Domain-prefixed when collision risk** — if the skill name is generic (e.g., `reporter`, `planner`), prefix with the domain (`jira-reporter`, `jira-planner`).
-- `scripts/install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.
+Each artifact class owns its naming rules in the corresponding taxonomy file:
 
-### Agent naming
+- Skills → `taxonomy/SKILL_TAXONOMY.md`
+- Agents → `taxonomy/AGENT_TAXONOMY.md`
+- Protocols → `taxonomy/PROTOCOL_TAXONOMY.md`
+- Tools → `taxonomy/TOOL_TAXONOMY.md`
 
-- **`<domain>-<concern>-<role>`** — e.g., `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor`
-- The domain prefix clusters related agents (all `skill-eval-*` sort together)
-- The role noun communicates what the agent *is*, not what it produces (prefer `judge` over `generate-criteria`)
-
-### Protocol naming
-
-- **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
-- Protocols live in subdirectories of `{synapse,src}/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
-- The directory name groups related protocols by domain; the file name identifies the specific protocol
+Each file specifies the structural name pattern and the controlled vocabulary that fills its slots.

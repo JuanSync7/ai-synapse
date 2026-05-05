@@ -1,6 +1,6 @@
 # Test Prompts Template
 
-<!-- Used by skill-eval-prompter to structure its output. -->
+<!-- Used by synapse-skill-eval-prompter to structure its output. -->
 <!-- Each prompt simulates a real user who only knows what the skill claims to do. -->
 
 ## Prompt Format

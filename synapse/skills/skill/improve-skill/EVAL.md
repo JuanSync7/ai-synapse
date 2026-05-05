@@ -78,12 +78,12 @@
   - **Test:** The `workflow_decisions` block shows a max-cycle check after each pass. If two consecutive cycles fail to clear an item, the trace records a "surface blocker" decision rather than a third attempt.
   - **Fail signal:** Trace shows three or more fix cycles on the same failing item without a blocker surfaced to the user.
 
-- [ ] **EVAL-E08:** skill-companion-file-writer dispatches carry an explicit model
-  - **Test:** When the trace includes a `skill-companion-file-writer` entry in `agents_dispatched`, that entry has a non-empty `model` field. This applies to every companion file dispatch, not only Pass 2 dispatches.
-  - **Fail signal:** Any `skill-companion-file-writer` entry in `agents_dispatched` has a missing or empty `model` field.
+- [ ] **EVAL-E08:** synapse-skill-companion-writer dispatches carry an explicit model
+  - **Test:** When the trace includes a `synapse-skill-companion-writer` entry in `agents_dispatched`, that entry has a non-empty `model` field. This applies to every companion file dispatch, not only Pass 2 dispatches.
+  - **Fail signal:** Any `synapse-skill-companion-writer` entry in `agents_dispatched` has a missing or empty `model` field.
 
-- [ ] **EVAL-E09:** skill-companion-file-writer subagents are dispatched in parallel when multiple files are needed
-  - **Test:** When `agents_dispatched` contains two or more `skill-companion-file-writer` entries for the same fix cycle, the trace's `workflow_decisions` block records a "parallel dispatch" decision — not sequential dispatch.
+- [ ] **EVAL-E09:** synapse-skill-companion-writer subagents are dispatched in parallel when multiple files are needed
+  - **Test:** When `agents_dispatched` contains two or more `synapse-skill-companion-writer` entries for the same fix cycle, the trace's `workflow_decisions` block records a "parallel dispatch" decision — not sequential dispatch.
   - **Fail signal:** Multiple companion file dispatches appear sequentially chained rather than parallel, or no dispatch decision is recorded when multiple companion files are required.
 
 - [ ] **EVAL-E10:** --behavioral-only flag causes structural pass to be absent from phases_executed

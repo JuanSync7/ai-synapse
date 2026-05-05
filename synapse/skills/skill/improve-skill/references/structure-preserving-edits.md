@@ -18,7 +18,7 @@ When improve-skill fixes a flow-graph SKILL.md, it must preserve the graph topol
 
 6. **Do not add prose sections** that bypass the node/edge structure. If new content is needed, add it as a Do step in the appropriate node, a new node with edges, or a companion file with a Load declaration.
 
-7. **Do not inflate SKILL.md beyond 500 lines** (hard cap). If a fix would exceed this, move existing content to a companion file first (dispatch `skill-companion-file-writer`), then apply the fix. ~80 lines is the target, but do not prematurely extract at 81 lines — the target is advisory.
+7. **Do not inflate SKILL.md beyond 500 lines** (hard cap). If a fix would exceed this, move existing content to a companion file first (dispatch `synapse-skill-companion-writer`), then apply the fix. ~80 lines is the target, but do not prematurely extract at 81 lines — the target is advisory.
 
 ---
 
@@ -35,7 +35,7 @@ improve-skill references companion files from skill-creator via symlinks. Before
 When a fix would push SKILL.md past 500 lines:
 
 1. Identify content that can move to a companion file (procedures, format specs, detailed instructions — not global invariants or routing decisions)
-2. Dispatch `skill-companion-file-writer` to create the companion (Load: `references/companion-dispatch-protocol.md` for dispatch fields)
+2. Dispatch `synapse-skill-companion-writer` to create the companion (Load: `references/companion-dispatch-protocol.md` for dispatch fields)
 3. Add a Load declaration at the appropriate node
 4. Then apply the original fix
 
@@ -43,7 +43,7 @@ When a fix would push SKILL.md past 500 lines:
 
 ## Companion-File-Writer Failure Handling
 
-When dispatching `skill-companion-file-writer` during a fix:
+When dispatching `synapse-skill-companion-writer` during a fix:
 
 - **First attempt fails:** Read the agent's gap report, enrich the content brief with more context, re-dispatch once
 - **Second attempt fails:** FAIL LOUDLY — surface the specific gaps to the user. Do not fall back to inlining content to paper over the failure

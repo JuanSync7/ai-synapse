@@ -30,6 +30,52 @@ Non-binding backlog of framework-level ideas surfaced during alpha cleanup. Item
 
 ---
 
+## protocol-eval-*, agent-eval-*, tool-eval-* decomposition
+
+**Problem.** `write-synapse-eval` (skill flow) decomposes eval authoring into surface-specific sub-agents under `synapse/agents/synapse/skill-eval/`: `synapse-skill-eval-prompter` (test prompts), `synapse-skill-eval-judge` (output criteria), `synapse-skill-eval-auditor` (execution criteria). Each agent owns one eval surface. The protocol, agent, and tool flows of `write-synapse-eval` do not have an equivalent decomposition — eval criteria are produced inline within the skill, with no per-surface sub-agents and no `synapse/agents/synapse/protocol-eval/`, `synapse/agents/synapse/agent-eval/`, or `synapse/agents/synapse/tool-eval/` directories. This means: (a) no reuse across pipelines (e.g., `/improve-protocol` if it ever exists), (b) authoring concerns leak into orchestration, (c) inconsistent contributor mental model (skill works one way, others another).
+
+**Proposal.** Mirror the skill-eval pattern for the surfaces each artifact actually has:
+
+| Artifact | Surfaces | Sub-agents |
+|----------|----------|------------|
+| Skill | input + output + execution | prompter + judge + auditor (already exists) |
+| Protocol | trigger-firing conformance (no input/output surface) | `protocol-eval-conformance-grader` (does consumer fire trigger?); possibly `protocol-eval-failure-grader` (does it emit failure assertion?) |
+| Agent | input + output (+ execution if it dispatches subagents) | `agent-eval-prompter` + `agent-eval-judge` (+ optional `agent-eval-auditor`) |
+| Tool | input contract + output contract + side-effects/idempotency | `tool-eval-prompter` (call shapes) + `tool-eval-judge` (output schema/semantics) + `tool-eval-auditor` (idempotency, error paths, side-effect boundaries) |
+
+Land these under `synapse/agents/synapse/protocol-eval/`, `synapse/agents/synapse/agent-eval/`, and `synapse/agents/synapse/tool-eval/`. Update the relevant `write-synapse-eval` flows to dispatch them.
+
+**Open design questions.**
+1. Does protocol need a "prompter" at all, or only conformance grading? (Conformance is graded against actual consumer agent runs, not synthetic prompts.)
+2. For agents: blind-prompter constraint (synapse-skill-eval-prompter sees only name + description) — does it apply to agents, or do agents need fuller context?
+3. Migration: rewrite the protocol/agent flows of `write-synapse-eval` to dispatch sub-agents, or build the sub-agents and let the flows continue inline until /improve-protocol forces reuse?
+
+**Why not now.** Cross-cutting refactor — touches `write-synapse-eval` (recently stabilized), creates new agent directories, requires registry + taxonomy updates. Skill-signal-reviewer is the smaller, higher-leverage win to ship first.
+
+**Owner / unblocker.** Brainstorm via `/synapse-brainstorm` after synapse-skill-signal-reviewer + agent-signal-reviewer establish the post-draft review pattern.
+
+---
+
+## synapse-agent-signal-reviewer and synapse-tool-signal-reviewer
+
+**Problem.** Symmetric gap to synapse-skill-signal-reviewer. Agent recipes (`{synapse,src}/agents/<domain>/<name>.md`) and tool definitions (`{synapse,src}/tools/<domain>/...`) are authoring artifacts whose quality is currently caught only indirectly — there's no dedicated signal-strength reviewer paralleling `synapse-protocol-signal-reviewer`.
+
+For agents the surface is: clear inputs, clear outputs, no implicit state, model-appropriate scope, single role.
+For tools the surface is: input/output schema clarity, idempotency declared, side-effect boundary explicit, error contract precise.
+
+**Proposal.** Add `synapse-agent-signal-reviewer` under `synapse/agents/agent-review/` and `synapse-tool-signal-reviewer` under `synapse/agents/tool-review/`. Dispatched by `agent-creator` / `tool-creator` (and `synapse-creator` flow-agent / flow-tool) at a `[R]` phase before eval handoff.
+
+**Open design questions.**
+1. Universal anatomy for agents and tools — is there one tight enough to validate? (Both vary more than protocols.)
+2. What checks transfer from `synapse-protocol-signal-reviewer` and which need new ones (e.g., input/output contract clarity for agents; idempotency/side-effect declarations for tools)?
+3. Does it run before or after the corresponding `write-synapse-eval` flow?
+
+**Why not now.** Tackle synapse-skill-signal-reviewer first to establish the pattern beyond the protocol case; agent and tool reviewers can copy the pattern once proven.
+
+**Owner / unblocker.** Brainstorm after `synapse-skill-signal-reviewer` ships.
+
+---
+
 ## (template — copy this when adding a new backlog item)
 
 ### <kebab-case-name>

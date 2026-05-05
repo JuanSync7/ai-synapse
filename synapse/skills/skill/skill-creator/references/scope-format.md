@@ -28,7 +28,7 @@ literally but miss edge cases."]
 # skill-creator — Capability Profile
 
 long-context: no
-tool-use: yes             # Dispatches agent definitions (skill-eval-prompter, skill-eval-judge, skill-eval-auditor) and /improve-skill
+tool-use: yes             # Dispatches agent definitions (synapse-skill-eval-prompter, synapse-skill-eval-judge, synapse-skill-eval-auditor) and /improve-skill
 multi-step-reasoning: yes # 7-phase workflow with judgment calls at each gate
 code-generation: no
 minimum-model-tier: frontier

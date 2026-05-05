@@ -121,25 +121,25 @@ VERDICT: REJECT
 
 ## Example 4 — Agent APPROVE
 
-**Input:** `/synapse-gatekeeper synapse/agents/skill-eval/skill-eval-judge.md`
+**Input:** `/synapse-gatekeeper synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md`
 
 ---
 
 ```
 VERDICT: APPROVE
 
-## Certification Report — skill-eval-judge (agent)
+## Certification Report — synapse-skill-eval-judge (agent)
 
 ### Structural                    ✓
 - [x] Agent file exists and is non-empty
 - [x] Frontmatter complete (name, description, domain, role)
-- [x] domain `skill-eval` in AGENT_TAXONOMY.md
+- [x] domain `synapse` in AGENT_TAXONOMY.md
 - [x] role `judge` in AGENT_TAXONOMY.md
 - [x] tags well-formed: [output-criteria, binary-grading, impartial]
 - [x] Name follows `<domain>-<concern>-<role>` convention
 - [x] Name globally unique in AGENTS_REGISTRY.md
 - [x] Listed in AGENTS_REGISTRY.md with correct description and consumers
-- [x] Domain README (synapse/agents/skill-eval/README.md) has row for skill-eval-judge
+- [x] Domain README (synapse/agents/synapse/skill-eval/README.md) has row for synapse-skill-eval-judge
 
 ### Quality                       ✓
 - [x] Clear persona ("impartial judge" mindset in opening paragraph)

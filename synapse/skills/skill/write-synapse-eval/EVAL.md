@@ -61,7 +61,7 @@
   - **Test:** Temporarily rename `synapse/skills/skill/synapse-gatekeeper/references/protocol-checklist.md`; invoke `/write-synapse-eval protocol <path>`. Trace shows hard failure with the unresolved Load path, no EVAL.md written.
   - **Fail signal:** Skill proceeds to write an EVAL.md with criteria sourced from training memory.
 
-- [ ] **EVAL-E08:** Bias-control invariant — `skill-eval-prompter` never sees `SKILL.md` body
+- [ ] **EVAL-E08:** Bias-control invariant — `synapse-skill-eval-prompter` never sees `SKILL.md` body
   - **Test:** Inspect the parallel dispatch from `flow-skill:[D]`. Prompter's input contains only the skill name and `description`; never the SKILL.md body or `references/`.
   - **Fail signal:** Prompter dispatch carries SKILL.md content.
 
@@ -94,7 +94,7 @@
 Acceptance checks:
 - [ ] **EVAL-T1.1:** A new `EVAL.md` is written at `synapse/skills/skill/synapse-brainstorm/EVAL.md`
 - [ ] **EVAL-T1.2:** EVAL.md contains an `EVAL-S` (Structural) section with at least one criterion
-- [ ] **EVAL-T1.3:** EVAL.md contains an `EVAL-O` (Output) section sourced from `skill-eval-judge`
+- [ ] **EVAL-T1.3:** EVAL.md contains an `EVAL-O` (Output) section sourced from `synapse-skill-eval-judge`
 - [ ] **EVAL-T1.4:** EVAL.md contains a `Test Prompts` section with prompts grouped by persona
 - [ ] **EVAL-T1.5:** EVAL.md does NOT contain inline criteria invented by the router (all `EVAL-O` come from agent dispatches)
 - [ ] **EVAL-T1.6:** Source `SKILL.md` is unmodified (read-only invariant)

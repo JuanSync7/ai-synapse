@@ -121,12 +121,12 @@ Exit: all scaffold files written, registry row appended, README row inserted →
 
 ### [R] — signal-strength review
 
-Load: `agents/protocol/protocol-signal-reviewer.md`
+Load: `agents/protocol/synapse-protocol-signal-reviewer.md`
 
 Brief: Dispatch the reviewer as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose.
 
 Do:
-1. Dispatch `agents/protocol/protocol-signal-reviewer.md` as a subagent (model: sonnet) with the drafted protocol file as input.
+1. Dispatch `agents/protocol/synapse-protocol-signal-reviewer.md` as a subagent (model: sonnet) with the drafted protocol file as input.
 2. If any of the 8 checks fail: fix the specific issues. Re-dispatch for a second review.
 3. **Two review cycles maximum.** If the protocol still fails after two cycles, surface remaining issues to the user — the protocol may need design changes, not just wording fixes.
 

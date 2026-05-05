@@ -56,7 +56,7 @@ The `file_type` parameter tells the subagent what kind of content to produce:
 
 ## Dispatching
 
-1. Read `agents/skill-companion-file-writer.md` to understand the subagent's input contract
+1. Read `agents/synapse-skill-companion-writer.md` to understand the subagent's input contract
 2. Dispatch all companion file subagents **in parallel** — they are independent
 3. Set model explicitly on each dispatch (per MUST rule)
 

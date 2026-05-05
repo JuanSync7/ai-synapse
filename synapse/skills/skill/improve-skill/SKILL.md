@@ -73,7 +73,7 @@ Load: `references/structural-checklist.md`, `references/flow-graph-pattern.md`, 
 Do:
   1. Score target against full structural checklist (baseline + extended + principles + flow-graph conformance) plus EVAL-Sxx criteria if EVAL.md exists
   2. List each failing item with one-line reason
-  3. Fix SKILL.md to address failures — if fix requires new companion file, dispatch `skill-companion-file-writer` (model: sonnet; Load: `agents/skill-companion-file-writer.md`, `references/companion-dispatch-protocol.md`)
+  3. Fix SKILL.md to address failures — if fix requires new companion file, dispatch `synapse-skill-companion-writer` (model: sonnet; Load: `agents/synapse-skill-companion-writer.md`, `references/companion-dispatch-protocol.md`)
   4. Re-score — if not at 100%, return to step 2
 Don't:
   - Continue past 2 fix cycles on the same failing item — surface as blocker

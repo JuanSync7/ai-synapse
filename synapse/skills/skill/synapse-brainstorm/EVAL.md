@@ -136,7 +136,7 @@
 
 ### EVAL-T05 — Experienced User: Reworking an existing agent with known failure modes
 
-**Prompt:** "I have a skill-eval-judge agent that consistently hallucinates passing scores when the test prompt is ambiguous. I've already tried tightening the scoring rubric — it didn't help. Before I redesign the agent, I want to brainstorm whether this is a prompt design problem, an architecture problem (maybe the judge needs a challenger agent), or a signal problem (the EVAL.md criteria are too vague to adjudicate). Help me think through the design space."
+**Prompt:** "I have a synapse-skill-eval-judge agent that consistently hallucinates passing scores when the test prompt is ambiguous. I've already tried tightening the scoring rubric — it didn't help. Before I redesign the agent, I want to brainstorm whether this is a prompt design problem, an architecture problem (maybe the judge needs a challenger agent), or a signal problem (the EVAL.md criteria are too vague to adjudicate). Help me think through the design space."
 
 **Why this tests the skill:** Tests whether the skill can handle a constrained rework session where one solution path has already been ruled out, requiring it to reason across architectural options.
 

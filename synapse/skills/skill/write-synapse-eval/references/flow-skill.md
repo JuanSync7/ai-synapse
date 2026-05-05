@@ -14,7 +14,7 @@ Loaded by `write-synapse-eval` after `[ROUTE]` confirms `$TYPE=skill`. Owns the 
 
 ## MUST NOT (flow level)
 - Inline criteria authoring — criteria come from agents, not from this file's training memory
-- Share context between `skill-eval-prompter` (blind) and `skill-eval-judge` (full SKILL.md sighted) — bias control
+- Share context between `synapse-skill-eval-prompter` (blind) and `synapse-skill-eval-judge` (full SKILL.md sighted) — bias control
 - Grade the artifact — this skill produces criteria; grading is `/synapse-gatekeeper` and `/improve-skill`
 - Write a partial EVAL.md if any agent fails — surface the error; user re-runs
 
@@ -25,11 +25,11 @@ Loaded by `write-synapse-eval` after `[ROUTE]` confirms `$TYPE=skill`. Owns the 
 ```
 write-synapse-eval (skill flow)
         │
-        ├── skill-eval-prompter   sees: skill name + description ONLY     (blind)
+        ├── synapse-skill-eval-prompter   sees: skill name + description ONLY     (blind)
         │
-        ├── skill-eval-judge      sees: full SKILL.md as impartial judge   (sighted)
+        ├── synapse-skill-eval-judge      sees: full SKILL.md as impartial judge   (sighted)
         │
-        └── skill-eval-auditor    sees: full SKILL.md                      (sighted, orchestration)
+        └── synapse-skill-eval-auditor    sees: full SKILL.md                      (sighted, orchestration)
 ```
 
 `prompter` is BLIND — it never sees how the skill works, so prompts cannot leak the skill's solution shape. `judge` and `auditor` are sighted but framed as evaluators, not authors. The three agents NEVER share context with each other. If the same context is fed to two of them, you have invalidated the eval.
@@ -41,10 +41,10 @@ write-synapse-eval (skill flow)
 | Tier | Source | Optional? |
 |------|--------|-----------|
 | EVAL-S (Structural) | Static checklist (this file, Step 5) | No |
-| EVAL-E (Execution / orchestration) | `skill-eval-auditor` output | Yes — omit section if auditor returns no criteria |
+| EVAL-E (Execution / orchestration) | `synapse-skill-eval-auditor` output | Yes — omit section if auditor returns no criteria |
 | EVAL-F (Flow Conformance) | Static checklist when `references/flow-*.md` files exist | Yes — omit if no flow files |
-| EVAL-O (Output) | `skill-eval-judge` output | No |
-| Test Prompts | `skill-eval-prompter` output | No |
+| EVAL-O (Output) | `synapse-skill-eval-judge` output | No |
+| Test Prompts | `synapse-skill-eval-prompter` output | No |
 
 ---
 
@@ -69,14 +69,14 @@ Exit:
 ### [D] — dispatch agents in parallel
 Brief: Three independent agents, three parallel dispatches. They share zero context.
 Do:
-  1. Dispatch `skill-eval-prompter` (model: sonnet) with **only** `$ARTIFACT_NAME` and the skill's `description` field. Do NOT pass `SKILL.md` body, `references/`, or any internal mechanics.
-  2. Dispatch `skill-eval-judge` (model: sonnet) with the full `SKILL.md` path. Frame as: "You are an impartial evaluator. Produce binary EVAL-Oxx output criteria for what this skill must produce when run."
-  3. Dispatch `skill-eval-auditor` (model: sonnet) with the full `SKILL.md` path. Frame as: "Produce EVAL-Exx orchestration criteria for the skill's execution patterns (subagent dispatch, model selection, phase gates). If the skill has no orchestration patterns, return an explicit empty result."
+  1. Dispatch `synapse-skill-eval-prompter` (model: sonnet) with **only** `$ARTIFACT_NAME` and the skill's `description` field. Do NOT pass `SKILL.md` body, `references/`, or any internal mechanics.
+  2. Dispatch `synapse-skill-eval-judge` (model: sonnet) with the full `SKILL.md` path. Frame as: "You are an impartial evaluator. Produce binary EVAL-Oxx output criteria for what this skill must produce when run."
+  3. Dispatch `synapse-skill-eval-auditor` (model: sonnet) with the full `SKILL.md` path. Frame as: "Produce EVAL-Exx orchestration criteria for the skill's execution patterns (subagent dispatch, model selection, phase gates). If the skill has no orchestration patterns, return an explicit empty result."
   4. Issue all three dispatches in a single parallel batch — never serialize them.
   5. On any agent failure: collect the error, abort the flow, do NOT proceed to assembly. Surface the failure to the caller; user re-runs.
 Don't:
-  - Pass `SKILL.md` body to `skill-eval-prompter` — destroys the blind constraint
-  - Share `skill-eval-prompter`'s output back into `skill-eval-judge`'s context — destroys independence
+  - Pass `SKILL.md` body to `synapse-skill-eval-prompter` — destroys the blind constraint
+  - Share `synapse-skill-eval-prompter`'s output back into `synapse-skill-eval-judge`'s context — destroys independence
   - Auto-retry a failed agent silently — surface and stop
 Exit:
   → `[A]` : all three agents returned (some may return empty for `auditor`)
@@ -98,7 +98,7 @@ Do:
      - EVAL-S06: Skill listed in `registry/SKILL_REGISTRY.md` with `status` column populated
      - EVAL-S07: Domain README contains a row for this skill
      - EVAL-S08: EVAL.md exists alongside SKILL.md (self-referential — passes by virtue of being written)
-  4. Fill the **Execution Criteria** section with `skill-eval-auditor`'s output. If auditor returned empty (no orchestration patterns), OMIT the section entirely — do not write an empty header.
+  4. Fill the **Execution Criteria** section with `synapse-skill-eval-auditor`'s output. If auditor returned empty (no orchestration patterns), OMIT the section entirely — do not write an empty header.
   5. If `$HAS_FLOW_FILES` is true, add a **Flow Conformance Criteria** section with the static EVAL-Fxx checklist (apply each check to all `references/flow-*.md` files):
      - EVAL-F01: Each flow has a real `[START]` and `[END]` node
      - EVAL-F02: Node headings use `### [ID]` (level-3) consistently
@@ -107,8 +107,8 @@ Do:
      - EVAL-F05: Per-node Loads — companions load inside the node that uses them
      - EVAL-F06: Flow file under 200 lines (advisory)
      - EVAL-F07: No `if $TYPE` conditionals inside flow files
-  6. Fill the **Output Criteria** section with `skill-eval-judge`'s EVAL-Oxx output verbatim.
-  7. Fill the **Test Prompts** section with `skill-eval-prompter`'s output, organized by persona (Naive / Experienced / Adversarial / Wrong Tool).
+  6. Fill the **Output Criteria** section with `synapse-skill-eval-judge`'s EVAL-Oxx output verbatim.
+  7. Fill the **Test Prompts** section with `synapse-skill-eval-prompter`'s output, organized by persona (Naive / Experienced / Adversarial / Wrong Tool).
   8. Confirm the full assembled string is non-empty before exiting.
 Don't:
   - Edit agent output bodies beyond formatting — preserve their criteria language verbatim

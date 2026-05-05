@@ -2,7 +2,10 @@
 
 Controlled vocabulary for agent metadata. When creating a new agent, pick `domain` and `role` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
 
-Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.md).
+Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention — lowercase-hyphenated.
+
+- **The domain prefix clusters related agents** — all `skill-eval-*` sort together.
+- **The role noun communicates what the agent *is*, not what it produces** — prefer `judge` over `generate-criteria`, `reviewer` over `produces-feedback`.
 
 ## Domains
 

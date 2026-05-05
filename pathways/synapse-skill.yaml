@@ -15,8 +15,8 @@ synapses:
     - synapse/skills/skill/write-synapse-eval
     - synapse/skills/skill/synapse-gatekeeper
   agents:
-    - synapse/agents/skill-eval/skill-eval-auditor
-    - synapse/agents/skill-eval/skill-eval-judge
-    - synapse/agents/skill-eval/skill-eval-prompter
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-auditor
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-judge
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-prompter
   protocols: []
   tools: []
