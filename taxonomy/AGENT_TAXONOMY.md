@@ -32,6 +32,7 @@ Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention —
 | `writer` | Produces content from a brief or specification |
 | `reviewer` | Validates output against input contract and quality criteria |
 | `maintainer` | Enforces invariants across existing artifacts; reads current state, applies surgical edits, writes updated state. |
+| `orchestrator` | Coordinator that dispatches sub-agents, aggregates their outputs, and emits a unified verdict; performs no domain judgment of its own. |
 
 ## Tags
 

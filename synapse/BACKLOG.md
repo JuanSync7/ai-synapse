@@ -52,27 +52,27 @@ Land these under `synapse/agents/synapse/protocol-eval/`, `synapse/agents/synaps
 
 **Why not now.** Cross-cutting refactor — touches `write-synapse-eval` (recently stabilized), creates new agent directories, requires registry + taxonomy updates. Skill-signal-reviewer is the smaller, higher-leverage win to ship first.
 
-**Owner / unblocker.** Brainstorm via `/synapse-brainstorm` after synapse-skill-signal-reviewer + agent-signal-reviewer establish the post-draft review pattern.
+**Owner / unblocker.** Brainstorm via `/synapse-brainstorm` after synapse-skill-signal-orchestrator + agent-signal-reviewer establish the post-draft review pattern.
 
 ---
 
-## synapse-agent-signal-reviewer and synapse-tool-signal-reviewer
+## synapse-agent-signal-orchestrator and synapse-tool-signal-orchestrator
 
-**Problem.** Symmetric gap to synapse-skill-signal-reviewer. Agent recipes (`{synapse,src}/agents/<domain>/<name>.md`) and tool definitions (`{synapse,src}/tools/<domain>/...`) are authoring artifacts whose quality is currently caught only indirectly — there's no dedicated signal-strength reviewer paralleling `synapse-protocol-signal-reviewer`.
+**Problem.** Symmetric gap to synapse-skill-signal-orchestrator. Agent recipes (`{synapse,src}/agents/<domain>/<name>.md`) and tool definitions (`{synapse,src}/tools/<domain>/...`) are authoring artifacts whose quality is currently caught only indirectly — there's no dedicated signal-strength reviewer paralleling `synapse-protocol-signal-reviewer`.
 
 For agents the surface is: clear inputs, clear outputs, no implicit state, model-appropriate scope, single role.
 For tools the surface is: input/output schema clarity, idempotency declared, side-effect boundary explicit, error contract precise.
 
-**Proposal.** Add `synapse-agent-signal-reviewer` under `synapse/agents/agent-review/` and `synapse-tool-signal-reviewer` under `synapse/agents/tool-review/`. Dispatched by `agent-creator` / `tool-creator` (and `synapse-creator` flow-agent / flow-tool) at a `[R]` phase before eval handoff.
+**Proposal.** Add `synapse-agent-signal-orchestrator` under `synapse/agents/agent-review/` and `synapse-tool-signal-orchestrator` under `synapse/agents/tool-review/`. Dispatched by `agent-creator` / `tool-creator` (and `synapse-creator` flow-agent / flow-tool) at a `[R]` phase before eval handoff.
 
 **Open design questions.**
 1. Universal anatomy for agents and tools — is there one tight enough to validate? (Both vary more than protocols.)
 2. What checks transfer from `synapse-protocol-signal-reviewer` and which need new ones (e.g., input/output contract clarity for agents; idempotency/side-effect declarations for tools)?
 3. Does it run before or after the corresponding `write-synapse-eval` flow?
 
-**Why not now.** Tackle synapse-skill-signal-reviewer first to establish the pattern beyond the protocol case; agent and tool reviewers can copy the pattern once proven.
+**Why not now.** Tackle synapse-skill-signal-orchestrator first to establish the pattern beyond the protocol case; agent and tool reviewers can copy the pattern once proven.
 
-**Owner / unblocker.** Brainstorm after `synapse-skill-signal-reviewer` ships.
+**Owner / unblocker.** Brainstorm after `synapse-skill-signal-orchestrator` ships.
 
 ---
 
