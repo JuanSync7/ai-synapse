@@ -1,7 +1,8 @@
 ---
 name: write-synapse-eval
 description: Use when generating an EVAL.md for a skill, protocol, agent, or tool.
-domain: skill
+domain: synapse
+subdomain: skill
 intent: write
 tags: [eval-md, criteria, test-prompts, multi-artifact, router]
 user-invocable: true
@@ -126,9 +127,9 @@ Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S
 
 **Type/path mismatch (`$TYPE=skill` but path is a flat .md):**
 ```
-/write-synapse-eval skill synapse/agents/skill-eval/skill-eval-judge.md
+/write-synapse-eval skill synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md
 → FAIL: $TYPE='skill' expects a directory containing SKILL.md, got a flat .md file.
-  If this is an agent, use: /write-synapse-eval agent synapse/agents/skill-eval/skill-eval-judge.md
+  If this is an agent, use: /write-synapse-eval agent synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md
 ```
 
 **Existing EVAL.md (no `--force`):**

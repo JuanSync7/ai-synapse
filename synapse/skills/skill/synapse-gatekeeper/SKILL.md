@@ -2,6 +2,7 @@
 name: synapse-gatekeeper
 description: "Use when a skill, agent, protocol, tool, or pathway is complete and ready for promotion review, or to check if an artifact meets the bar to land in ai-synapse."
 domain: synapse
+subdomain: skill
 intent: validate
 tags: [skill, agent, protocol, tool, pathway, promotion, certification, gatekeeper]
 user-invocable: true
@@ -34,7 +35,7 @@ Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `tes
 | Build an agent from scratch | `/agent-creator` |
 | Build a protocol from scratch | `/protocol-creator` |
 | Review a decision or design approach (not an artifact) | `/stakeholder-reviewer` |
-| Evaluate or rewrite an EVAL.md only | `/write-skill-eval`, `/write-agent-eval`, or `/write-protocol-eval` |
+| Evaluate or rewrite an EVAL.md only | `/write-synapse-eval` (unified router for skill/agent/protocol/tool) |
 
 ---
 

@@ -84,6 +84,6 @@ Agents follow `{domain}-{subdomain?}-{purpose?}-{role}` where:
 Validate the chosen `domain` and `role` against the taxonomy before proceeding. If nothing fits, propose a taxonomy addition — don't invent ad hoc values.
 
 Examples:
-- `skill-eval-judge` — skill-eval domain, judge role
+- `synapse-skill-eval-judge` — synapse domain, judge role
 - `docs-spec-coherence-reviewer` — docs domain, spec subdomain, coherence purpose, reviewer role
 - `protocol-review-agent` — protocol-eval domain, reviewer role

@@ -25,9 +25,9 @@ The terminal segment is type-specific and must come from the artifact type's tax
 
 | Name | Pattern | Segments |
 |---|---|---|
-| `skill-eval-judge` | domain-subdomain-role | 3 |
+| `synapse-skill-eval-judge` | domain-subdomain-subdomain-role | 4 |
 | `docs-spec-section-writer` | domain-subdomain-purpose-role | 4 |
-| `protocol-eval-reviewer` | domain-subdomain-role | 3 |
+| `synapse-protocol-signal-reviewer` | domain-subdomain-purpose-role | 4 |
 | `observability-execution-trace` | domain-purpose-type | 3 |
 | `testing-criticality-scorer` | domain-purpose-action | 3 |
 

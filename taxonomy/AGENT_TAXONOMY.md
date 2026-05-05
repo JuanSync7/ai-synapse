@@ -2,17 +2,24 @@
 
 Controlled vocabulary for agent metadata. When creating a new agent, pick `domain` and `role` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
 
-Agents follow the `<domain>-<concern>-<role>` naming convention (see GOVERNANCE.md).
+Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention — lowercase-hyphenated.
+
+- **The domain prefix clusters related agents** — all `skill-eval-*` sort together.
+- **The role noun communicates what the agent *is*, not what it produces** — prefer `judge` over `generate-criteria`, `reviewer` over `produces-feedback`.
 
 ## Domains
 
 | Domain | Description |
 |--------|-------------|
+| `synapse` | Framework-level agents: artifact authoring, evaluation, ecosystem maintenance |
+
+## Subdomains
+
+| Subdomain | Description |
+|-----------|-------------|
 | `skill` | Skill authoring and companion-file generation |
 | `skill-eval` | Skill evaluation and quality assessment |
-| `docs` | Document authoring, review, and maintenance |
-| `protocol-eval` | Protocol evaluation, signal-strength review, conformance testing |
-| `synapse` | Synapse ecosystem management — workflow automation, manifest generation |
+| `protocol` | Protocol authoring, signal-strength review, conformance testing |
 
 ## Roles
 

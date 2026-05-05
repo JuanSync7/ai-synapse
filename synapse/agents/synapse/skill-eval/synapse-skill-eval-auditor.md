@@ -1,7 +1,8 @@
 ---
-name: skill-eval-auditor
+name: synapse-skill-eval-auditor
 description: "Execution criteria for orchestration patterns (EVAL-Exx)"
 domain: synapse
+subdomain: skill-eval
 role: auditor
 tags: [execution-criteria, orchestration, trace-grading]
 ---

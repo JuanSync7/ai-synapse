@@ -1,19 +1,16 @@
 # Tool Taxonomy
 
-Controlled vocabulary for tool metadata. When creating a new tool, pick `domain` and `action` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
+Controlled vocabulary for tool metadata. When creating a new tool, pick `domain`, `action`, and `type` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
 
-Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention.
+Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention — lowercase-hyphenated, with subdomain/action included when they aid disambiguation; omit them when the bare name already makes scope clear.
+
+- **The action slot communicates what the tool *is*, not what it processes** — prefer `scorer` over `score-skills`, `validator` over `check-frontmatter`.
 
 ## Domains
 
 | Domain | Description |
 |--------|-------------|
-| `testing` | Test generation, scoring, coverage analysis |
-| `build` | Build configuration, artifact generation |
-| `validation` | Input/output validation, schema checking |
-| `analysis` | Code analysis, metric computation |
-| `integration` | External service interaction tooling |
-| `synapse` | Synapse ecosystem tooling — branching, registry sync, validation |
+| `synapse` | Framework-level tools: branching, registry sync, validation, ecosystem automation |
 
 ## Actions
 

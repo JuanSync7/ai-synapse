@@ -11,7 +11,7 @@ This document defines what belongs in ai-synapse, the criteria an artifact (skil
 ai-synapse is a curated library, not a scratch pad. A skill belongs here when it meets all three conditions:
 
 1. **Reusable across projects** — the skill is not tied to a single codebase, team, or context. It solves a category of problem, not a one-off task.
-2. **Has a passing EVAL.md** — an EVAL.md exists, was generated or reviewed by `/write-skill-eval`, and the skill scores ≥ 80 against it.
+2. **Has a passing EVAL.md** — an EVAL.md exists, was generated or reviewed by `/write-synapse-eval`, and the skill scores ≥ 80 against it.
 3. **Not a duplicate** — no existing skill in the registry already covers the same intent at the same scope. A variation in phrasing is not enough — the use case must be genuinely distinct.
 
 ### Agent Definitions
@@ -20,7 +20,7 @@ Agent definitions (`{synapse,src}/agents/`) are internal recipes dispatched by s
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
 - **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-gatekeeper`, same as skills
-- **No standalone EVAL.md** — agents are tested indirectly through the skills that dispatch them. A standalone eval format will be defined when `write-agent-eval` is built (currently a draft stub)
+- **No standalone EVAL.md required** — agents are tested indirectly through the skills that dispatch them. To generate an EVAL.md when needed, use `/write-synapse-eval agent <path>` (the unified eval router; the standalone `write-agent-eval` is deprecated)
 - **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
 - **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
 
@@ -32,7 +32,7 @@ Protocols (`{synapse,src}/protocols/`) are shared conventions and schemas inject
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
 - **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-gatekeeper`
-- **No standalone EVAL.md** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). A standalone eval format will be defined when `write-protocol-eval` is built (currently a draft stub)
+- **No standalone EVAL.md required** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). To generate an EVAL.md when needed, use `/write-synapse-eval protocol <path>` (the unified eval router; the standalone `write-protocol-eval` is deprecated)
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
 
 A protocol belongs in `{synapse,src}/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
@@ -338,19 +338,11 @@ When brainstorming or improving a skill reveals that another skill, agent, proto
 
 ## Naming Conventions
 
-- **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory. No namespacing is possible at runtime.
-- **Lowercase hyphenated** — `write-spec-docs`, not `WriteSpecDocs` or `write_spec_docs`.
-- **Domain-prefixed when collision risk** — if the skill name is generic (e.g., `reporter`, `planner`), prefix with the domain (`jira-reporter`, `jira-planner`).
-- `scripts/install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.
+Each artifact class owns its naming rules in the corresponding taxonomy file:
 
-### Agent naming
+- Skills → `taxonomy/SKILL_TAXONOMY.md`
+- Agents → `taxonomy/AGENT_TAXONOMY.md`
+- Protocols → `taxonomy/PROTOCOL_TAXONOMY.md`
+- Tools → `taxonomy/TOOL_TAXONOMY.md`
 
-- **`<domain>-<concern>-<role>`** — e.g., `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor`
-- The domain prefix clusters related agents (all `skill-eval-*` sort together)
-- The role noun communicates what the agent *is*, not what it produces (prefer `judge` over `generate-criteria`)
-
-### Protocol naming
-
-- **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
-- Protocols live in subdirectories of `{synapse,src}/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
-- The directory name groups related protocols by domain; the file name identifies the specific protocol
+Each file specifies the structural name pattern and the controlled vocabulary that fills its slots.

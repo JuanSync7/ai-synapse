@@ -13,7 +13,7 @@ Loaded by synapse-gatekeeper when the artifact path points to `src/agents/<domai
 | `domain` in AGENT_TAXONOMY.md | Value matches a row in AGENT_TAXONOMY.md |
 | `role` in AGENT_TAXONOMY.md | Value matches a row in AGENT_TAXONOMY.md |
 | `tags` well-formed | Array of lowercase hyphenated strings |
-| Name follows convention | `<domain>-<concern>-<role>` pattern (e.g., `skill-eval-judge`) |
+| Name follows convention | `<domain>-<concern>-<role>` pattern (e.g., `synapse-skill-eval-judge`) |
 | Name globally unique | No collision in AGENTS_REGISTRY.md |
 | Listed in AGENTS_REGISTRY.md | Row exists with correct description and consumer list |
 | Domain README has row | Domain `README.md` contains a row linking this agent |

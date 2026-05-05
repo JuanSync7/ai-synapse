@@ -2,6 +2,7 @@
 name: skill-router
 description: "Routes to specialized skills from the ai-skills repository. Use when the user's request matches a known skill domain but no installed skill covers it. Does NOT activate for general coding, debugging, git operations, or conversation."
 domain: synapse
+subdomain: meta
 intent: route
 tags: [router, discovery, lazy-load]
 user-invocable: false
@@ -32,7 +33,7 @@ If the symlink is broken or the repo is missing, tell the user: "ai-skills repo 
 
 - **User wants to run a specific installed skill** → that skill handles it directly; the router does not interfere
 - **User asks how to create a new skill** → this is a skill-creator task, not a routing task. Route to `meta/skill-creator` if not installed, but do not attempt to create skills yourself.
-- **User asks to improve or evaluate a skill** → route to `meta/improve-skill` or `meta/write-skill-eval`
+- **User asks to improve or evaluate a skill** → route to `meta/improve-skill` or `meta/write-synapse-eval`
 - **User asks to run an autonomous pipeline** → route to `orchestration/autonomous-orchestrator`
 
 ## Domain Vocabulary

@@ -2,6 +2,7 @@
 name: write-skill-eval
 description: Use when asked to write an eval for a skill, create skill evaluation criteria, generate an EVAL.md, or produce test prompts for a Claude Code skill.
 domain: synapse
+subdomain: skill
 intent: route
 tags: [eval-md, criteria, test-prompts]
 user-invocable: true
@@ -9,6 +10,8 @@ argument-hint: "[path to skill directory]"
 ---
 
 # Skill Evaluation Router
+
+> **⚠ Deprecated.** Superseded by `/write-synapse-eval skill <path>`. The unified router's `flow-skill.md` performs the same blind/sighted agent dispatch and EVAL.md assembly described below. Existing inbound references (improve-skill, skill-creator) still work but should migrate. New callers MUST use `/write-synapse-eval`.
 
 Routes to the correct sub-skill for generating evaluation artifacts. The evaluation suite produces an EVAL.md file that improve-skill consumes during its automated loop.
 
@@ -36,15 +39,15 @@ Mark each `in_progress` when starting, `completed` when done. When dispatching s
 ```
 write-skill-eval (you are here)
         │
-        ├── ~/.claude/agents/skill-eval-prompter.md
+        ├── ~/.claude/agents/synapse-skill-eval-prompter.md
         │     sees: skill name + description ONLY
         │     produces: diverse test prompts across personas
         │
-        ├── ~/.claude/agents/skill-eval-judge.md
+        ├── ~/.claude/agents/synapse-skill-eval-judge.md
         │     sees: full SKILL.md (as impartial judge)
         │     produces: binary output quality criteria
         │
-        └── ~/.claude/agents/skill-eval-auditor.md
+        └── ~/.claude/agents/synapse-skill-eval-auditor.md
               sees: full SKILL.md
               produces: EVAL-E criteria (if orchestration patterns exist)
 ```
@@ -58,9 +61,9 @@ write-skill-eval (you are here)
 
 | User Intent | Route To |
 |-------------|----------|
-| Generate test prompts for a skill | Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent |
-| Write output quality criteria | Read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent |
-| Generate execution criteria | Read `~/.claude/agents/skill-eval-auditor.md` and dispatch as Agent |
+| Generate test prompts for a skill | Read `~/.claude/agents/synapse-skill-eval-prompter.md` and dispatch as Agent |
+| Write output quality criteria | Read `~/.claude/agents/synapse-skill-eval-judge.md` and dispatch as Agent |
+| Generate execution criteria | Read `~/.claude/agents/synapse-skill-eval-auditor.md` and dispatch as Agent |
 | Create a full EVAL.md | Run both in sequence (criteria first, then prompts) |
 | Improve an existing EVAL.md | Identify which section needs work, route accordingly |
 
@@ -76,9 +79,9 @@ Every EVAL.md follows the template in [templates/eval.md](templates/eval.md) wit
 ## Workflow: Generating a Full EVAL.md
 
 1. Read the target skill's name and description from its SKILL.md frontmatter
-2. Read `~/.claude/agents/skill-eval-judge.md` and dispatch as Agent (model: sonnet) with the skill directory path
-3. Read `~/.claude/agents/skill-eval-prompter.md` and dispatch as Agent (model: sonnet) with only the skill name and description (blind constraint)
-4. Read `~/.claude/agents/skill-eval-auditor.md` and dispatch as Agent (model: sonnet) with the skill directory path. If the agent returns no criteria (no orchestration patterns), omit the Execution Criteria section.
+2. Read `~/.claude/agents/synapse-skill-eval-judge.md` and dispatch as Agent (model: sonnet) with the skill directory path
+3. Read `~/.claude/agents/synapse-skill-eval-prompter.md` and dispatch as Agent (model: sonnet) with only the skill name and description (blind constraint)
+4. Read `~/.claude/agents/synapse-skill-eval-auditor.md` and dispatch as Agent (model: sonnet) with the skill directory path. If the agent returns no criteria (no orchestration patterns), omit the Execution Criteria section.
 5. Structural criteria come from improve-skill's baseline checklist (not generated here)
 6. Assemble into EVAL.md using the template and write to the skill's directory
 

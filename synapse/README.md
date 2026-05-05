@@ -21,9 +21,7 @@ Internal recipes dispatched by framework skills.
 
 | Domain | Description |
 |--------|-------------|
-| [protocol-eval/](agents/protocol-eval/) | Agents for protocol evaluation |
-| [skill/](agents/skill/) | Agents that operate on skill artifacts (e.g. companion-file writer) |
-| [skill-eval/](agents/skill-eval/) | Agents for skill quality evaluation |
+| [synapse/](agents/synapse/) | Ecosystem management agents and subdomain agents (skill, skill-eval, protocol) |
 
 ## [protocols/](protocols/)
 

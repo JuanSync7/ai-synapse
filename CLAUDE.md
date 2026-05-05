@@ -43,9 +43,10 @@ Each skill directory has the same shape under either root: `SKILL.md`, optional 
 - `registry/PROTOCOL_REGISTRY.md` — protocol discovery table
 
 **Taxonomy files (`taxonomy/`):**
-- `taxonomy/SKILL_TAXONOMY.md` — controlled vocabulary for skill `domain` and `intent` metadata fields
-- `taxonomy/AGENT_TAXONOMY.md` — controlled vocabulary for agent `domain` and `role` metadata fields
-- `taxonomy/PROTOCOL_TAXONOMY.md` — controlled vocabulary for protocol `domain` and `type` metadata fields
+- `taxonomy/SKILL_TAXONOMY.md` — controlled vocabulary for skill `domain`, `subdomain` (optional), and `intent` metadata fields; defines naming pattern `{domain}-{subdomain?}-{intent?}-{name}`
+- `taxonomy/AGENT_TAXONOMY.md` — controlled vocabulary for agent `domain`, `subdomain` (optional), and `role` metadata fields; defines naming pattern `{domain}-{subdomain?}-{concern}-{role}`
+- `taxonomy/PROTOCOL_TAXONOMY.md` — controlled vocabulary for protocol `domain`, `subdomain` (optional), and `type` metadata fields; defines naming pattern `{domain}-{subdomain?}-{type?}-{name}`
+- `taxonomy/TOOL_TAXONOMY.md` — controlled vocabulary for tool `domain`, `subdomain` (optional), `action`, and `type` metadata fields; defines naming pattern `{domain}-{subdomain?}-{action?}-{name}`
 
 **Root files:**
 - `GOVERNANCE.md` — repo-level governance: promotion criteria, contribution workflow, naming conventions
@@ -116,7 +117,8 @@ Every SKILL.md has YAML frontmatter followed by a markdown body:
 ---
 name: skill-name
 description: "Trigger conditions — when this skill fires (not a workflow summary)"
-domain: docs.spec           # from SKILL_TAXONOMY.md
+domain: synapse             # from SKILL_TAXONOMY.md
+subdomain: skill            # from SKILL_TAXONOMY.md (optional — include when artifact lives in a subdomain dir)
 intent: write               # from SKILL_TAXONOMY.md
 tags: [lowercase, hyphenated]
 user-invocable: true

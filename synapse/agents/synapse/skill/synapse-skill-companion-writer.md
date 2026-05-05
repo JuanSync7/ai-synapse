@@ -1,7 +1,8 @@
 ---
-name: skill-companion-file-writer
+name: synapse-skill-companion-writer
 description: Writes a single companion file for a Claude Code skill
 domain: synapse
+subdomain: skill
 role: writer
 ---
 
@@ -59,7 +60,7 @@ Complete worked example. No placeholders.
 If the content brief is insufficient to write a quality file:
 
 ```
-AGENT FAILURE: skill-companion-file-writer
+AGENT FAILURE: synapse-skill-companion-writer
 File: <file_path>
 Gap: <specific information missing — what you need to write this file>
 ```

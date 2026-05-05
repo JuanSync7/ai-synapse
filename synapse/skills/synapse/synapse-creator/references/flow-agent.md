@@ -20,7 +20,7 @@ There are no companion directories, no references/, no templates/ siblings. Scaf
 - Create a subdirectory for the agent — the file is the artifact
 - Inline frontmatter validation, registry writes, or README row updates — call shared-steps
 - Proceed from `[U]` without a confirmed input/output contract and dispatching skill
-- Skip `[E]` — every agent gets an eval handoff even if write-agent-eval is minimal
+- Skip `[E]` — every agent gets an eval handoff even if write-synapse-eval (agent flow) is minimal
 
 ---
 
@@ -87,12 +87,12 @@ Exit:
 ---
 
 ### [E] — eval handoff
-Brief: Dispatch eval writer. Agents get EVAL.md via `write-agent-eval`.
+Brief: Dispatch eval writer. Agents get EVAL.md via `write-synapse-eval (agent flow)`.
 Do:
   1. Call → `shared-steps:handoff-eval(agent, $artifact_path)`
   2. Do not block on completion — dispatch is fire-and-confirm, not fire-and-wait
 Don't:
-  - Generate EVAL.md inline — that is `write-agent-eval`'s job
+  - Generate EVAL.md inline — that is `write-synapse-eval (agent flow)`'s job
   - Skip this step because the agent "is simple"
 Exit:
   → `[END]` : eval dispatched
@@ -102,7 +102,7 @@ Exit:
 ### [END] — report
 Do:
   1. Print verbatim what was created: file path (`$artifact_dir/<name>.md`), registry row added, domain README row added
-  2. Print: eval handoff dispatched to `write-agent-eval`
+  2. Print: eval handoff dispatched to `write-synapse-eval (agent flow)`
   3. Print: artifact is `status: draft` — run `/synapse-gatekeeper $artifact_path` before promoting
 Don't:
   - End without full output summary

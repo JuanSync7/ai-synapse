@@ -2,6 +2,7 @@
 name: skill-creator
 description: Use when asked to create a new skill, build a skill, or edit an existing skill's SKILL.md and companions.
 domain: synapse
+subdomain: skill
 intent: write
 tags: [skill, skill-md, scaffold]
 user-invocable: true
@@ -30,7 +31,7 @@ and writing conventions.
 
 ## Wrong-Tool Detection
 - **User wants to improve an existing skill (score-fix loop)** → redirect to `/improve-skill [path]`
-- **User wants to evaluate or re-evaluate a skill** → redirect to `/write-skill-eval [path]`
+- **User wants to evaluate or re-evaluate a skill** → redirect to `/write-synapse-eval skill [path]`
 - **User wants to run a skill** → invoke the skill directly, not skill-creator
 
 ## Entry
@@ -59,10 +60,10 @@ Brief: Apply targeted changes to an existing skill while respecting structural r
 Do:
   1. Read existing SKILL.md + all companion files in the skill directory
   2. Apply described changes — use structure-preserving edit rules for flow-graph targets
-  3. If companion files are affected by the edit, dispatch `skill-companion-file-writer` (model: sonnet; Load: `agents/skill-companion-file-writer.md`)
+  3. If companion files are affected by the edit, dispatch `synapse-skill-companion-writer` (model: sonnet; Load: `agents/synapse-skill-companion-writer.md`)
   4. Re-validate against structural checklist — confirm no rules broken by the edit
   5. If edit changes registry-relevant metadata (name, domain, intent, pipeline status) → update registry entries
-  6. If edit changes behavior that invalidates existing EVAL.md criteria → flag for user ("EVAL.md may need updating — run `/write-skill-eval` to regenerate")
+  6. If edit changes behavior that invalidates existing EVAL.md criteria → flag for user ("EVAL.md may need updating — run `/write-synapse-eval skill <path>` to regenerate")
 Don't:
   - Rewrite content beyond the described edit — touch only what was requested
   - Skip structural re-validation after applying changes
@@ -110,7 +111,7 @@ Exit:
   → [C] : SKILL.md written + companion inventory ready
 
 ### [C] Write Companions
-Load: agents/skill-companion-file-writer.md, references/companion-dispatch-protocol.md, references/writing-conventions.md
+Load: agents/synapse-skill-companion-writer.md, references/companion-dispatch-protocol.md, references/writing-conventions.md
 Brief: Main agent becomes orchestrator — dispatches subagents, doesn't write directly.
 Do:
   1. Dispatch companion file subagents per protocol
@@ -132,7 +133,7 @@ Don't: Add pipeline entry for skills that don't consume/produce defined artifact
 Exit: → [E]
 
 ### [E] Eval
-Load: agents/skill-eval-prompter.md, agents/skill-eval-judge.md, agents/skill-eval-auditor.md
+Load: agents/synapse-skill-eval-prompter.md, agents/synapse-skill-eval-judge.md, agents/synapse-skill-eval-auditor.md
 Brief: Three independent subagents — dispatch in parallel.
 Do:
   1. Dispatch prompter + judge + auditor in parallel
