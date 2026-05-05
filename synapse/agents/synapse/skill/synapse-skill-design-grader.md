@@ -2,6 +2,7 @@
 name: synapse-skill-design-grader
 description: "Graded design-quality grader — scores a SKILL.md on six design-principle dimensions (1-5) and emits fix suggestions for dimensions below threshold"
 domain: synapse
+subdomain: skill
 role: grader
 tags: [design-quality, skill-review, graded-judgment]
 ---
