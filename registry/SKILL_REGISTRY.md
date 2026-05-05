@@ -9,14 +9,15 @@ Full inventory of all skills. Before creating a new skill, check if one already 
 | [synapse-brainstorm](../synapse/skills/skill/synapse-brainstorm/SKILL.md) | Generalized brainstorm for any artifact type — coaching, pressure-testing, N memos | skill | — | draft |
 | [skill-creator](../synapse/skills/skill/skill-creator/SKILL.md) | Creates new skills with EVAL.md and registry entry | skill | — | draft |
 | [improve-skill](../synapse/skills/skill/improve-skill/SKILL.md) | Karpathy-style score-fix-rescore loop for skill quality | skill | — | draft |
-| [write-skill-eval](../synapse/skills/skill/write-skill-eval/SKILL.md) | Generates EVAL.md with output criteria and test prompts | skill | — | draft |
-| [write-synapse-eval](../synapse/skills/skill/write-synapse-eval/SKILL.md) | Router-based unified EVAL.md generator for skills, protocols, agents, and tools — type-specific flows load on demand | skill | — | stable |
+| [write-skill-eval](../synapse/skills/skill/write-skill-eval/SKILL.md) | **Deprecated** — superseded by write-synapse-eval (use `/write-synapse-eval skill <path>`) | skill | — | deprecated |
+| [write-synapse-eval](../synapse/skills/skill/write-synapse-eval/SKILL.md) | Router-based unified EVAL.md generator for skills, protocols, agents, and tools — type-specific flows load on demand | skill | — | draft |
 | [synapse-gatekeeper](../synapse/skills/skill/synapse-gatekeeper/SKILL.md) | Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria | skill | — | draft |
 | [agent-creator](../synapse/skills/agent/agent-creator/SKILL.md) | Creates new agent definitions with frontmatter and taxonomy alignment | agent | — | draft |
-| [write-agent-eval](../synapse/skills/agent/write-agent-eval/SKILL.md) | Generates evaluation criteria for agent definitions | agent | — | draft |
+| [write-agent-eval](../synapse/skills/agent/write-agent-eval/SKILL.md) | **Deprecated** — superseded by write-synapse-eval (use `/write-synapse-eval agent <path>`) | agent | — | deprecated |
 | [protocol-creator](../synapse/skills/protocol/protocol-creator/SKILL.md) | Creates new protocol definitions with frontmatter and taxonomy alignment | protocol | — | draft |
-| [write-protocol-eval](../synapse/skills/protocol/write-protocol-eval/SKILL.md) | Generates conformance testing criteria for protocol definitions | protocol | — | draft |
+| [write-protocol-eval](../synapse/skills/protocol/write-protocol-eval/SKILL.md) | **Deprecated** — superseded by write-synapse-eval (use `/write-synapse-eval protocol <path>`) | protocol | — | deprecated |
 | [skill-router](../synapse/skills/meta/skill-router/SKILL.md) | Routes user intent to the right skill based on domain matching | meta | — | draft |
 | [autonomous-orchestrator](../synapse/skills/orchestration/autonomous-orchestrator/SKILL.md) | Fully autonomous dev pipeline with stakeholder gates | orchestration | — | draft |
 | [stakeholder-reviewer](../synapse/skills/orchestration/stakeholder-reviewer/SKILL.md) | Evaluates decisions against stakeholder persona (APPROVE/REVISE/ESCALATE) | orchestration | — | draft |
 | [synapse-creator](../synapse/skills/synapse/synapse-creator/SKILL.md) | Router-based unified creator for new skills, protocols, agents, or tools — type-specific flows load on demand | synapse | — | stable |
+| [synapse-external-validator](../synapse/skills/synapse/synapse-external-validator/SKILL.md) | Suite-level structural conformance sweep — validates all artifacts in an external submodule before it is wired into ai-synapse | synapse | — | draft |

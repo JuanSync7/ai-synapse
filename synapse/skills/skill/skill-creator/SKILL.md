@@ -30,7 +30,7 @@ and writing conventions.
 
 ## Wrong-Tool Detection
 - **User wants to improve an existing skill (score-fix loop)** → redirect to `/improve-skill [path]`
-- **User wants to evaluate or re-evaluate a skill** → redirect to `/write-skill-eval [path]`
+- **User wants to evaluate or re-evaluate a skill** → redirect to `/write-synapse-eval skill [path]`
 - **User wants to run a skill** → invoke the skill directly, not skill-creator
 
 ## Entry
@@ -62,7 +62,7 @@ Do:
   3. If companion files are affected by the edit, dispatch `skill-companion-file-writer` (model: sonnet; Load: `agents/skill-companion-file-writer.md`)
   4. Re-validate against structural checklist — confirm no rules broken by the edit
   5. If edit changes registry-relevant metadata (name, domain, intent, pipeline status) → update registry entries
-  6. If edit changes behavior that invalidates existing EVAL.md criteria → flag for user ("EVAL.md may need updating — run `/write-skill-eval` to regenerate")
+  6. If edit changes behavior that invalidates existing EVAL.md criteria → flag for user ("EVAL.md may need updating — run `/write-synapse-eval skill <path>` to regenerate")
 Don't:
   - Rewrite content beyond the described edit — touch only what was requested
   - Skip structural re-validation after applying changes

@@ -36,7 +36,7 @@ Try these strategies, roughly in priority order:
 - SKILL.md must stay under 500 lines
 - Do not merge the three loops back into a flat phase list
 - Do not remove the baseline test (Phase 1.5) — it prevents unnecessary skills
-- Do not change the EVAL.md generation pipeline (Phases 3-5) — that's owned by write-skill-eval
+- Do not change the EVAL.md generation pipeline (Phases 3-5) — that's owned by write-synapse-eval (skill flow)
 - Keep language imperative and opinionated — no hedging ("consider", "you might")
 - Preserve the execution fence pattern
 

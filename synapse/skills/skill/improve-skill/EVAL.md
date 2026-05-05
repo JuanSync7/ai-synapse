@@ -20,11 +20,11 @@
 - **EVAL-S04 — Flow-graph conformance:** MUST/MUST NOT/Entry/Flow sections present, node IDs explicit (`### [ID] Name`), per-node Don'ts co-located, exit conditions explicit with labeled edges, self-loops declared, [END] is a real node with Do/Don't, position tracking in MUST, per-node Load declarations at point of use.
 
 - [ ] **EVAL-S05:** Wrong-tool redirect present
-  - **Test:** SKILL.md contains a Wrong-Tool Detection section that names at least one case improve-skill does NOT handle and names the sibling skill (`/skill-creator` for new skills, `/write-skill-eval` for EVAL.md generation) as the correct alternative.
+  - **Test:** SKILL.md contains a Wrong-Tool Detection section that names at least one case improve-skill does NOT handle and names the sibling skill (`/skill-creator` for new skills, `/write-synapse-eval` for EVAL.md generation) as the correct alternative.
   - **Fail signal:** No explicit wrong-tool redirect exists anywhere in the body.
 
 - [ ] **EVAL-S06:** EVAL.md auto-detection behavior is fully specified
-  - **Test:** SKILL.md documents both branches of the EVAL.md check: (a) EVAL.md exists → use its criteria, (b) EVAL.md does not exist → offer to generate via `write-skill-eval` as an isolated subagent, with the reason for isolation stated (bias control).
+  - **Test:** SKILL.md documents both branches of the EVAL.md check: (a) EVAL.md exists → use its criteria, (b) EVAL.md does not exist → offer to generate via `write-synapse-eval` (skill flow) as an isolated subagent, with the reason for isolation stated (bias control).
   - **Fail signal:** Either branch is missing, or the isolation rationale is absent.
 
 - [ ] **EVAL-S07:** Pass flags are documented with their effect
@@ -70,9 +70,9 @@
   - **Test:** When the target EVAL.md has an `## Execution Criteria` section, the trace's `phases_executed` list includes both an output-grading phase and an execution-grading phase with separate score card tables.
   - **Fail signal:** Only one grading table is produced when both EVAL-O and EVAL-E criteria exist; or the execution grading phase is absent from the trace.
 
-- [ ] **EVAL-E06:** write-skill-eval is dispatched as an isolated subagent — not called in the parent context
-  - **Test:** When EVAL.md is absent and the user accepts the offer to generate it, the `agents_dispatched` block shows a dispatch to `write-skill-eval` as a subagent with `context_isolation: true` (the parent's session context excluded from the subagent prompt).
-  - **Fail signal:** `write-skill-eval` is invoked directly in the parent context (i.e., no Agent dispatch), or the dispatch includes session context from the parent's SKILL.md reading pass.
+- [ ] **EVAL-E06:** write-synapse-eval (skill flow) is dispatched as an isolated subagent — not called in the parent context
+  - **Test:** When EVAL.md is absent and the user accepts the offer to generate it, the `agents_dispatched` block shows a dispatch to `write-synapse-eval` as a subagent with `context_isolation: true` (the parent's session context excluded from the subagent prompt).
+  - **Fail signal:** `write-synapse-eval` is invoked directly in the parent context (i.e., no Agent dispatch), or the dispatch includes session context from the parent's SKILL.md reading pass.
 
 - [ ] **EVAL-E07:** Fix cycles halt and surface blockers when items cannot be resolved in two cycles
   - **Test:** The `workflow_decisions` block shows a max-cycle check after each pass. If two consecutive cycles fail to clear an item, the trace records a "surface blocker" decision rather than a third attempt.
@@ -176,7 +176,7 @@
   - **Fail signal:** Structural scoring or structural edits appear in the output when `--behavioral-only` is set.
 
 - [ ] **EVAL-O17:** Missing EVAL.md triggers an offer, not a silent skip or error
-  - **Test:** When no EVAL.md exists in the target skill directory, the output explicitly offers to generate one via `write-skill-eval` and states the consequence of declining (behavioral quality unverified).
+  - **Test:** When no EVAL.md exists in the target skill directory, the output explicitly offers to generate one via `write-synapse-eval` (skill flow) and states the consequence of declining (behavioral quality unverified).
   - **Fail signal:** Absence of EVAL.md causes Pass 2 to silently skip with no offer, or causes an error with no recovery path offered.
 
 - [ ] **EVAL-O18:** Test prompts and EVAL.md criteria are never modified during behavioral pass

@@ -10,6 +10,8 @@ argument-hint: "[path to skill directory]"
 
 # Skill Evaluation Router
 
+> **⚠ Deprecated.** Superseded by `/write-synapse-eval skill <path>`. The unified router's `flow-skill.md` performs the same blind/sighted agent dispatch and EVAL.md assembly described below. Existing inbound references (improve-skill, skill-creator) still work but should migrate. New callers MUST use `/write-synapse-eval`.
+
 Routes to the correct sub-skill for generating evaluation artifacts. The evaluation suite produces an EVAL.md file that improve-skill consumes during its automated loop.
 
 ## Wrong-Tool Detection

@@ -118,7 +118,7 @@ Do:
   1. Call → `shared-steps:handoff-eval(skill, $artifact_path)`
   2. EVAL.md must not exist before SKILL.md + companions are complete
 Don't:
-  - Generate EVAL.md manually — that is `write-skill-eval`'s job
+  - Generate EVAL.md manually — that is `write-synapse-eval`'s job (skill flow)
   - Block on eval completion — dispatch and proceed
 Exit:
   → `[V]` : eval dispatched

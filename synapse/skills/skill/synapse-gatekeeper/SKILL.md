@@ -34,7 +34,7 @@ Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `tes
 | Build an agent from scratch | `/agent-creator` |
 | Build a protocol from scratch | `/protocol-creator` |
 | Review a decision or design approach (not an artifact) | `/stakeholder-reviewer` |
-| Evaluate or rewrite an EVAL.md only | `/write-skill-eval`, `/write-agent-eval`, or `/write-protocol-eval` |
+| Evaluate or rewrite an EVAL.md only | `/write-synapse-eval` (unified router for skill/agent/protocol/tool) |
 
 ---
 

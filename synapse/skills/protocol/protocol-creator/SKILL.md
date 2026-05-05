@@ -21,7 +21,7 @@ Protocols are not skills. Skills are long-running workflows with phases and prog
 - **User wants to create a skill** → redirect to `/skill-creator`
 - **User wants to create an agent** → redirect to `/agent-creator`
 - **User wants to improve an existing protocol** → redirect to `/improve-skill` (adapt for protocols until `/improve-protocol` exists)
-- **User wants to evaluate a protocol** → redirect to `/write-protocol-eval`
+- **User wants to evaluate a protocol** → redirect to `/write-synapse-eval protocol <path>`
 - **User wants to brainstorm whether something should be a protocol** → redirect to `/synapse-brainstorm`
 - **User wants to certify a protocol for promotion** → redirect to `/synapse-gatekeeper`
 
@@ -147,9 +147,9 @@ Protocols MUST be 30–120 lines including frontmatter. Over 120 lines means the
 
 ## Phase 3: Signal-Strength Review
 
-> **Read [`agents/protocol-eval-reviewer.md`](agents/protocol-eval-reviewer.md)** and dispatch as an Agent (model: sonnet) with the drafted protocol file as input.
+> **Read [`agents/protocol-signal-reviewer.md`](agents/protocol-signal-reviewer.md)** and dispatch as an Agent (model: sonnet) with the drafted protocol file as input.
 
-MUST dispatch the protocol-eval-reviewer as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose of a separate reviewer.
+MUST dispatch the protocol-signal-reviewer as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose of a separate reviewer.
 
 **If any checks fail:** Fix the specific issues identified in the review. Re-dispatch the agent for a second review.
 
@@ -210,7 +210,7 @@ A complete protocol has:
 | Task | Route to |
 |------|----------|
 | Protocol needs improvement after creation | `/improve-skill <protocol-path>` |
-| Protocol needs conformance tests | `/write-protocol-eval <protocol-path>` |
+| Protocol needs conformance tests | `/write-synapse-eval protocol <protocol-path>` |
 | Protocol needs promotion certification | `/synapse-gatekeeper <protocol-path>` |
 | User wants to brainstorm whether something should be a protocol | `/synapse-brainstorm` |
 | User wants to create a skill instead | `/skill-creator` |

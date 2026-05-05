@@ -27,7 +27,7 @@ The terminal segment is type-specific and must come from the artifact type's tax
 |---|---|---|
 | `skill-eval-judge` | domain-subdomain-role | 3 |
 | `docs-spec-section-writer` | domain-subdomain-purpose-role | 4 |
-| `protocol-eval-reviewer` | domain-subdomain-role | 3 |
+| `protocol-signal-reviewer` | domain-subdomain-role | 3 |
 | `observability-execution-trace` | domain-purpose-type | 3 |
 | `testing-criticality-scorer` | domain-purpose-action | 3 |
 

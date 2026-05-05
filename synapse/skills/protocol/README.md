@@ -7,4 +7,4 @@ Protocol development lifecycle — create and evaluate behavioral contracts for 
 | Skill | Intent | Description |
 |-------|--------|-------------|
 | [protocol-creator](protocol-creator/) | write | Creates new protocol definitions — elicits precision anchors, drafts with universal anatomy, validates signal strength, registers |
-| [write-protocol-eval](write-protocol-eval/) | generate | Generates conformance testing criteria for protocol definitions |
+| [write-protocol-eval](write-protocol-eval/) | generate | **Deprecated** — superseded by `/write-synapse-eval protocol <path>` |

@@ -26,7 +26,7 @@ Applies the autoresearch loop (modify → measure → keep if improved → repea
 
 ## Wrong-Tool Detection
 - **User wants to create a new skill** → redirect to `/skill-creator`
-- **User wants to generate or regenerate EVAL.md** → redirect to `/write-skill-eval [path]`
+- **User wants to generate or regenerate EVAL.md** → redirect to `/write-synapse-eval skill [path]`
 - **User wants to run a skill** → invoke the skill directly
 
 ## Progress Tracking
@@ -59,7 +59,7 @@ Do:
   3. Detect structure: flow-graph or prose — if prose, flag as structural finding and recommend `/skill-creator` for migration
   4. Check for EVAL.md in target directory:
      - **Present** → use its EVAL-Sxx criteria in [S], EVAL-O/EVAL-E criteria and test prompts in [B]
-     - **Absent** and behavioral pass needed → offer to dispatch `/write-skill-eval` as isolated subagent (model: sonnet, no session context — bias control)
+     - **Absent** and behavioral pass needed → offer to dispatch `/write-synapse-eval skill <path>` as isolated subagent (model: sonnet, no session context — bias control)
 Don't:
   - Proceed with broken symlinks or unresolvable Load targets — FAIL LOUDLY with paths listed
   - Auto-convert prose to flow-graph — flag the finding, continue scoring against prose checklist

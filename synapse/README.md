@@ -21,7 +21,7 @@ Internal recipes dispatched by framework skills.
 
 | Domain | Description |
 |--------|-------------|
-| [protocol-eval/](agents/protocol-eval/) | Agents for protocol evaluation |
+| [protocol-review/](agents/protocol-review/) | Signal-strength review of protocol authoring |
 | [skill/](agents/skill/) | Agents that operate on skill artifacts (e.g. companion-file writer) |
 | [skill-eval/](agents/skill-eval/) | Agents for skill quality evaluation |
 

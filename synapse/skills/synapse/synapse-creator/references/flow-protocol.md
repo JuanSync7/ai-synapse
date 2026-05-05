@@ -121,12 +121,12 @@ Exit: all scaffold files written, registry row appended, README row inserted →
 
 ### [R] — signal-strength review
 
-Load: `agents/protocol/protocol-eval-reviewer.md`
+Load: `agents/protocol/protocol-signal-reviewer.md`
 
 Brief: Dispatch the reviewer as a separate Agent — DO NOT run the 8-check review inline. The agent produces an independent signal-strength verdict. Inline review substitutes your own judgment, which defeats the purpose.
 
 Do:
-1. Dispatch `agents/protocol/protocol-eval-reviewer.md` as a subagent (model: sonnet) with the drafted protocol file as input.
+1. Dispatch `agents/protocol/protocol-signal-reviewer.md` as a subagent (model: sonnet) with the drafted protocol file as input.
 2. If any of the 8 checks fail: fix the specific issues. Re-dispatch for a second review.
 3. **Two review cycles maximum.** If the protocol still fails after two cycles, surface remaining issues to the user — the protocol may need design changes, not just wording fixes.
 
@@ -143,11 +143,11 @@ Exit: review passed (all 8 checks) → `[EVAL]`
 Brief: Dispatch eval writer; do not grade the produced protocol's body quality — that is downstream.
 
 Do:
-1. Run `→ shared-steps:handoff-eval(protocol, $artifact_path)` — dispatches `write-protocol-eval`
+1. Run `→ shared-steps:handoff-eval(protocol, $artifact_path)` — dispatches `write-synapse-eval (protocol flow)`
 
 Don't:
 - Block on downstream eval completion — handoff dispatches and continues
-- Grade the protocol's content quality — that is `write-protocol-eval` + `/synapse-gatekeeper`'s job
+- Grade the protocol's content quality — that is `write-synapse-eval (protocol flow)` + `/synapse-gatekeeper`'s job
 
 Exit: handoff dispatched → `[END]`
 
@@ -159,7 +159,7 @@ Do: Print verbatim summary:
 - Files created (protocol `.md` path)
 - Registry row added (PROTOCOL_REGISTRY.md)
 - Domain README row added
-- EVAL.md scaffold dispatched to `write-protocol-eval`
+- EVAL.md scaffold dispatched to `write-synapse-eval (protocol flow)`
 - Status: `draft` — run `/synapse-gatekeeper <protocol-path>` before promoting
 
 ---

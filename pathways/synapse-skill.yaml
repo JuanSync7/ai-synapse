@@ -5,14 +5,14 @@ harness: claude
 tags: [skill, meta, creation, ai-synapse]
 ---
 
-# Pipeline (informational): synapse-brainstorm → skill-creator → improve-skill → write-skill-eval → synapse-gatekeeper
+# Pipeline (informational): synapse-brainstorm → skill-creator → improve-skill → write-synapse-eval → synapse-gatekeeper
 
 synapses:
   skills:
     - synapse/skills/skill/synapse-brainstorm
     - synapse/skills/skill/skill-creator
     - synapse/skills/skill/improve-skill
-    - synapse/skills/skill/write-skill-eval
+    - synapse/skills/skill/write-synapse-eval
     - synapse/skills/skill/synapse-gatekeeper
   agents:
     - synapse/agents/skill-eval/skill-eval-auditor
