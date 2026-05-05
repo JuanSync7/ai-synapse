@@ -40,7 +40,7 @@ Score every item as PASS or FAIL. List each failure with a one-line reason and t
 ---
 
 ## Principles Alignment
-<!-- Source of truth: skill-creator/references/skill-design-principles.md
+<!-- Source of truth: synapse-creator/references/design-principles-skill.md
      Update these criteria when the source principles change. -->
 
 - [ ] Mental model present — skill opens with a conceptual framing paragraph before any rules or workflow steps
