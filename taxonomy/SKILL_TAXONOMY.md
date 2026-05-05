@@ -11,34 +11,18 @@ Skills follow the `{domain}-{subdomain?}-{intent?}-{name}` naming convention —
 
 | Domain | Description |
 |--------|-------------|
-| `agent` | Agent development lifecycle |
-| `agent.create` | Agent creation and improvement |
-| `agent.eval` | Agent evaluation and certification |
-| `code` | Code generation and execution |
-| `code.plan` | Execution planning |
-| `code.test` | Test code authoring and execution |
-| `creative` | Standalone creative/visual |
-| `docs` | Documentation authoring |
-| `docs.arch` | System-level architecture decisions |
-| `docs.design` | Design documents |
-| `docs.impl` | Implementation reference docs |
-| `docs.post-build` | Engineering guides, test docs |
-| `docs.scope` | Scope definition and phase planning |
-| `docs.spec` | Specs and summaries |
-| `frameworks` | Framework-specific tooling |
-| `frameworks.langgraph` | LangGraph-specific tools |
-| `integration` | External tool integrations |
-| `integration.jira` | JIRA project tracking |
-| `meta` | Meta-level tools: routing, framework utilities |
-| `optimization` | Autonomous iterative improvement |
-| `orchestration` | Multi-agent coordination |
-| `protocol` | Protocol development lifecycle |
-| `protocol.create` | Protocol creation and improvement |
-| `protocol.eval` | Protocol evaluation and certification |
-| `skill` | Skill development lifecycle |
-| `skill.create` | Skill creation and improvement |
-| `skill.eval` | Skill evaluation and certification |
-| `synapse` | Synapse ecosystem management — branching, registry, validation |
+| `synapse` | Framework-level skills: artifact authoring, evaluation, orchestration, ecosystem management |
+
+## Subdomains
+
+| Subdomain | Description |
+|-----------|-------------|
+| `agent` | Agent development lifecycle (creation, evaluation) |
+| `skill` | Skill development lifecycle (creation, evaluation, improvement) |
+| `protocol` | Protocol development lifecycle (creation, evaluation) |
+| `tool` | Tool development lifecycle (creation, evaluation) |
+| `meta` | Routing and framework utilities |
+| `orchestration` | Multi-agent coordination and pipeline execution |
 
 ## Intents
 

@@ -2,6 +2,7 @@
 name: write-skill-eval
 description: Use when asked to write an eval for a skill, create skill evaluation criteria, generate an EVAL.md, or produce test prompts for a Claude Code skill.
 domain: synapse
+subdomain: skill
 intent: route
 tags: [eval-md, criteria, test-prompts]
 user-invocable: true

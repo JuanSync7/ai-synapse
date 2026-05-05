@@ -2,6 +2,7 @@
 name: write-synapse-eval
 description: Use when generating an EVAL.md for a skill, protocol, agent, or tool.
 domain: synapse
+subdomain: skill
 intent: write
 tags: [eval-md, criteria, test-prompts, multi-artifact, router]
 user-invocable: true

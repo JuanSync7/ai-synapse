@@ -2,6 +2,7 @@
 name: execution-trace
 description: "Structured self-report trace appended by subagents when an observer requests execution observability"
 domain: synapse
+subdomain: observability
 type: trace
 tags: [execution-trace, self-reported, subagent-observability]
 ---

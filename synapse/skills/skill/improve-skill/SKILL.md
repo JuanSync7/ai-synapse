@@ -2,6 +2,7 @@
 name: improve-skill
 description: "Use when a skill needs quality improvement. Triggered by 'improve this skill', 'fix the skill', 'review skill quality', 'make the skill better'."
 domain: synapse
+subdomain: skill
 intent: improve
 tags: [skill, quality, score-fix-loop]
 user-invocable: true

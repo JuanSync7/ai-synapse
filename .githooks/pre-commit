@@ -2,9 +2,10 @@
 set -euo pipefail
 
 # Pre-commit hook: structural validation for changed skills, agents, and protocols.
-# Skills: frontmatter fields, SKILL_TAXONOMY.md values, domain README rows, EVAL.md existence.
-# Agents: frontmatter fields (name/domain/role), AGENT_TAXONOMY.md values, AGENTS_REGISTRY.md listing.
-# Protocols: frontmatter fields (name/domain/type), PROTOCOL_TAXONOMY.md values.
+# Skills: frontmatter fields, SKILL_TAXONOMY.md values (domain/subdomain/intent), domain README rows, EVAL.md existence.
+# Agents: frontmatter fields (name/domain/role), AGENT_TAXONOMY.md values (domain/subdomain/role), AGENTS_REGISTRY.md listing.
+# Protocols: frontmatter fields (name/domain/type), PROTOCOL_TAXONOMY.md values (domain/subdomain/type).
+# Subdomain is optional in frontmatter; when present, must match the Subdomains table in the taxonomy file.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_TAXONOMY="$REPO_ROOT/taxonomy/SKILL_TAXONOMY.md"
@@ -111,30 +112,39 @@ extract_taxonomy_values() {
 
 # Extract skill taxonomy values
 skill_domains=()
+skill_subdomains=()
 skill_intents=()
 if [ ${#changed_skill_dirs[@]} -gt 0 ]; then
     extract_taxonomy_values "$SKILL_TAXONOMY" "Domains"
     skill_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$SKILL_TAXONOMY" "Subdomains"
+    skill_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
     extract_taxonomy_values "$SKILL_TAXONOMY" "Intents"
     skill_intents=("${_taxonomy_values[@]}")
 fi
 
 # Extract agent taxonomy values
 agent_domains=()
+agent_subdomains=()
 agent_roles=()
 if [ ${#changed_agent_files[@]} -gt 0 ]; then
     extract_taxonomy_values "$AGENT_TAXONOMY" "Domains"
     agent_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$AGENT_TAXONOMY" "Subdomains"
+    agent_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
     extract_taxonomy_values "$AGENT_TAXONOMY" "Roles"
     agent_roles=("${_taxonomy_values[@]}")
 fi
 
 # Extract protocol taxonomy values
 protocol_domains=()
+protocol_subdomains=()
 protocol_types=()
 if [ ${#changed_protocol_files[@]} -gt 0 ]; then
     extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Domains"
     protocol_domains=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Subdomains"
+    protocol_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
     extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Types"
     protocol_types=("${_taxonomy_values[@]}")
 fi
@@ -152,8 +162,9 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         fi
     done
 
-    # --- Check 2: domain and intent values are in SKILL_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain (optional), and intent values are in SKILL_TAXONOMY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
     intent_val="$(echo "$frontmatter" | grep '^intent:' | sed 's/^intent: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
@@ -166,6 +177,19 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         done
         if [ "$found" = false ]; then
             errors+=("$skill_dir: domain '$domain_val' not found in SKILL_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$subdomain_val" ]; then
+        found=false
+        for s in "${skill_subdomains[@]+"${skill_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$skill_dir: subdomain '$subdomain_val' not found in SKILL_TAXONOMY.md")
         fi
     fi
 
@@ -253,8 +277,9 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
         fi
     done
 
-    # --- Check 2: domain and role values are in AGENT_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain (optional), and role values are in AGENT_TAXONOMY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
     role_val="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
@@ -267,6 +292,19 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
         done
         if [ "$found" = false ]; then
             errors+=("$agent_file: domain '$domain_val' not found in AGENT_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$subdomain_val" ]; then
+        found=false
+        for s in "${agent_subdomains[@]+"${agent_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$agent_file: subdomain '$subdomain_val' not found in AGENT_TAXONOMY.md")
         fi
     fi
 
@@ -328,8 +366,9 @@ for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"
         fi
     done
 
-    # --- Check 2: domain and type values are in PROTOCOL_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain (optional), and type values are in PROTOCOL_TAXONOMY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
     type_val="$(echo "$frontmatter" | grep '^type:' | sed 's/^type: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
@@ -342,6 +381,19 @@ for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"
         done
         if [ "$found" = false ]; then
             errors+=("$protocol_file: domain '$domain_val' not found in PROTOCOL_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$subdomain_val" ]; then
+        found=false
+        for s in "${protocol_subdomains[@]+"${protocol_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$protocol_file: subdomain '$subdomain_val' not found in PROTOCOL_TAXONOMY.md")
         fi
     fi
 

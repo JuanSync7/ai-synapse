@@ -11,11 +11,15 @@ Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention —
 
 | Domain | Description |
 |--------|-------------|
+| `synapse` | Framework-level agents: artifact authoring, evaluation, ecosystem maintenance |
+
+## Subdomains
+
+| Subdomain | Description |
+|-----------|-------------|
 | `skill` | Skill authoring and companion-file generation |
 | `skill-eval` | Skill evaluation and quality assessment |
-| `docs` | Document authoring, review, and maintenance |
-| `protocol-eval` | Protocol evaluation, signal-strength review, conformance testing |
-| `synapse` | Synapse ecosystem management — workflow automation, manifest generation |
+| `protocol` | Protocol authoring, signal-strength review, conformance testing |
 
 ## Roles
 

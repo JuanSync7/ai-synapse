@@ -2,6 +2,7 @@
 name: protocol-creator
 description: "Use when asked to create a new protocol, build a protocol for X, or define an inter-agent behavioral contract."
 domain: synapse
+subdomain: protocol
 intent: write
 tags: [protocol, creation, scaffolding, behavioral-contract]
 user-invocable: true

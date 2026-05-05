@@ -10,12 +10,7 @@ Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention — 
 
 | Domain | Description |
 |--------|-------------|
-| `testing` | Test generation, scoring, coverage analysis |
-| `build` | Build configuration, artifact generation |
-| `validation` | Input/output validation, schema checking |
-| `analysis` | Code analysis, metric computation |
-| `integration` | External service interaction tooling |
-| `synapse` | Synapse ecosystem tooling — branching, registry sync, validation |
+| `synapse` | Framework-level tools: branching, registry sync, validation, ecosystem automation |
 
 ## Actions
 

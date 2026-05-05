@@ -11,9 +11,14 @@ Protocols follow the `{domain}-{subdomain?}-{type?}-{name}` naming convention â€
 
 | Domain | Description |
 |--------|-------------|
+| `synapse` | Framework-level protocols: shared conventions and schemas across the ecosystem |
+
+## Subdomains
+
+| Subdomain | Description |
+|-----------|-------------|
 | `observability` | Execution traces, logging conventions, telemetry schemas |
 | `memory` | Working memory patterns, state externalization, compaction safety |
-| `synapse` | Synapse ecosystem conventions â€” contribution workflow, branching, CR lifecycle |
 
 ## Types
 

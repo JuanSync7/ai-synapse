@@ -2,6 +2,7 @@
 name: write-agent-eval
 description: "Use when asked to generate evaluation criteria for an agent definition, or to create an EVAL.md for an agent."
 domain: synapse
+subdomain: agent
 intent: generate
 tags: [agent, eval, quality-assessment]
 user-invocable: true
