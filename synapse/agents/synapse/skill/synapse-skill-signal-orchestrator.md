@@ -1,13 +1,13 @@
 ---
-name: synapse-skill-signal-reviewer
-description: "Signal-strength reviewer — graded multi-dimensional review of skill authoring artifacts (SKILL.md + companions) before eval generation"
+name: synapse-skill-signal-orchestrator
+description: "Signal-strength orchestrator — dispatches anatomy/design/companion sub-agents in parallel and aggregates their verdicts into a unified APPROVE/REVISE/ESCALATE before eval generation"
 domain: synapse
 subdomain: skill
-role: reviewer
-tags: [signal-strength, skill-review, authoring-quality]
+role: orchestrator
+tags: [signal-strength, skill-review, authoring-quality, orchestration]
 ---
 
-# Skill Signal-Strength Reviewer
+# Skill Signal-Strength Orchestrator
 
 ## Mental Model
 
