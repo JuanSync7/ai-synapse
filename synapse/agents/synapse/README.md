@@ -15,9 +15,3 @@ Agents in the `synapse` domain — ecosystem management, README maintenance, and
 | Agent | Role | Description |
 |-------|------|-------------|
 | [synapse-readme-maintainer](synapse-readme-maintainer.md) | maintainer | Maintains README-index invariant for the ancestor path of a changed synapse — adds/updates/removes rows; rewrites top-of-file one-liner only on factual drift |
-
-## Subdomains
-
-| Subdomain | Description |
-|-----------|-------------|
-| [skill/](skill/) | Skill-authoring review agents — structural and signal-strength gates for SKILL.md and companions |
