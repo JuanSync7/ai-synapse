@@ -1,9 +1,10 @@
 # skill
 
-Skill authoring agents — companion-file generation and content production for SKILL.md / references / templates.
+Skill authoring and review agents — companion-file production for SKILL.md / references / templates, plus structural and signal-strength gates that run before eval generation.
 
 ## Agents
 
 | Agent | Role | Description |
 |-------|------|-------------|
 | [synapse-skill-companion-writer](synapse-skill-companion-writer.md) | writer | Writes a single companion file (reference or template) for a skill |
+| [synapse-skill-anatomy-reviewer](synapse-skill-anatomy-reviewer.md) | reviewer | Binary anatomy gate — checks SKILL.md structural anatomy (frontmatter, routing contract, required sections) against the canonical anatomy spec before eval generation |
