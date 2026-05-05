@@ -134,7 +134,7 @@ The autonomous orchestrator drives end-to-end pipelines using stages defined in 
 
 ## Skill Design Principles
 
-These are the core principles for writing and modifying skills (full reference: `synapse/skills/skill/skill-creator/references/skill-design-principles.md`):
+These are the core principles for writing and modifying skills (full reference: `synapse/skills/synapse/synapse-creator/references/design-principles-skill.md`):
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
