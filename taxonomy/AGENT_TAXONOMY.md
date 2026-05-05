@@ -26,6 +26,7 @@ Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention —
 | Role | Description |
 |------|-------------|
 | `judge` | Impartial evaluator producing binary pass/fail criteria |
+| `grader` | Impartial evaluator producing graded/scaled scores (e.g., 1–5 per dimension) with rationale; complement to `judge` for non-binary evaluation |
 | `prompter` | Generates test inputs blind to implementation |
 | `auditor` | Evaluates execution/workflow behavior |
 | `writer` | Produces content from a brief or specification |
