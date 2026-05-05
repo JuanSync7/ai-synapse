@@ -2,6 +2,7 @@
 name: synapse-skill-signal-reviewer
 description: "Signal-strength reviewer — graded multi-dimensional review of skill authoring artifacts (SKILL.md + companions) before eval generation"
 domain: synapse
+subdomain: skill
 role: reviewer
 tags: [signal-strength, skill-review, authoring-quality]
 ---
