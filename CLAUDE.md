@@ -26,7 +26,7 @@ Two layers of validation apply. Layer 1 is automatic; Layer 2 is on you.
 
 | Change | Run |
 |--------|-----|
-| New skill or external import | `/skill-creator` (full pipeline) → `/synapse-gatekeeper` |
+| New skill or external import | `/synapse-creator skill` (full pipeline) → `/synapse-gatekeeper` |
 | Modified existing skill (SKILL.md, references/, templates/) | `/improve-skill` (score-fix loop against existing EVAL.md) |
 | New or modified agent / protocol / tool / pathway | `/synapse-gatekeeper <artifact-path>` |
 | Trivial changes (typos, formatting-only) | Layer 1 is sufficient |
@@ -39,7 +39,7 @@ The autonomous orchestrator drives end-to-end pipelines using stages defined in 
 
 ## Skill Design Principles
 
-Apply when writing or modifying skills. Full reference: [`synapse/skills/skill/skill-creator/references/skill-design-principles.md`](synapse/skills/skill/skill-creator/references/skill-design-principles.md).
+Apply when writing or modifying skills. Full reference: [`synapse/skills/synapse-creator/references/design-principles-skill.md`](synapse/skills/synapse-creator/references/design-principles-skill.md).
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
@@ -65,7 +65,7 @@ Every directory in the repo must have a README.md (exceptions: dot-directories a
 - **Description is a routing contract.** Frontmatter `description` specifies *when* a skill fires, not *what* it does. If the description could replace reading the body, it's too broad.
 - **Skills with 3+ phases** include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when intent doesn't match.
-- **EVAL.md files are generated artifacts** containing structural criteria, output criteria, and test prompts. Run `/write-skill-eval`, `/write-agent-eval`, or `/write-protocol-eval` to regenerate.
+- **EVAL.md files are generated artifacts** containing structural criteria, output criteria, and test prompts. Run `/write-synapse-eval <artifact-path>` to regenerate.
 - **Pipeline-routable skills** register a stage entry in [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml) with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`. Non-pipeline skills only need a row in [`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md).
 - **Taxonomy values** must come from the controlled vocabularies in [`taxonomy/`](taxonomy/). If nothing fits, propose an addition there — don't invent ad hoc values.
 

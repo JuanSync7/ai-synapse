@@ -1,7 +1,8 @@
 ---
 name: external-memory
 description: "Behavioral contract for file-based working memory — enables skills to externalize state into files that survive auto-compaction and context limits"
-domain: memory
+domain: synapse
+subdomain: memory
 type: contract
 tags: [working-memory, state-externalization, compaction-safe, file-based]
 ---
