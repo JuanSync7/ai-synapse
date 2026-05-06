@@ -83,3 +83,34 @@ def hash_directory(
         outer.update(inner.hexdigest().encode("ascii"))
         outer.update(b"\n")
     return "sha256:" + outer.hexdigest()
+
+
+def file_hashes(
+    path: pathlib.Path, exclude: set[str] | None = None
+) -> dict[str, str]:
+    """Return {posix_relpath: sha256_hex} for every non-excluded file.
+
+    Exclusion logic mirrors `hash_directory`. The hex digests are bare hex
+    (no `sha256:` prefix), so callers can compare individual files without
+    re-hashing the entire tree.
+    """
+    root = pathlib.Path(path)
+    extra = set(exclude or ())
+    out: dict[str, str] = {}
+    if not root.is_dir():
+        return out
+    for p in root.rglob("*"):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(root)
+        parts = rel.parts
+        if _should_skip(parts):
+            continue
+        if parts[-1] in extra:
+            continue
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        out[rel.as_posix()] = h.hexdigest()
+    return out

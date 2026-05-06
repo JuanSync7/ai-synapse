@@ -77,6 +77,37 @@ def test_empty_dir_stable(hashing, tmp_path):
     assert hashing.hash_directory(a) == hashing.hash_directory(b)
 
 
+def test_file_hashes_basic(hashing, tmp_path):
+    a = _make_dir(tmp_path / "a", {"SKILL.md": "x", "refs/foo.md": "y"})
+    h = hashing.file_hashes(a)
+    assert set(h.keys()) == {"SKILL.md", "refs/foo.md"}
+    # all hex
+    for v in h.values():
+        assert len(v) == 64
+        int(v, 16)
+
+
+def test_file_hashes_respects_exclusions(hashing, tmp_path):
+    a = _make_dir(tmp_path / "a", {
+        "SKILL.md": "x",
+        "EVAL.md": "skip",
+        "change_requests/cr.md": "skip",
+        "x.pyc": "skip",
+    })
+    h = hashing.file_hashes(a)
+    assert set(h.keys()) == {"SKILL.md"}
+
+
+def test_file_hashes_empty_for_missing_dir(hashing, tmp_path):
+    assert hashing.file_hashes(tmp_path / "nope") == {}
+
+
+def test_file_hashes_extra_exclude(hashing, tmp_path):
+    a = _make_dir(tmp_path / "a", {"SKILL.md": "x", "extra.md": "y"})
+    h = hashing.file_hashes(a, exclude={"extra.md"})
+    assert set(h.keys()) == {"SKILL.md"}
+
+
 def test_pyc_and_dsstore_excluded(hashing, tmp_path):
     a = _make_dir(tmp_path / "a", {"SKILL.md": "x"})
     h1 = hashing.hash_directory(a)
