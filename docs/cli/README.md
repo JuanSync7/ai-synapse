@@ -24,3 +24,7 @@ Per-command documentation for the `cortex` dispatcher. Run `./cortex help <comma
 | [clean](clean.md) | Remove all installed symlinks |
 | [check-links](check-links.md) | Validate markdown links |
 | [reorganize](reorganize.md) | Domain-based artifact reorganization |
+| [clerk](clerk.md) | External submodule bump automation (overview) |
+| [clerk bump-externals](clerk-bump-externals.md) | Detect upstream tags; open bump PRs |
+| [clerk status](clerk-status.md) | Summarize `~/.synapse/clerk_state.toml` |
+| [clerk doctor](clerk-doctor.md) | Clerk-self checks (state, gh auth, .gitmodules) |

@@ -50,6 +50,11 @@ Maintainer — repo hygiene and repair:
   check-links                         Validate relative markdown links
   reorganize <subcommand>             Domain-based artifact reorganization
 
+Clerk — automated external/ submodule bumps (cron-driven):
+  clerk bump-externals [--apply]      Detect upstream tags; dry-run by default
+  clerk status                        Summarize ~/.synapse/clerk_state.toml
+  clerk doctor                        Clerk-self checks (state, gh auth, .gitmodules)
+
 Help:
   help [<command>]                    Show help for a command
   --version                           Show version
@@ -249,6 +254,25 @@ DRIFTUSAGE
         ;;
     check-links)    "$SCRIPTS/check-links.sh" ;;
     reorganize)     shift; "$SCRIPTS/reorganize.sh" "$@" ;;
+
+    # --- Clerk: external submodule bump automation ---
+    clerk)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'CLERKUSAGE'
+Usage: ./cortex clerk <subcommand> [args...]
+
+  bump-externals [--apply] [--only PATH] [--state PATH] [--json]
+                                  Detect upstream submodule tag bumps; default dry-run
+  status [--state PATH] [--json]  Summarize clerk state file
+  doctor [--state PATH]           Clerk-specific self checks
+CLERKUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/clerk_cli.py" "$sub" "$@"
+        ;;
 
     # --- Help ---
     help)           shift; show_help "${1:-}" ;;
