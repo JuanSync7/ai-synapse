@@ -1,4 +1,4 @@
-.PHONY: all init install claude codex codex-project gemini agents list available clean zip reorg check-links
+.PHONY: all init install claude codex codex-project gemini agents list available clean zip reorg check-links tag-stable tag-dev
 
 all:
 	@echo "Usage: make <command> [args...]"
@@ -100,6 +100,15 @@ zip:
 
 check-links:
 	./scripts/check-links.sh
+
+# --- Versioning ---
+# tag-stable: promote latest vX.Y.Z-pre.N tag to stable (manual cadence, on main)
+# tag-dev:    local dev convenience — print next pre-tag for current diff (no apply)
+tag-stable:
+	./scripts/tag-stable.sh
+
+tag-dev:
+	./scripts/tag-dev.sh
 
 # make reorg → show status (for other commands, use ./scripts/reorganize.sh directly)
 reorg:
