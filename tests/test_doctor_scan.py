@@ -317,6 +317,40 @@ def test_scan_all_no_lockfile(lib, repo, tmp_path):
     assert findings[0].category == "corrupt"
 
 
+def test_scan_drift_respects_ignore_exception(lib, repo, tmp_path):
+    install_root = tmp_path / "install"
+    lf = _build_lockfile(lib, repo, install_root)
+    # Drift the source
+    (repo / "synapse" / "skills" / "foo" / "SKILL.md").write_text("local edit\n")
+    actual = lib["hashing"].hash_directory(repo / "synapse" / "skills" / "foo")
+    pins = lib["pins"].empty()
+    pins.drift_exceptions["skill/foo"] = lib["pins"].DriftException(
+        artifact_key="skill/foo",
+        hash=actual,
+        reason="ok",
+        expires="2099-01-01",
+    )
+    findings = lib["scan"].scan_drift(lf, repo, pins=pins)
+    assert findings == []
+
+
+def test_scan_drift_expired_exception_re_fires(lib, repo, tmp_path):
+    install_root = tmp_path / "install"
+    lf = _build_lockfile(lib, repo, install_root)
+    (repo / "synapse" / "skills" / "foo" / "SKILL.md").write_text("local edit\n")
+    actual = lib["hashing"].hash_directory(repo / "synapse" / "skills" / "foo")
+    pins = lib["pins"].empty()
+    pins.drift_exceptions["skill/foo"] = lib["pins"].DriftException(
+        artifact_key="skill/foo",
+        hash=actual,
+        reason="stale",
+        expires="2000-01-01",
+    )
+    findings = lib["scan"].scan_drift(lf, repo, pins=pins)
+    assert len(findings) == 1
+    assert findings[0].category == "drift"
+
+
 def test_scan_all_clean_fixture(lib, repo, tmp_path):
     # Build a valid lockfile, save it, scan everything, expect no findings
     install_root = tmp_path / "install"

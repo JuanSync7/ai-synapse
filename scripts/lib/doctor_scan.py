@@ -45,10 +45,22 @@ def _expand(p: str) -> pathlib.Path:
 # drift
 # ---------------------------------------------------------------------------
 
-def scan_drift(lockfile: lf_mod.Lockfile, repo_root: pathlib.Path) -> list[df.Finding]:
-    """Compare recomputed source-path hash to lockfile content_hash."""
+def scan_drift(
+    lockfile: lf_mod.Lockfile,
+    repo_root: pathlib.Path,
+    pins: pins_mod.Pins | None = None,
+) -> list[df.Finding]:
+    """Compare recomputed source-path hash to lockfile content_hash.
+
+    If `pins` is provided and contains a non-expired `[drift_exceptions]`
+    entry whose hash matches the current actual hash, the artifact is
+    skipped (drift acknowledged). Expired exceptions are ignored — drift
+    re-fires normally.
+    """
     out: list[df.Finding] = []
     repo_root = pathlib.Path(repo_root)
+    today = datetime.date.today().isoformat()
+    exceptions = pins.drift_exceptions if pins is not None else {}
     for key, art in lockfile.artifacts.items():
         src = repo_root / art.source_path
         if not src.exists():
@@ -56,6 +68,11 @@ def scan_drift(lockfile: lf_mod.Lockfile, repo_root: pathlib.Path) -> list[df.Fi
             continue
         actual = hashing.hash_directory(src)
         if actual != art.content_hash:
+            ex = exceptions.get(key)
+            if ex is not None and ex.hash == actual:
+                # Expired? expires == "" means never expires.
+                if not ex.expires or ex.expires >= today:
+                    continue
             out.append(df.Finding(
                 category="drift",
                 severity="warn",
@@ -426,7 +443,7 @@ def scan_all(
     if "corrupt" not in skip:
         findings += scan_corrupt(lockfile_path, lockfile)
     if "drift" not in skip:
-        findings += scan_drift(lockfile, repo_root)
+        findings += scan_drift(lockfile, repo_root, pins=pins)
     if "missing" not in skip:
         findings += scan_missing(lockfile, repo_root)
     if "orphaned" not in skip:
