@@ -15,7 +15,7 @@ A graded-judgment sub-agent that evaluates design quality of a SKILL.md across s
 Without this agent, graded design feedback on a SKILL.md does not exist at creation time. The two existing failure modes are:
 
 1. **Binary reviewers produce false fails.** A skill that leads with a two-sentence mental model paragraph before its mechanics passes a binary "mental-model paragraph present?" check but still fails the design principle if the model paragraph is too thin. Binary cannot catch degree of compliance.
-2. **`/improve-skill` is reactive, not proactive.** It runs on an already-generated EVAL.md. By that point, design debt is baked in. The signal-reviewer suite runs before eval generation — it is the gate, not the remediation loop.
+2. **`/synapse-skill-skill-improver` is reactive, not proactive.** It runs on an already-generated EVAL.md. By that point, design debt is baked in. The signal-reviewer suite runs before eval generation — it is the gate, not the remediation loop.
 
 Neither the anatomy-reviewer nor the companion-auditor covers this gap: anatomy checks presence/format (binary), companion-auditor checks file hygiene (binary). Design quality is a distinct graded dimension requiring judgment, not detection.
 
@@ -114,8 +114,8 @@ Six dimensions drawn from `skill-design-principles.md` (spec loaded at runtime �
 | `synapse/skills/skill/skill-creator/references/skill-design-principles.md` | consumes (loads at runtime) | Canonical grading spec. Load once at start; never re-encode inline |
 | `synapse-skill-anatomy-reviewer` (sibling) | independent parallel dispatch | No contract — results are aggregated independently by orchestrator |
 | `synapse-skill-companion-auditor` (sibling) | independent parallel dispatch | No contract — results are aggregated independently by orchestrator |
-| `synapse-creator` flow-skill `[R]` phase | dispatches via orchestrator | Orchestrator is the dispatcher; this agent does not interact with flow-skill directly |
-| `/improve-skill` | dispatches via orchestrator | Orchestrator is the dispatcher; this agent does not interact with improve-skill directly |
+| `synapse-router-artifact-creator` flow-skill `[R]` phase | dispatches via orchestrator | Orchestrator is the dispatcher; this agent does not interact with flow-skill directly |
+| `/synapse-skill-skill-improver` | dispatches via orchestrator | Orchestrator is the dispatcher; this agent does not interact with synapse-skill-skill-improver directly |
 
 ---
 

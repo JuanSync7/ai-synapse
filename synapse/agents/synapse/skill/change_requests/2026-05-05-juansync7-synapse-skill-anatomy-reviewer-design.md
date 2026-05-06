@@ -7,13 +7,13 @@
 
 ## 1. Problem Statement
 
-Skill creation in ai-synapse has no quality gate between draft and eval generation. The `synapse-creator` flow-skill moves a skill from `[draft]` to `[EVAL]` without verifying that the skill is structurally sound or well-designed. This produces two downstream problems:
+Skill creation in ai-synapse has no quality gate between draft and eval generation. The `synapse-router-artifact-creator` flow-skill moves a skill from `[draft]` to `[EVAL]` without verifying that the skill is structurally sound or well-designed. This produces two downstream problems:
 
 1. `write-skill-eval` receives poorly structured SKILL.md files, causing evals that test for the wrong things.
-2. `/improve-skill` operates on skills with anatomy defects it was not designed to catch, wasting fix cycles on structural issues that should have been stopped earlier.
+2. `/synapse-skill-skill-improver` operates on skills with anatomy defects it was not designed to catch, wasting fix cycles on structural issues that should have been stopped earlier.
 3. The existing `synapse-protocol-signal-reviewer` pattern shows that a review gate before eval generation is effective, but the protocol version is binary — which produces false failures for the higher-variance skill surface (SKILL.md + references/ + templates/).
 
-What changes: a multi-dimensional review gate (`synapse-skill-signal-reviewer`) is inserted at the `[R]` phase of synapse-creator, before `write-skill-eval` is dispatched, and is also shared as a structural pre-check in `/improve-skill`.
+What changes: a multi-dimensional review gate (`synapse-skill-signal-reviewer`) is inserted at the `[R]` phase of synapse-router-artifact-creator, before `write-skill-eval` is dispatched, and is also shared as a structural pre-check in `/synapse-skill-skill-improver`.
 
 ---
 
@@ -39,13 +39,13 @@ Re-encoding anatomy rules or design principles inside agent files creates drift 
 
 ### P4 — Shared across dispatchers, canonically located once
 
-The reviewer is useful in two lifecycle moments: creation time (`synapse-creator` `[R]` phase) and improvement time (`/improve-skill` structural pre-check). It must be canonical at one location and symlinked into both consumers — not duplicated.
+The reviewer is useful in two lifecycle moments: creation time (`synapse-router-artifact-creator` `[R]` phase) and improvement time (`/synapse-skill-skill-improver` structural pre-check). It must be canonical at one location and symlinked into both consumers — not duplicated.
 
 **Implication:** Canonical location is `synapse/agents/synapse/skill/`. Dispatchers load it by symlink; the reviewer is not aware of which dispatcher called it.
 
 ### P5 — Companion files are in scope; EVAL.md is out of scope
 
-The skill surface includes SKILL.md + references/ + templates/. EVAL.md is out of scope: it is a generated artifact with its own lifecycle, reviewed separately by `write-skill-eval` and `synapse-gatekeeper`.
+The skill surface includes SKILL.md + references/ + templates/. EVAL.md is out of scope: it is a generated artifact with its own lifecycle, reviewed separately by `write-skill-eval` and `synapse-router-artifact-gatekeeper`.
 
 **Implication:** `synapse-skill-companion-auditor` reads references/ and templates/ but explicitly skips EVAL.md even if present.
 
@@ -56,7 +56,7 @@ The skill surface includes SKILL.md + references/ + templates/. EVAL.md is out o
 ### 3.1 Flow Graph
 
 ```
-[synapse-creator flow-skill: draft]
+[synapse-router-artifact-creator flow-skill: draft]
         │
         ▼
 [R] synapse-skill-signal-reviewer ◄─────────────────────────────────┐
@@ -81,12 +81,12 @@ The skill surface includes SKILL.md + references/ + templates/. EVAL.md is out o
                       [EVAL] write-skill-eval
 
 ────────────────────────────────────────────────────────────────────
-/improve-skill: structural pre-check (independent dispatch)
+/synapse-skill-skill-improver: structural pre-check (independent dispatch)
 
         │
         └─── dispatch ──► synapse-skill-signal-reviewer
                           (same canonical agent; cycle tracking
-                          lives in /improve-skill dispatcher)
+                          lives in /synapse-skill-skill-improver dispatcher)
 ```
 
 ### 3.2 Node Specifications
@@ -129,7 +129,7 @@ model: sonnet
 #### synapse-skill-anatomy-reviewer (sub-agent)
 
 ```
-Load: CLAUDE.md skill anatomy section + synapse-creator flow-skill drafting rules
+Load: CLAUDE.md skill anatomy section + synapse-router-artifact-creator flow-skill drafting rules
       (via: synapse/skills/skill/skill-creator/references/skill-anatomy.md — side artifact)
 Do:
   1. Read SKILL.md.
@@ -144,7 +144,7 @@ Do:
   4. Return anatomy table.
 Don't:
   - Do not judge design quality — only structural presence and format.
-  - Do not proceed silently if skill-anatomy.md is missing; loud-fail per failure-reporting protocol.
+  - Do not proceed silently if skill-anatomy.md is missing; loud-fail per synapse-observability-failure-reporting-schema protocol.
 Exit:
   - Return per-check PASS/FAIL table to orchestrator.
 ```
@@ -288,7 +288,7 @@ tags: [signal-strength, skill-review, authoring-quality]
 - ESCALATE: REVISE on second cycle (likely design issue, not wording)
 ```
 
-**Pipeline integration (synapse-creator flow-skill `[R]` phase):**
+**Pipeline integration (synapse-router-artifact-creator flow-skill `[R]` phase):**
 ```
 Load: agents/skill/synapse-skill-signal-reviewer.md
 Do:
@@ -327,7 +327,7 @@ This file is a prerequisite for `synapse-skill-anatomy-reviewer` to function cor
 
 **Purpose:** Single source of truth for skill anatomy spec — what a complete SKILL.md must contain, in what structure, and why. Currently scattered across:
 - CLAUDE.md skill anatomy section
-- synapse-creator flow-skill drafting rules
+- synapse-router-artifact-creator flow-skill drafting rules
 
 **After creation:** CLAUDE.md and flow-skill drafting rules should reference this file rather than re-stating the rules, eliminating drift.
 
@@ -339,8 +339,8 @@ This file is a prerequisite for `synapse-skill-anatomy-reviewer` to function cor
 |---|---|---|
 | Binary anatomy gate may still produce false failures for intentionally minimal skills | Accept — anatomy checks are presence/format only, not subjective. Minimal skills (e.g., no companions) are handled by explicit skip rules (P2: skip companion check if 0 files; P2: Wrong-Tool Detection only required if user-invocable: true). | If false failure rate is observed after 10+ skill reviews |
 | Property overlap: anatomy-reviewer and design-judge both touch "description" | Accept — anatomy checks presence and format (is it a routing contract syntactically?); design-judge checks tightness and precision (is the routing contract actually tight?). Different angles, same surface. | If agent outputs consistently contradict each other on description quality |
-| Stamping (last-reviewed timestamp on artifacts) would make reviewer freshness trackable | Deferred to BACKLOG.md — out of scope for this brainstorm. Reviewer produces verdict only; persistence layer is a separate concern. | When /synapse-gatekeeper needs freshness enforcement |
-| fix cycles (max 2) are tracked by dispatcher, not orchestrator | Accept — orchestrator is stateless on lifecycle. Cycle tracking in dispatcher keeps orchestrator reusable across dispatchers with different cycle policies. | If cycle policies need to diverge between synapse-creator and /improve-skill |
+| Stamping (last-reviewed timestamp on artifacts) would make reviewer freshness trackable | Deferred to BACKLOG.md — out of scope for this brainstorm. Reviewer produces verdict only; persistence layer is a separate concern. | When /synapse-router-artifact-gatekeeper needs freshness enforcement |
+| fix cycles (max 2) are tracked by dispatcher, not orchestrator | Accept — orchestrator is stateless on lifecycle. Cycle tracking in dispatcher keeps orchestrator reusable across dispatchers with different cycle policies. | If cycle policies need to diverge between synapse-router-artifact-creator and /synapse-skill-skill-improver |
 
 ---
 
@@ -350,8 +350,8 @@ This file is a prerequisite for `synapse-skill-anatomy-reviewer` to function cor
 |---|---|---|
 | `synapse/skills/skill/skill-creator/references/skill-anatomy.md` | consumed by `synapse-skill-anatomy-reviewer` | Must exist before anatomy-reviewer is deployed; must be kept current when CLAUDE.md anatomy spec changes |
 | `synapse/skills/skill/skill-creator/references/skill-design-principles.md` | consumed by `synapse-skill-design-judge` and `synapse-skill-companion-auditor` | Must exist; currently exists — consumed at runtime |
-| `synapse-creator` flow-skill (flow-skill.md `[R]` phase) | dispatches `synapse-skill-signal-reviewer` | Dispatcher must add `[R]` phase block with 2-cycle loop logic |
-| `/improve-skill` | dispatches `synapse-skill-signal-reviewer` as structural pre-check | Dispatcher must add pre-check invocation before improvement loop |
+| `synapse-router-artifact-creator` flow-skill (flow-skill.md `[R]` phase) | dispatches `synapse-skill-signal-reviewer` | Dispatcher must add `[R]` phase block with 2-cycle loop logic |
+| `/synapse-skill-skill-improver` | dispatches `synapse-skill-signal-reviewer` as structural pre-check | Dispatcher must add pre-check invocation before improvement loop |
 | `write-skill-eval` | downstream from reviewer | Receives skill only after APPROVE verdict |
-| `synapse-gatekeeper` | re-runs reviewer for promotion freshness | Treated as independent dispatch — orchestrator is stateless |
+| `synapse-router-artifact-gatekeeper` | re-runs reviewer for promotion freshness | Treated as independent dispatch — orchestrator is stateless |
 | `synapse-protocol-signal-reviewer` | pattern precedent (not a dependency) | Relocation to `synapse/agents/synapse/protocol/` is a follow-up task, not a blocker |
