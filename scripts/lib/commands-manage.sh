@@ -259,7 +259,7 @@ cmd_install_agents() {
     echo "Installed $count agent(s) → $AGENTS_TARGET"
 }
 
-cmd_doctor() {
+cmd_doctor_symlinks() {
     local broken=0
 
     echo "Checking external/ submodules..."
