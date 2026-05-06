@@ -15,7 +15,7 @@
 
 ## What is AI-Synapse?
 
-AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
+AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/synapse-creator` in any Claude Code session.
 
 The repo serves two roles: a **home for standalone artifacts** (self-contained, no shared infrastructure) and a **registry that submodules artifact suites** from external repos (multi-artifact projects with shared config and their own CI). Both are installed the same way via the `cortex` CLI.
 
@@ -149,7 +149,7 @@ ai-synapse/
 Top-level CLI dispatcher. Routes all commands to scripts under `scripts/`. Run `./cortex help` for the full command reference, or `./cortex help <command>` to view detailed docs for any subcommand.
 
 ### [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml)
-The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
+The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). An adopter-supplied orchestrator skill reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
 
 ### Registries (`registry/`)
 Discovery tables for all artifact types. Check these before creating a new artifact:
@@ -226,7 +226,7 @@ Pathways (`pathways/`) are named bundles of synapses — a YAML file listing whi
 
 ### synapse/ vs src/ vs external/
 
-- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-creator, synapse-gatekeeper, write-synapse-eval, autonomous-orchestrator, tooling).
+- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-creator, synapse-gatekeeper, write-synapse-eval, synapse-external-validator, improve-skill, tooling).
 - **`src/`** — adopter artifact slot owned by this repo. Convention-enforced, managed by `scripts/reorganize.sh`. Empty in the framework distribution; downstream adopters populate it with their own skills, agents, protocols, and tools.
 - **`external/`** — submodule slot for externally-owned suites. Empty in the framework distribution; adopters add multi-artifact suites here as git submodules. Each suite owns its own structure (typically `skills/`, `agents/`, `protocols/`).
 

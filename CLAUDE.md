@@ -35,7 +35,7 @@ Two layers of validation apply. Layer 1 is automatic; Layer 2 is on you.
 
 ## Pipeline System
 
-The autonomous orchestrator drives end-to-end pipelines using stages defined in [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml). Each stage has typed inputs/outputs and dependency chains (`requires_all` / `requires_any`). Named presets (`full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. A stakeholder-reviewer gates stage transitions.
+End-to-end pipeline metadata lives in [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml). Each stage has typed inputs/outputs and dependency chains (`requires_all` / `requires_any`). Named presets (`full`, `feature`, `bugfix`) are trusted stage sequences that bypass dependency resolution. The framework defines the contract; an adopter-supplied orchestrator skill consumes it and drives stage transitions through a stakeholder review gate.
 
 ## Skill Design Principles
 
