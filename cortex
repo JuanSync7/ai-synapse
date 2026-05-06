@@ -18,7 +18,7 @@ usage() {
 Usage: ./cortex <command> [args...]
 
 Consumer — load and manage synapses:
-  install <targets...>                Install synapses to Claude Code
+  install [--force] <targets...>      Install synapses to Claude Code
   codex <targets...>                  Install synapses to Codex CLI
   codex-project <targets...>          Install synapses to Codex project
   gemini <targets...>                 Install synapses to Gemini CLI
@@ -33,6 +33,7 @@ Versioning — pin/unpin/bump/inspect synapse version:
   unpin                               Reset pin to "latest"
   bump                                Freeze floating pin to current resolved value
   status                              Show current pin, resolved SHA, drift summary
+  drift <subcommand>                  Resolve drift (show, stash, restore, adopt, ignore, list-stashes)
 
 Contributor — create and validate artifacts:
   scaffold <type> <domain> <name>     Create a new synapse (skill, agent, protocol, tool)
@@ -118,6 +119,29 @@ case "${1:-}" in
     unpin)          shift; python3 "$SCRIPTS/lib/pins_cli.py" unpin "$@" ;;
     bump)           shift; python3 "$SCRIPTS/lib/pins_cli.py" bump "$@" ;;
     status)         shift; python3 "$SCRIPTS/lib/pins_cli.py" status "$@" ;;
+
+    # --- Consumer: drift resolution ---
+    drift)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'DRIFTUSAGE'
+Usage: ./cortex drift <subcommand> [args...]
+
+  show <artifact>                 Show diff vs source (exit 1 if drift)
+  stash <artifact> [--reason X]   Save local edits, restore canonical
+  restore <stash-id> [--yes]      Restore a stash over its source path
+  list-stashes [--json]           List stashes under ~/.synapse/stash/
+  adopt <artifact> [--slug N] [--reason X]
+                                  Promote drift to a change_request
+  ignore <artifact> [--reason X] [--expires DATE]
+                                  Add a [drift_exceptions] entry to pins.toml
+DRIFTUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/drift_cli.py" "$sub" "$@"
+        ;;
 
     # --- Contributor: create ---
     scaffold)

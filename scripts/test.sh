@@ -31,4 +31,12 @@ echo "==> bash tests/test_doctor_cli.sh"
 bash tests/test_doctor_cli.sh
 
 echo ""
+echo "==> bash tests/test_drift_cli.sh"
+bash tests/test_drift_cli.sh
+
+echo ""
+echo "==> bash tests/test_install_force.sh"
+bash tests/test_install_force.sh
+
+echo ""
 echo "All test suites passed."
