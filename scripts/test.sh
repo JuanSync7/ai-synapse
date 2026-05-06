@@ -27,4 +27,8 @@ echo "==> bash tests/test_pins_cli.sh"
 bash tests/test_pins_cli.sh
 
 echo ""
+echo "==> bash tests/test_doctor_cli.sh"
+bash tests/test_doctor_cli.sh
+
+echo ""
 echo "All test suites passed."

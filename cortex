@@ -42,7 +42,9 @@ Contributor — create and validate artifacts:
 Maintainer — repo hygiene and repair:
   sync [--fix]                        Sync registries and READMEs from disk state
   audit                               Companion artifact audit
-  doctor                              Check for broken symlinks
+  doctor [--json|--severity-floor|--skip] Scan installed.lock for 7 finding categories
+  doctor symlinks                     Check for broken symlinks (legacy behavior)
+  doctor all                          Run symlinks check then full scan; combined exit
   clean                               Remove all installed symlinks
   check-links                         Validate relative markdown links
   reorganize <subcommand>             Domain-based artifact reorganization
@@ -199,7 +201,28 @@ case "${1:-}" in
 
     # --- Maintainer: inspect ---
     audit)          "$SCRIPTS/audit-artifacts.sh" "${@:2}" ;;
-    doctor)         "$SCRIPTS/install.sh" doctor ;;
+    doctor)
+        shift
+        sub="${1:-}"
+        case "$sub" in
+            symlinks)
+                "$SCRIPTS/install.sh" doctor-symlinks
+                ;;
+            all)
+                shift || true
+                "$SCRIPTS/install.sh" doctor-symlinks
+                rc1=$?
+                python3 "$SCRIPTS/lib/doctor_cli.py" "$@"
+                rc2=$?
+                # Combined exit code: max of the two
+                exit $(( rc1 > rc2 ? rc1 : rc2 ))
+                ;;
+            *)
+                # Default: run the new finding-based doctor with any args/flags
+                python3 "$SCRIPTS/lib/doctor_cli.py" "$@"
+                ;;
+        esac
+        ;;
     check-links)    "$SCRIPTS/check-links.sh" ;;
     reorganize)     shift; "$SCRIPTS/reorganize.sh" "$@" ;;
 

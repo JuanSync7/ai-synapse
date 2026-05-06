@@ -18,7 +18,8 @@ Per-command documentation for the `cortex` dispatcher. Run `./cortex help <comma
 | [validate](validate.md) | Run structural checks |
 | [sync](sync.md) | Sync registries and READMEs |
 | [audit](audit.md) | Companion artifact audit |
-| [doctor](doctor.md) | Check for broken symlinks |
+| [doctor](doctor.md) | Scan installed.lock for 7 finding categories |
+| [doctor symlinks](doctor-symlinks.md) | Legacy broken-symlink check (now a subcommand) |
 | [clean](clean.md) | Remove all installed symlinks |
 | [check-links](check-links.md) | Validate markdown links |
 | [reorganize](reorganize.md) | Domain-based artifact reorganization |
