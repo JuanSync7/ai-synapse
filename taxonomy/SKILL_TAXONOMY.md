@@ -1,46 +1,41 @@
 # Skill Taxonomy
 
-Controlled vocabulary for skill metadata. When creating a new skill, pick `domain` and `intent` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
+Naming and metadata rules for skills. The controlled vocabulary for each slug slot lives in [`registry/SKILL_VOCABULARY.md`](../registry/SKILL_VOCABULARY.md). The inventory of skills currently in the repo lives in [`registry/SKILL_REGISTRY.md`](../registry/SKILL_REGISTRY.md). This file defines the *shape*; vocabulary holds the *values*; registry holds the *inventory*.
 
-Skills follow the `{domain}-{subdomain?}-{intent?}-{name}` naming convention — lowercase-hyphenated, with subdomain/intent included when they aid disambiguation; omit them when the bare name already makes scope clear.
+## Naming convention
 
-- **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory; no runtime namespacing exists. `scripts/install.sh` warns on collisions at install time; never rely on last-write-wins — rename before promoting.
-- **The intent slot communicates what the skill *does*, not what it produces** — prefer `write` over `produces-spec`, `improve` over `quality-loop`.
+`{domain}-{subdomain}-{scope}-{role}` — lowercase-hyphenated. All four slots required.
 
-## Domains
+- **`domain`** — ecosystem (e.g., `synapse`, `docs`).
+- **`subdomain`** — category within the domain (e.g., `skill`, `router`).
+- **`scope`** — noun naming what the skill operates on (e.g., `artifact`, `postmortem`, `eval`).
+- **`role`** — agentive noun naming what the skill is (e.g., `writer`, `reviewer`, `gatekeeper`).
 
-| Domain | Description |
-|--------|-------------|
-| `synapse` | Framework-level skills: artifact authoring, evaluation, orchestration, ecosystem management |
+## Examples
 
-## Subdomains
+| Slug | Description |
+|------|-------------|
+| `synapse-router-artifact-gatekeeper` | Certifies any artifact type against the promotion bar |
+| `synapse-skill-skill-improver` | Iterates on an existing skill against its EVAL.md |
 
-| Subdomain | Description |
-|-----------|-------------|
-| `agent` | Agent development lifecycle (creation, evaluation) |
-| `skill` | Skill development lifecycle (creation, evaluation, improvement) |
-| `protocol` | Protocol development lifecycle (creation, evaluation) |
-| `tool` | Tool development lifecycle (creation, evaluation) |
-| `meta` | Routing and framework utilities |
-| `orchestration` | Multi-agent coordination and pipeline execution |
+**Anti-patterns:**
 
-## Intents
+| Slug | Why it's wrong |
+|------|----------------|
+| `synapse-eval-writer` | Missing subdomain; `eval` placed in the subdomain slot but it's actually the scope. Should be `synapse-router-eval-writer`. |
+| `synapse-skill-skill-improve` | `improve` is a verb. Role slot must be an agentive noun (`improver`). |
 
-| Intent | Description |
-|--------|-------------|
-| `write` | Produce a new artifact |
-| `review` | Evaluate/critique existing work |
-| `plan` | Create an execution strategy |
-| `route` | Dispatch to another skill |
-| `execute` | Run/dispatch agents |
-| `improve` | Iterate on existing artifact |
-| `debug` | Diagnose and fix issues |
-| `analyze` | Extract insights without changing anything |
-| `convert` | Transform between formats |
-| `validate` | Check correctness against a reference |
-| `summarize` | Condense existing artifact |
-| `migrate` | Move between versions/platforms |
-| `generate` | Produce from template/config |
+## Frontmatter
+
+Required fields on every `SKILL.md`:
+
+```yaml
+name: <slug>           # must equal directory name AND match {domain}-{subdomain}-{scope}-{role}
+domain: <value>
+subdomain: <value>
+scope: <noun>          # what the skill operates over
+role: <noun>           # what the skill IS
+```
 
 ## Tags
 

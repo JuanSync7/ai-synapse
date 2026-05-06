@@ -1,12 +1,14 @@
 # Skills Registry
 
-Full inventory of all skills. Before creating a new skill, check if one already covers the capability you need. Pipeline-routable skills are also registered in `synapse/SKILLS_REGISTRY.yaml` with their stage metadata.
+Full inventory of all skills. Before creating a new skill, check if one already covers the capability you need. Pipeline-routable skills are also registered in [`synapse/SKILLS_REGISTRY.yaml`](../synapse/SKILLS_REGISTRY.yaml) with their stage metadata.
 
-| Skill | Description | Domain | Pipeline Stage | Status |
-|-------|-------------|--------|----------------|--------|
-| [synapse-creator](../synapse/skills/synapse-creator/SKILL.md) | Router-based unified creator for new skills, protocols, agents, or tools — type-specific flows load on demand | synapse | — | stable |
-| [synapse-brainstorm](../synapse/skills/synapse-brainstorm/SKILL.md) | Generalized brainstorm for any artifact type — coaching, pressure-testing, N memos | synapse | — | draft |
-| [write-synapse-eval](../synapse/skills/write-synapse-eval/SKILL.md) | Router-based unified EVAL.md generator for skills, protocols, agents, and tools — type-specific flows load on demand | synapse | — | draft |
-| [synapse-gatekeeper](../synapse/skills/synapse-gatekeeper/SKILL.md) | Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria | synapse | — | draft |
-| [synapse-external-validator](../synapse/skills/synapse-external-validator/SKILL.md) | Suite-level structural conformance sweep — validates all artifacts in an external submodule before it is wired into ai-synapse | synapse | — | draft |
-| [improve-skill](../synapse/skills/improve-skill/SKILL.md) | Karpathy-style score-fix-rescore loop for skill quality | synapse | — | draft |
+Schema: see [registry/README.md](README.md).
+
+| Skill | Description | Status | Consumers |
+|------|-------------|--------|-----------|
+| [synapse-router-artifact-brainstormer](../synapse/skills/synapse-router-artifact-brainstormer/SKILL.md) | Use when exploring an idea for a new artifact (skill, tool, agent, protocol) or reworking an existing one — before committing to build | draft | synapse-git-dispatch-cr, synapse-router-artifact-creator, synapse-router-eval-writer, synapse-skill |
+| [synapse-router-artifact-creator](../synapse/skills/synapse-router-artifact-creator/SKILL.md) | Use when creating a new skill, protocol, agent, or tool in ai-synapse. Routes to type-specific creation flow. | draft | synapse-router-suite-validator, synapse-skill, synapse-skill-anatomy-reviewer, synapse-skill-companion-auditor, synapse-skill-design-grader, synapse-skill-signal-orchestrator |
+| [synapse-router-artifact-gatekeeper](../synapse/skills/synapse-router-artifact-gatekeeper/SKILL.md) | Use when a skill, agent, protocol, tool, or pathway is complete and ready for promotion review, or to check if an artifact meets the bar to land in ai-synapse. | draft | synapse-router-artifact-brainstormer, synapse-router-artifact-creator, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill, synapse-skill-companion-auditor, synapse-skill-signal-orchestrator |
+| [synapse-router-eval-writer](../synapse/skills/synapse-router-eval-writer/SKILL.md) | Use when generating an EVAL.md for a skill, protocol, agent, or tool. | draft | synapse-router-artifact-gatekeeper, synapse-router-suite-validator, synapse-skill, synapse-skill-skill-improver |
+| [synapse-router-suite-validator](../synapse/skills/synapse-router-suite-validator/SKILL.md) | Use when adding or updating an external submodule suite (under external/), or when checking whether a candidate suite conforms to ai-synapse conventions before it is wired in. Sweeps every artifact in the suite and produces a structural conformance rollup. | draft | — |
+| [synapse-skill-skill-improver](../synapse/skills/synapse-skill-skill-improver/SKILL.md) | Use when a skill needs quality improvement. Triggered by improve this skill, fix the skill, review skill quality, make the skill better. | draft | synapse-observability-execution-trace, synapse-meta-readme-maintainer, synapse-router-artifact-brainstormer, synapse-router-artifact-creator, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill, synapse-skill-anatomy-reviewer, synapse-skill-design-grader, synapse-skill-signal-orchestrator |

@@ -3,6 +3,7 @@ name: synapse-protocol-signal-reviewer
 description: "Signal-strength reviewer — validates protocol instructions use commitment language, named trigger moments, and follow universal anatomy"
 domain: synapse
 subdomain: protocol
+scope: signal
 role: reviewer
 tags: [signal-strength, protocol-review, wording-validation]
 ---

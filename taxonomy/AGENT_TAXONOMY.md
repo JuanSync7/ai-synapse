@@ -1,38 +1,41 @@
 # Agent Taxonomy
 
-Controlled vocabulary for agent metadata. When creating a new agent, pick `domain` and `role` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
+Naming and metadata rules for agents. The controlled vocabulary for each slug slot lives in [`registry/AGENT_VOCABULARY.md`](../registry/AGENT_VOCABULARY.md). The inventory of agents currently in the repo lives in [`registry/AGENTS_REGISTRY.md`](../registry/AGENTS_REGISTRY.md). This file defines the *shape*; vocabulary holds the *values*; registry holds the *inventory*.
 
-Agents follow the `{domain}-{subdomain?}-{concern}-{role}` naming convention — lowercase-hyphenated.
+## Naming convention
 
-- **The domain prefix clusters related agents** — all `skill-eval-*` sort together.
-- **The role noun communicates what the agent *is*, not what it produces** — prefer `judge` over `generate-criteria`, `reviewer` over `produces-feedback`.
+`{domain}-{subdomain}-{scope}-{role}` — lowercase-hyphenated. All four slots required.
 
-## Domains
+- **`domain`** — ecosystem (e.g., `synapse`).
+- **`subdomain`** — category within the domain (e.g., `skill`).
+- **`scope`** — noun naming what the agent operates on (e.g., `companion`, `eval`, `readme`).
+- **`role`** — agentive noun naming what the agent is (e.g., `judge`, `auditor`, `writer`).
 
-| Domain | Description |
-|--------|-------------|
-| `synapse` | Framework-level agents: artifact authoring, evaluation, ecosystem maintenance |
+## Examples
 
-## Subdomains
-
-| Subdomain | Description |
-|-----------|-------------|
-| `skill` | Skill authoring and companion-file generation |
-| `skill-eval` | Skill evaluation and quality assessment |
-| `protocol` | Protocol authoring, signal-strength review, conformance testing |
-
-## Roles
-
-| Role | Description |
+| Slug | Description |
 |------|-------------|
-| `judge` | Impartial evaluator producing binary pass/fail criteria |
-| `grader` | Impartial evaluator producing graded/scaled scores (e.g., 1–5 per dimension) with rationale; complement to `judge` for non-binary evaluation |
-| `prompter` | Generates test inputs blind to implementation |
-| `auditor` | Evaluates execution/workflow behavior |
-| `writer` | Produces content from a brief or specification |
-| `reviewer` | Validates output against input contract and quality criteria |
-| `maintainer` | Enforces invariants across existing artifacts; reads current state, applies surgical edits, writes updated state. |
-| `orchestrator` | Coordinator that dispatches sub-agents, aggregates their outputs, and emits a unified verdict; performs no domain judgment of its own. |
+| `synapse-skill-companion-auditor` | Audits skill companion files against load-trigger and modularity rules |
+| `synapse-skill-design-grader` | Grades a SKILL.md on design-principle dimensions |
+
+**Anti-patterns:**
+
+| Slug | Why it's wrong |
+|------|----------------|
+| `synapse-skill-judge-design` | Slot order reversed — reads "the judge design" (Yoda speak). Should be `design-judge`. |
+| `synapse-skill-design-validate` | `validate` is a verb. Role slot must be an agentive noun (`validator`). |
+
+## Frontmatter
+
+Required fields on every agent `.md` file:
+
+```yaml
+name: <slug>           # must equal filename AND match {domain}-{subdomain}-{scope}-{role}
+domain: <value>
+subdomain: <value>
+scope: <noun>          # what the agent operates over
+role: <noun>           # what the agent IS
+```
 
 ## Tags
 

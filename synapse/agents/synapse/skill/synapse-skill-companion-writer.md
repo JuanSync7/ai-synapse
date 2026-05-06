@@ -3,6 +3,7 @@ name: synapse-skill-companion-writer
 description: Writes a single companion file for a Claude Code skill
 domain: synapse
 subdomain: skill
+scope: companion
 role: writer
 ---
 

@@ -3,6 +3,7 @@ name: synapse-skill-signal-orchestrator
 description: "Signal-strength orchestrator — dispatches anatomy/design/companion sub-agents in parallel and aggregates their verdicts into a unified APPROVE/REVISE/ESCALATE before eval generation"
 domain: synapse
 subdomain: skill
+scope: signal
 role: orchestrator
 tags: [signal-strength, skill-review, authoring-quality, orchestration]
 ---
@@ -11,12 +12,12 @@ tags: [signal-strength, skill-review, authoring-quality, orchestration]
 
 ## Mental Model
 
-Skill creation has no quality gate between draft and eval generation. Without a structural+design review at `[R]`, defective skills reach `write-skill-eval` and `/improve-skill` with anatomy gaps (missing frontmatter, descriptions that summarize workflow rather than route, absent Wrong-Tool Detection) and design defects (procedure instead of policy, no failure-mode tracing, bloat) that should have been stopped earlier. This agent closes that gap by acting as a thin orchestrator: it dispatches three focused sub-agents in parallel — anatomy (binary), design (graded), companion (pass/fail) — and aggregates their verdicts into a single APPROVE / REVISE / ESCALATE signal. Decomposition matters because mixing structural, quality, and companion concerns in one prompt degrades each judgment; the orchestrator itself holds no judgment, only an aggregation rule.
+Skill creation has no quality gate between draft and eval generation. Without a structural+design review at `[R]`, defective skills reach `write-skill-eval` and `/synapse-skill-skill-improver` with anatomy gaps (missing frontmatter, descriptions that summarize workflow rather than route, absent Wrong-Tool Detection) and design defects (procedure instead of policy, no failure-mode tracing, bloat) that should have been stopped earlier. This agent closes that gap by acting as a thin orchestrator: it dispatches three focused sub-agents in parallel — anatomy (binary), design (graded), companion (pass/fail) — and aggregates their verdicts into a single APPROVE / REVISE / ESCALATE signal. Decomposition matters because mixing structural, quality, and companion concerns in one prompt degrades each judgment; the orchestrator itself holds no judgment, only an aggregation rule.
 
 ## Inputs
 
 - **Skill directory path** — directory containing `SKILL.md` and optional `references/`, `templates/` subdirectories.
-- EVAL.md is **out of scope** even if present; it has its own lifecycle (`write-skill-eval`, `synapse-gatekeeper`).
+- EVAL.md is **out of scope** even if present; it has its own lifecycle (`write-skill-eval`, `synapse-router-artifact-gatekeeper`).
 
 ## Dispatch
 
@@ -24,8 +25,8 @@ Dispatch all three sub-agents **in parallel** (single message, three Task calls)
 
 | Sub-agent | Role | Spec source loaded at runtime |
 |-----------|------|-------------------------------|
-| `synapse-skill-anatomy-reviewer` | Binary gate on SKILL.md structural anatomy | `synapse/skills/synapse-creator/references/skill-anatomy.md` |
-| `synapse-skill-design-grader` | Graded 1-5 per design-quality dimension | `synapse/skills/synapse-creator/references/design-principles-skill.md` |
+| `synapse-skill-anatomy-reviewer` | Binary gate on SKILL.md structural anatomy | `synapse/skills/synapse-router-artifact-creator/references/skill-anatomy.md` |
+| `synapse-skill-design-grader` | Graded 1-5 per design-quality dimension | `synapse/skills/synapse-router-artifact-creator/references/design-principles-skill.md` |
 | `synapse-skill-companion-auditor` | Audit `references/` + `templates/` progressive disclosure | progressive-disclosure rules in `design-principles-skill.md` |
 
 Pass each sub-agent the skill directory path (or SKILL.md path for design-grader/anatomy-reviewer). Collect their raw outputs and label findings by source: `[anatomy]`, `[design]`, `[companion]`.
@@ -40,7 +41,7 @@ Apply exactly this rule — no judgment, no extrapolation:
 - **REVISE** if: any anatomy fail OR design avg < 3.5 OR any dimension < 2 OR companion pass rate < 90%.
 - **ESCALATE** if: REVISE verdict on second cycle (likely a structural design issue, not a wording fix).
 
-**Cycle tracking lives in the dispatcher**, not in this orchestrator. The orchestrator is stateless — it reviews, aggregates, returns. The dispatcher (`synapse-creator` `[R]` phase or `/improve-skill`) decides whether this is cycle 1 or 2 and whether to emit ESCALATE.
+**Cycle tracking lives in the dispatcher**, not in this orchestrator. The orchestrator is stateless — it reviews, aggregates, returns. The dispatcher (`synapse-router-artifact-creator` `[R]` phase or `/synapse-skill-skill-improver`) decides whether this is cycle 1 or 2 and whether to emit ESCALATE.
 
 If 0 companion files exist, the companion-auditor returns "No companions — skip"; treat that section's pass rate as 100%.
 

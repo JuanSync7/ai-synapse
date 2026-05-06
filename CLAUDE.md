@@ -6,7 +6,7 @@ Project-level guidance for Claude Code working in ai-synapse. For repo layout, i
 
 A central library of composable artifacts (skills, agents, protocols, tools) for Claude Code and other AI coding harnesses. Three artifact homes:
 
-- **`synapse/`** — framework artifacts (the meta-tools that build/evaluate/govern other artifacts: skill-creator, gatekeeper, eval generators, orchestration).
+- **`synapse/`** — framework artifacts (the meta-tools that build/evaluate/govern other artifacts: artifact-creator, gatekeeper, eval generators, suite validator, skill improver).
 - **`src/`** — adopter artifacts owned by this repo. May be empty in a pure framework distribution.
 - **`external/`** — externally-owned submodule suites with their own CI and shared config.
 
@@ -26,9 +26,9 @@ Two layers of validation apply. Layer 1 is automatic; Layer 2 is on you.
 
 | Change | Run |
 |--------|-----|
-| New skill or external import | `/synapse-creator skill` (full pipeline) → `/synapse-gatekeeper` |
-| Modified existing skill (SKILL.md, references/, templates/) | `/improve-skill` (score-fix loop against existing EVAL.md) |
-| New or modified agent / protocol / tool / pathway | `/synapse-gatekeeper <artifact-path>` |
+| New skill or external import | `/synapse-router-artifact-creator skill` (full pipeline) → `/synapse-router-artifact-gatekeeper` |
+| Modified existing skill (SKILL.md, references/, templates/) | `/synapse-skill-skill-improver` (score-fix loop against existing EVAL.md) |
+| New or modified agent / protocol / tool / pathway | `/synapse-router-artifact-gatekeeper <artifact-path>` |
 | Trivial changes (typos, formatting-only) | Layer 1 is sufficient |
 
 **New artifacts must be certified before merging to `main`.** Include the gatekeeper APPROVE verdict in the PR description. If not ready, mark `status: draft` in the appropriate registry — this is tracked and must be resolved before the artifact is considered production-ready. See [`GOVERNANCE.md`](GOVERNANCE.md) for full promotion criteria.
@@ -39,7 +39,7 @@ End-to-end pipeline metadata lives in [`synapse/SKILLS_REGISTRY.yaml`](synapse/S
 
 ## Skill Design Principles
 
-Apply when writing or modifying skills. Full reference: [`synapse/skills/synapse-creator/references/design-principles-skill.md`](synapse/skills/synapse-creator/references/design-principles-skill.md).
+Apply when writing or modifying skills. Full reference: [`synapse/skills/synapse-router-artifact-creator/references/design-principles-skill.md`](synapse/skills/synapse-router-artifact-creator/references/design-principles-skill.md).
 
 1. **Context injection, not programming** — only include what the agent can't derive from training. Token bloat degrades output quality.
 2. **Mental model before mechanics** — lead with a conceptual framing paragraph, then rules.
@@ -65,7 +65,7 @@ Every directory in the repo must have a README.md (exceptions: dot-directories a
 - **Description is a routing contract.** Frontmatter `description` specifies *when* a skill fires, not *what* it does. If the description could replace reading the body, it's too broad.
 - **Skills with 3+ phases** include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when intent doesn't match.
-- **EVAL.md files are generated artifacts** containing structural criteria, output criteria, and test prompts. Run `/write-synapse-eval <artifact-path>` to regenerate.
+- **EVAL.md files are generated artifacts** containing structural criteria, output criteria, and test prompts. Run `/synapse-router-eval-writer <artifact-path>` to regenerate.
 - **Pipeline-routable skills** register a stage entry in [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml) with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`. Non-pipeline skills only need a row in [`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md).
 - **Taxonomy values** must come from the controlled vocabularies in [`taxonomy/`](taxonomy/). If nothing fits, propose an addition there — don't invent ad hoc values.
 
