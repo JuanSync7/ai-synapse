@@ -1,4 +1,4 @@
-.PHONY: all init install claude codex codex-project gemini agents list available clean zip reorg check-links tag-stable tag-dev
+.PHONY: all init install claude codex codex-project gemini agents list available clean zip reorg check-links tag-stable tag-dev test
 
 all:
 	@echo "Usage: make <command> [args...]"
@@ -109,6 +109,11 @@ tag-stable:
 
 tag-dev:
 	./scripts/tag-dev.sh
+
+# --- Tests ---
+# make test → runs pytest, plus the bash-driven CLI/version tests.
+test:
+	./scripts/test.sh
 
 # make reorg → show status (for other commands, use ./scripts/reorganize.sh directly)
 reorg:
