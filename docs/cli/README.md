@@ -20,6 +20,7 @@ Per-command documentation for the `cortex` dispatcher. Run `./cortex help <comma
 | [audit](audit.md) | Companion artifact audit |
 | [doctor](doctor.md) | Scan installed.lock for 7 finding categories |
 | [doctor symlinks](doctor-symlinks.md) | Legacy broken-symlink check (now a subcommand) |
+| [drift](drift.md) | Resolve drift (show, stash, restore, adopt, ignore, list-stashes) |
 | [clean](clean.md) | Remove all installed symlinks |
 | [check-links](check-links.md) | Validate markdown links |
 | [reorganize](reorganize.md) | Domain-based artifact reorganization |
