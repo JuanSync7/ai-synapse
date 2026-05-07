@@ -25,6 +25,7 @@ import hashing  # noqa: E402
 import lockfile as lf_mod  # noqa: E402
 import pins as pins_mod  # noqa: E402
 import pins_resolver as resolver  # noqa: E402
+import telemetry as _telemetry  # noqa: E402
 
 _HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
@@ -85,6 +86,11 @@ def scan_drift(
                     "install_path": art.install_path,
                 },
             ))
+            _telemetry.emit(
+                "drift_detected",
+                artifact=key,
+                metadata={"expected": art.content_hash, "actual": actual},
+            )
     return out
 
 

@@ -29,6 +29,7 @@ if str(_HERE) not in sys.path:
 
 import clerk_state as cs
 import clerk_upstream as cu
+import telemetry as _telemetry
 
 Action = Literal[
     "bump",
@@ -223,14 +224,10 @@ def render_pr_body(plan: BumpPlan, repo_root: pathlib.Path, *, runner=subprocess
 
 def _emit_event(event_type: str, plan: BumpPlan, *, exit_status: str = "ok",
                 metadata: dict | None = None) -> None:
-    """T8 telemetry hook. Currently a no-op.
+    """T8 telemetry hook — dispatches to the configured sinks.
 
-    T8 will dispatch (event_type, payload) to the configured sinks
-    (file/HTTP/OTLP). For now this is the single call site clerk uses; T8
-    can swap the body without touching the orchestration flow.
-
-    Argument schema (will become the v1 telemetry event):
-        timestamp     str   - ISO8601 UTC, set by T8
+    Event schema (v1):
+        timestamp     str   - ISO8601 UTC, set by telemetry
         event_type    str   - "clerk_bump_planned" | "clerk_bumped"
                               | "clerk_force_push_aborted" | "clerk_dirty_abort"
                               | "clerk_no_auth" | "clerk_branch_exists"
@@ -238,9 +235,27 @@ def _emit_event(event_type: str, plan: BumpPlan, *, exit_status: str = "ok",
         artifact      str   - plan.submodule_path
         version       str   - plan.target_tag
         exit_status   str   - "ok" | "error"
-        metadata      dict  - {current_sha, target_sha, upstream_url, pr_url?}
+        metadata      dict  - {current_sha, target_sha, upstream_url, pr_url?, ...}
+
+    Non-raising: telemetry.emit swallows all exceptions internally.
     """
-    return None
+    md = {
+        "current_sha": plan.current_sha,
+        "target_sha": plan.target_sha,
+        "upstream_url": plan.upstream_url,
+        "action": plan.action,
+    }
+    if plan.pr_url:
+        md["pr_url"] = plan.pr_url
+    if metadata:
+        md.update(metadata)
+    _telemetry.emit(
+        event_type,
+        artifact=plan.submodule_path,
+        version=plan.target_tag,
+        exit_status=exit_status,
+        metadata=md,
+    )
 
 
 # ---------------------------------------------------------------------------

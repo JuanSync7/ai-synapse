@@ -10,9 +10,16 @@ import datetime
 import pathlib
 import socket
 import subprocess
+import sys
 
 from hashing import hash_directory
 from lockfile import Artifact, External, Lockfile
+
+_HERE = pathlib.Path(__file__).resolve().parent
+if str(_HERE) not in sys.path:
+    sys.path.insert(0, str(_HERE))
+
+import telemetry as _telemetry  # noqa: E402
 
 
 def upsert_artifact(
@@ -35,6 +42,11 @@ def upsert_artifact(
         content_hash=content_hash,
         type=type,
         status="installed",
+    )
+    _telemetry.emit(
+        "install",
+        artifact=key,
+        metadata={"type": type, "install_path": install_path},
     )
 
 
@@ -67,11 +79,17 @@ def upsert_external(
 
 def remove_artifact(lockfile: Lockfile, key: str) -> None:
     """Drop an artifact entry. No-op if absent."""
+    existed = key in lockfile.artifacts
     lockfile.artifacts.pop(key, None)
+    if existed:
+        _telemetry.emit("uninstall", artifact=key)
 
 
 def remove_external(lockfile: Lockfile, key: str) -> None:
+    existed = key in lockfile.externals
     lockfile.externals.pop(key, None)
+    if existed:
+        _telemetry.emit("uninstall", artifact=key, metadata={"kind": "external"})
 
 
 def _git_head(repo_root: pathlib.Path) -> str:
