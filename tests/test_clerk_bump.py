@@ -22,7 +22,8 @@ LIB_DIR = REPO_ROOT / "scripts" / "lib"
 @pytest.fixture
 def mods():
     sys.path.insert(0, str(LIB_DIR))
-    for n in ("clerk_bump", "clerk_state", "clerk_upstream"):
+    for n in ("clerk_bump", "clerk_state", "clerk_upstream", "clerk_auth",
+              "clerk_auth_config"):
         if n in sys.modules:
             del sys.modules[n]
     cb = importlib.import_module("clerk_bump")
@@ -30,6 +31,26 @@ def mods():
     cu = importlib.import_module("clerk_upstream")
     yield cb, cs, cu
     sys.path.remove(str(LIB_DIR))
+
+
+class _FakeAuthAdapter:
+    """Minimal stand-in for clerk_auth.PatAuthAdapter / AppAuthAdapter."""
+    def __init__(self, *, authenticated: bool = True, env: dict | None = None):
+        self._auth = authenticated
+        self._env = env or {}
+
+    def get_token(self):
+        if not self._auth:
+            from clerk_auth import AuthError
+            raise AuthError("test: not authenticated")
+        from clerk_auth import AuthResult
+        return AuthResult(mode="pat", token="test-token", auth_user="test")
+
+    def is_authenticated(self):
+        return self._auth
+
+    def env_for_subprocess(self):
+        return dict(self._env)
 
 
 def _proc(stdout: str = "", returncode: int = 0, stderr: str = ""):
@@ -248,12 +269,11 @@ def test_apply_bump_aborts_no_auth(mods, tmp_path):
     )
 
     def runner(args, **kw):
-        if args[:2] == ["gh", "auth"]:
-            return _proc("not logged in", returncode=1)
         return _proc("")
 
+    auth = _FakeAuthAdapter(authenticated=False)
     with pytest.raises(RuntimeError, match="not authenticated"):
-        cb.apply_bump(plan, repo, cs.empty(), runner=runner)
+        cb.apply_bump(plan, repo, cs.empty(), runner=runner, auth_adapter=auth)
     assert plan.action == "abort-no-auth"
 
 
@@ -267,14 +287,13 @@ def test_apply_bump_aborts_dirty(mods, tmp_path):
     )
 
     def runner(args, **kw):
-        if args[:2] == ["gh", "auth"]:
-            return _proc("ok", returncode=0)
         if args[0] == "git" and "status" in args and "--porcelain" in args:
             return _proc(" M somefile\n", returncode=0)
         return _proc("")
 
     with pytest.raises(RuntimeError, match="uncommitted"):
-        cb.apply_bump(plan, repo, cs.empty(), runner=runner)
+        cb.apply_bump(plan, repo, cs.empty(), runner=runner,
+                      auth_adapter=_FakeAuthAdapter())
     assert plan.action == "abort-dirty"
 
 
@@ -288,8 +307,6 @@ def test_apply_bump_aborts_branch_exists(mods, tmp_path):
     )
 
     def runner(args, **kw):
-        if args[:2] == ["gh", "auth"]:
-            return _proc("ok", returncode=0)
         if "status" in args and "--porcelain" in args:
             return _proc("", returncode=0)
         if "ls-remote" in args and "--exit-code" in args:
@@ -297,7 +314,8 @@ def test_apply_bump_aborts_branch_exists(mods, tmp_path):
         return _proc("")
 
     with pytest.raises(RuntimeError, match="already exists"):
-        cb.apply_bump(plan, repo, cs.empty(), runner=runner)
+        cb.apply_bump(plan, repo, cs.empty(), runner=runner,
+                      auth_adapter=_FakeAuthAdapter())
     assert plan.action == "abort-branch-exists"
 
 
@@ -311,8 +329,6 @@ def test_apply_bump_happy_path_records_state(mods, tmp_path):
     )
 
     def runner(args, **kw):
-        if args[:2] == ["gh", "auth"]:
-            return _proc("ok", returncode=0)
         if args[:2] == ["gh", "pr"]:
             return _proc("https://github.com/o/r/pull/42\n", returncode=0)
         if "status" in args and "--porcelain" in args:
@@ -323,7 +339,8 @@ def test_apply_bump_happy_path_records_state(mods, tmp_path):
 
     state = cs.empty()
     state_path = tmp_path / "clerk_state.toml"
-    pr_url = cb.apply_bump(plan, repo, state, runner=runner, state_path=state_path)
+    pr_url = cb.apply_bump(plan, repo, state, runner=runner, state_path=state_path,
+                           auth_adapter=_FakeAuthAdapter())
     assert pr_url == "https://github.com/o/r/pull/42"
     assert state.bumps["external/foo"].last_pr_url == pr_url
     assert state.bumps["external/foo"].last_bumped_to == "v1.0.0"

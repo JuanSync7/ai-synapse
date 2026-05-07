@@ -27,6 +27,7 @@ _HERE = pathlib.Path(__file__).resolve().parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
+import clerk_auth as _ca
 import clerk_state as cs
 import clerk_upstream as cu
 import telemetry as _telemetry
@@ -264,22 +265,28 @@ def _emit_event(event_type: str, plan: BumpPlan, *, exit_status: str = "ok",
 
 def _run(args: list[str], *, cwd: pathlib.Path | None = None,
          runner=subprocess.run, check: bool = True,
-         capture: bool = True) -> subprocess.CompletedProcess:
+         capture: bool = True,
+         env_extra: dict[str, str] | None = None) -> subprocess.CompletedProcess:
+    env = None
+    if env_extra:
+        env = dict(os.environ)
+        env.update(env_extra)
     return runner(
         args,
         cwd=str(cwd) if cwd else None,
         check=check, capture_output=capture, text=True,
+        env=env,
     )
 
 
-def _gh_authenticated(runner=subprocess.run) -> bool:
-    """`gh auth status` returns 0 iff a token is configured. Missing `gh` → False."""
-    try:
-        proc = runner(["gh", "auth", "status"],
-                      check=False, capture_output=True, text=True)
-        return proc.returncode == 0
-    except FileNotFoundError:
-        return False
+def _get_auth_adapter():
+    """Return the active auth adapter (PAT or App) per ~/.synapse/config.toml.
+
+    T6 replaces the T7-era `_gh_authenticated()` boolean check. The adapter
+    returned exposes `get_token()` (raises AuthError if no auth available)
+    and `env_for_subprocess()` (vars to inject into git/gh subprocess calls).
+    """
+    return _ca.get_adapter()
 
 
 def _branch_exists_remote(repo_root: pathlib.Path, branch: str,
@@ -324,6 +331,7 @@ def apply_bump(
     runner=subprocess.run,
     state_path: pathlib.Path | None = None,
     pr_base: str = "main",
+    auth_adapter=None,
 ) -> str:
     """Execute a 'bump' plan. Returns PR URL.
 
@@ -352,15 +360,25 @@ def apply_bump(
     sub_abs = repo_root / plan.submodule_path
     branch = _branch_name(plan)
 
-    # 1. Auth
-    if not _gh_authenticated(runner=runner):
+    # 1. Auth — resolve adapter, fetch token (raises AuthError if no auth).
+    if auth_adapter is None:
+        try:
+            auth_adapter = _get_auth_adapter()
+        except _ca.AuthError as e:
+            plan.action = "abort-no-auth"
+            plan.reason = f"auth adapter init failed: {e}"
+            _emit_event("clerk_no_auth", plan, exit_status="error",
+                        metadata={"auth_error": str(e)})
+            raise RuntimeError(plan.reason) from e
+    try:
+        auth_result = auth_adapter.get_token()
+    except _ca.AuthError as e:
         plan.action = "abort-no-auth"
-        plan.reason = (
-            "gh CLI is not authenticated; run `gh auth login` "
-            "(T6 will introduce a richer auth abstraction)"
-        )
-        _emit_event("clerk_no_auth", plan, exit_status="error")
-        raise RuntimeError(plan.reason)
+        plan.reason = f"clerk not authenticated: {e}"
+        _emit_event("clerk_no_auth", plan, exit_status="error",
+                    metadata={"auth_error": str(e), "auth_mode": getattr(auth_adapter, "cfg", None).__class__.__name__ if hasattr(auth_adapter, "cfg") else ""})
+        raise RuntimeError(plan.reason) from e
+    auth_env = auth_adapter.env_for_subprocess()
 
     # 2. Submodule clean
     if _submodule_dirty(repo_root, plan.submodule_path, runner=runner):
@@ -402,19 +420,19 @@ def apply_bump(
         _run(["git", "-C", str(repo_root), "commit", "-m", _commit_message(plan)],
              runner=runner)
 
-        # 8. Push (no --force, ever)
+        # 8. Push (no --force, ever) — inject auth env if adapter provides one
         _run(["git", "-C", str(repo_root), "push", "-u", "origin", branch],
-             runner=runner)
+             runner=runner, env_extra=auth_env)
         pushed = True
 
-        # 9. gh pr create
+        # 9. gh pr create — inject auth env so installation tokens reach gh
         body = render_pr_body(plan, repo_root, runner=runner)
         title = f"chore(external): bump {pathlib.Path(plan.submodule_path).name} to {plan.target_tag}"
         proc = _run(
             ["gh", "pr", "create",
              "--base", pr_base, "--head", branch,
              "--title", title, "--body", body],
-            cwd=repo_root, runner=runner,
+            cwd=repo_root, runner=runner, env_extra=auth_env,
         )
         # gh prints the PR URL on stdout
         pr_url = (proc.stdout or "").strip().splitlines()[-1] if proc.stdout else ""
