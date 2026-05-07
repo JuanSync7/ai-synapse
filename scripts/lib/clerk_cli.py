@@ -26,6 +26,8 @@ _HERE = pathlib.Path(__file__).resolve().parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
+import clerk_auth as ca  # noqa: E402
+import clerk_auth_config as cac  # noqa: E402
 import clerk_bump as cb  # noqa: E402
 import clerk_state as cs  # noqa: E402
 import clerk_upstream as cu  # noqa: E402
@@ -220,16 +222,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         issues += 1
         state = cs.empty()
 
-    # 2. gh auth
-    try:
-        proc = subprocess.run(["gh", "auth", "status"],
-                              check=False, capture_output=True, text=True)
-        if proc.returncode == 0:
-            print("  [ok]   gh auth status: authenticated")
-        else:
-            print("  [warn] gh auth status: not authenticated (--apply will refuse)")
-    except FileNotFoundError:
-        print("  [warn] gh CLI not installed (--apply will refuse)")
+    # 2. Auth (PAT or App)
+    _doctor_report_auth(probe=getattr(args, "probe_auth", False))
 
     # 3. .gitmodules
     submodules = cu.parse_gitmodules(repo)
@@ -247,6 +241,161 @@ def cmd_doctor(args: argparse.Namespace) -> int:
                 print(f"    [ok]   {path}: last_bumped_to={last_tag}")
 
     return 0 if issues == 0 else 1
+
+
+# ---------------------------------------------------------------------------
+# auth subcommands (T6)
+# ---------------------------------------------------------------------------
+
+def _doctor_report_auth(*, probe: bool = False) -> None:
+    """Print clerk's auth status. Never prints token values.
+
+    Without `probe`, App mode only validates that config + key file are
+    present — does NOT mint a token (would consume GitHub rate limit).
+    """
+    try:
+        cfg = cac.load()
+    except ValueError as e:
+        print(f"  [ERROR] auth config invalid: {e}")
+        return
+
+    if cfg.auth == "pat":
+        token_env = cfg.pat.token_env
+        if os.environ.get(token_env, "").strip():
+            print(f"  [ok]   auth: PAT — token from ${token_env}")
+            return
+        # Check ambient gh
+        ok, user = ca._gh_auth_status_user()
+        if ok:
+            label = f"({user})" if user else ""
+            print(f"  [ok]   auth: PAT — gh CLI ambient {label}".rstrip())
+        else:
+            print(f"  [warn] auth: PAT — NOT AUTHENTICATED "
+                  f"(set ${token_env} or run `gh auth login`)")
+        return
+
+    # App mode
+    if cfg.app is None:
+        print("  [ERROR] auth: App mode but [clerk.app] not configured")
+        return
+    key_present = cfg.app.private_key_path.exists()
+    if not key_present:
+        print(f"  [warn] auth: App — private key missing at "
+              f"{cfg.app.private_key_path}")
+        return
+    if not probe:
+        print(f"  [ok]   auth: App — app_id={cfg.app.app_id} "
+              f"installation_id={cfg.app.installation_id} (config valid; "
+              f"--probe-auth to mint a real token)")
+        return
+    # Probe: actually mint a token
+    try:
+        adapter = ca.AppAuthAdapter(cfg.app)
+        result = adapter.get_token()
+        print(f"  [ok]   auth: App — app_id={cfg.app.app_id} "
+              f"(token expires {result.expires_at})")
+    except ca.AuthError as e:
+        print(f"  [ERROR] auth: App — NOT AUTHENTICATED — {e}")
+
+
+def cmd_auth_show(args: argparse.Namespace) -> int:
+    cfg = cac.load()
+    if args.json:
+        out = {
+            "auth": cfg.auth,
+            "config_path": str(cac.config_path()),
+            "pat": {"token_env": cfg.pat.token_env},
+            "app": (
+                {
+                    "app_id": cfg.app.app_id,
+                    "installation_id": cfg.app.installation_id,
+                    "private_key_path": str(cfg.app.private_key_path),
+                }
+                if cfg.app else None
+            ),
+        }
+        print(json.dumps(out, indent=2))
+        return 0
+    print(f"clerk auth config: {cac.config_path()}")
+    print(f"  auth     = {cfg.auth!r}")
+    print(f"  pat.token_env = {cfg.pat.token_env!r}  "
+          f"(value NOT shown for security)")
+    if cfg.app is not None:
+        print(f"  app.app_id          = {cfg.app.app_id!r}")
+        print(f"  app.installation_id = {cfg.app.installation_id!r}")
+        print(f"  app.private_key_path = {cfg.app.private_key_path}")
+    else:
+        print("  app: (not configured)")
+    return 0
+
+
+def cmd_auth_set_mode(args: argparse.Namespace) -> int:
+    if args.mode not in ("pat", "app"):
+        print(f"error: mode must be 'pat' or 'app', got {args.mode!r}",
+              file=sys.stderr)
+        return 2
+
+    cfg = cac.load()
+    cfg.auth = args.mode
+    if args.token_env:
+        cfg.pat.token_env = args.token_env
+    if args.mode == "app":
+        # Build/update app config
+        existing = cfg.app
+        app_id = args.app_id or (existing.app_id if existing else None)
+        iid = args.installation_id or (existing.installation_id if existing else None)
+        keyp = (
+            pathlib.Path(os.path.expanduser(args.private_key_path))
+            if args.private_key_path
+            else (existing.private_key_path if existing else None)
+        )
+        missing = []
+        if not app_id: missing.append("--app-id")
+        if not iid: missing.append("--installation-id")
+        if not keyp: missing.append("--private-key-path")
+        if missing:
+            print(
+                "error: app mode requires " + ", ".join(missing)
+                + " (or pre-existing [clerk.app] in the config file)",
+                file=sys.stderr,
+            )
+            return 2
+        cfg.app = cac.AppConfig(
+            app_id=str(app_id),
+            installation_id=str(iid),
+            private_key_path=keyp,
+        )
+
+    cac.save(cfg, cac.config_path())
+    print(f"clerk auth mode set to {cfg.auth!r}; config: {cac.config_path()}")
+    return 0
+
+
+def cmd_auth_probe(args: argparse.Namespace) -> int:
+    try:
+        cfg = cac.load()
+    except ValueError as e:
+        print(f"error: invalid config: {e}", file=sys.stderr)
+        return 1
+    try:
+        adapter = ca.get_adapter(cfg)
+    except ca.AuthError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+
+    try:
+        result = adapter.get_token()
+    except ca.AuthError as e:
+        print(f"error: probe failed — {e}", file=sys.stderr)
+        return 1
+
+    # NEVER print the token itself.
+    print(f"clerk auth probe: OK")
+    print(f"  mode      = {result.mode}")
+    print(f"  auth_user = {result.auth_user}")
+    if result.expires_at:
+        print(f"  expires_at = {result.expires_at}")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -278,7 +427,34 @@ def build_parser() -> argparse.ArgumentParser:
     dp = sub.add_parser("doctor",
                         help="Clerk-self checks (state file, gh auth, .gitmodules)")
     dp.add_argument("--state", default=None)
+    dp.add_argument("--probe-auth", action="store_true",
+                    help="Actually mint an App-mode token (consumes GitHub rate limit)")
     dp.set_defaults(func=cmd_doctor)
+
+    # auth ----------------------------------------------------------------
+    ap = sub.add_parser("auth", help="Manage clerk auth config (PAT / App)")
+    asub = ap.add_subparsers(dest="auth_cmd", required=True)
+
+    ash = asub.add_parser("show", help="Print clerk auth config (no token values)")
+    ash.add_argument("--json", action="store_true")
+    ash.set_defaults(func=cmd_auth_show)
+
+    asm = asub.add_parser("set-mode",
+                          help="Set auth mode to 'pat' or 'app' (writes config file)")
+    asm.add_argument("mode", choices=["pat", "app"])
+    asm.add_argument("--token-env", default=None,
+                     help="Env var name for PAT token (default: SYNAPSE_CLERK_TOKEN)")
+    asm.add_argument("--app-id", default=None,
+                     help="GitHub App ID (required for first-time set-mode app)")
+    asm.add_argument("--installation-id", default=None,
+                     help="Installation ID (required for first-time set-mode app)")
+    asm.add_argument("--private-key-path", default=None,
+                     help="Path to RSA private key (required for first-time set-mode app)")
+    asm.set_defaults(func=cmd_auth_set_mode)
+
+    apr = asub.add_parser("probe",
+                          help="Probe current auth (PAT: env/ambient; App: mint a token)")
+    apr.set_defaults(func=cmd_auth_probe)
 
     return p
 
