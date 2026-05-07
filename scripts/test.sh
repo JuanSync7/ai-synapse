@@ -43,6 +43,10 @@ echo "==> bash tests/test_clerk_cli.sh"
 bash tests/test_clerk_cli.sh
 
 echo ""
+echo "==> bash tests/test_clerk_auth_cli.sh"
+bash tests/test_clerk_auth_cli.sh
+
+echo ""
 echo "==> bash tests/test_telemetry_cli.sh"
 bash tests/test_telemetry_cli.sh
 

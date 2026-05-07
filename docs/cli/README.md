@@ -27,7 +27,11 @@ Per-command documentation for the `cortex` dispatcher. Run `./cortex help <comma
 | [clerk](clerk.md) | External submodule bump automation (overview) |
 | [clerk bump-externals](clerk-bump-externals.md) | Detect upstream tags; open bump PRs |
 | [clerk status](clerk-status.md) | Summarize `~/.synapse/clerk_state.toml` |
-| [clerk doctor](clerk-doctor.md) | Clerk-self checks (state, gh auth, .gitmodules) |
+| [clerk doctor](clerk-doctor.md) | Clerk-self checks (state, auth, .gitmodules) |
+| [clerk auth](clerk-auth.md) | Manage clerk auth (PAT / GitHub App) — overview |
+| [clerk auth show](clerk-auth-show.md) | Print auth config (no token values) |
+| [clerk auth set-mode](clerk-auth-set-mode.md) | Switch between PAT and App, persist config |
+| [clerk auth probe](clerk-auth-probe.md) | Exercise the active auth adapter |
 | [telemetry](telemetry.md) | Lifecycle event emission (overview, sinks, opt-out) |
 | [telemetry status](telemetry-status.md) | Show telemetry config and file size |
 | [telemetry rotate](telemetry-rotate.md) | Gzip events.jsonl and truncate |
