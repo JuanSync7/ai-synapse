@@ -27,6 +27,7 @@ import lockfile as lf_mod  # noqa: E402
 import pins as pins_mod  # noqa: E402
 import pins_resolver as resolver  # noqa: E402
 import synapse_paths  # noqa: E402
+import telemetry as _telemetry  # noqa: E402
 
 PINS_FILENAME = "pins.toml"
 
@@ -75,6 +76,7 @@ def cmd_pin(args) -> int:
     before = pins.pin
     pins.pin = value
     pins_mod.save(pins, p)
+    _telemetry.emit("pin_changed", metadata={"old": before, "new": value})
     print(f"pin: {before} -> {value}")
     return 0
 
@@ -85,6 +87,7 @@ def cmd_unpin(_args) -> int:
     before = pins.pin
     pins.pin = "latest"
     pins_mod.save(pins, p)
+    _telemetry.emit("pin_unpinned", metadata={"old": before, "new": "latest"})
     print(f"pin: {before} -> latest")
     return 0
 
@@ -120,6 +123,7 @@ def cmd_bump(_args) -> int:
 
     pins.pin = new_pin
     pins_mod.save(pins, p)
+    _telemetry.emit("pin_bumped", metadata={"old": before, "new": new_pin})
     print(f"pin: {before} -> {new_pin}")
     return 0
 

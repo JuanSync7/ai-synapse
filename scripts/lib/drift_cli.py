@@ -29,6 +29,7 @@ import drift_diff as dd_mod  # noqa: E402
 import drift_resolve as dr_mod  # noqa: E402
 import lockfile as lf_mod  # noqa: E402
 import synapse_paths  # noqa: E402
+import telemetry as _telemetry  # noqa: E402
 
 PINS_FILENAME = "pins.toml"
 
@@ -107,6 +108,9 @@ def cmd_stash(args) -> int:
     except (ValueError, subprocess.CalledProcessError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
+    _telemetry.emit("drift_stashed", artifact=key,
+                    metadata={"stash_dir": str(stash_dir),
+                              "reason": args.reason or ""})
     print(
         f"Stashed {key} to {stash_dir}/  "
         f"(use cortex drift restore {stash_dir.name} to recover)"
@@ -128,6 +132,8 @@ def cmd_restore(args) -> int:
     except (ValueError, subprocess.CalledProcessError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
+    _telemetry.emit("drift_restored", artifact=args.stash_id,
+                    metadata={"stash_id": args.stash_id})
     print(f"Restored stash {args.stash_id}")
     return 0
 
@@ -177,6 +183,9 @@ def cmd_adopt(args) -> int:
         rel = cr_path.relative_to(repo_root)
     except ValueError:
         rel = cr_path
+    _telemetry.emit("drift_adopted", artifact=key,
+                    metadata={"change_request": str(rel),
+                              "reason": args.reason or ""})
     print(f"Adopted drift in {key} as change_request: {rel}")
     print(f"  hint: review and `git add {rel}` to commit")
     return 0
@@ -203,6 +212,9 @@ def cmd_ignore(args) -> int:
         print(f"error: {e}", file=sys.stderr)
         return 2
     when = args.expires or "indefinitely"
+    _telemetry.emit("drift_ignored", artifact=key,
+                    metadata={"expires": args.expires or "",
+                              "reason": args.reason or ""})
     print(f"Ignored drift in {key} until {when}")
     if res.expires_warning:
         print("  warn: no --expires set — drift exception never auto-clears.",
