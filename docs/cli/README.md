@@ -28,3 +28,7 @@ Per-command documentation for the `cortex` dispatcher. Run `./cortex help <comma
 | [clerk bump-externals](clerk-bump-externals.md) | Detect upstream tags; open bump PRs |
 | [clerk status](clerk-status.md) | Summarize `~/.synapse/clerk_state.toml` |
 | [clerk doctor](clerk-doctor.md) | Clerk-self checks (state, gh auth, .gitmodules) |
+| [telemetry](telemetry.md) | Lifecycle event emission (overview, sinks, opt-out) |
+| [telemetry status](telemetry-status.md) | Show telemetry config and file size |
+| [telemetry rotate](telemetry-rotate.md) | Gzip events.jsonl and truncate |
+| [telemetry emit](telemetry-emit.md) | Emit a single event (used by hooks) |
