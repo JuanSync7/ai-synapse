@@ -34,6 +34,6 @@ A "stable" upstream tag is `vX.Y.Z` with no `-` suffix. Pre-release tags (`v1.0.
 
 Only the running clerk should modify this file.
 
-## Telemetry (T8)
+## Telemetry
 
-Clerk has a single internal hook (`clerk_bump._emit_event`) that T8 will wire to the configured sinks (file/HTTP/OTLP). For T7 the hook is a no-op.
+Clerk dispatches events to the configured telemetry sinks via `clerk_bump._emit_event`. Event types: `clerk_bump_planned`, `clerk_bumped`, `clerk_force_push_aborted`, `clerk_dirty_abort`, `clerk_no_auth`, `clerk_branch_exists`, `clerk_network_error`. See [`telemetry`](telemetry.md) for sink configuration.

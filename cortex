@@ -55,6 +55,11 @@ Clerk — automated external/ submodule bumps (cron-driven):
   clerk status                        Summarize ~/.synapse/clerk_state.toml
   clerk doctor                        Clerk-self checks (state, gh auth, .gitmodules)
 
+Telemetry — emit lifecycle events to file/HTTP/OTLP sinks:
+  telemetry status [--json]           Show config, sinks, file size
+  telemetry rotate                    Gzip events.jsonl and truncate
+  telemetry emit <event> [...]        Emit a single event (used by hooks)
+
 Help:
   help [<command>]                    Show help for a command
   --version                           Show version
@@ -272,6 +277,28 @@ CLERKUSAGE
         fi
         shift
         python3 "$SCRIPTS/lib/clerk_cli.py" "$sub" "$@"
+        ;;
+
+    # --- Telemetry ---
+    telemetry)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'TELUSAGE'
+Usage: ./cortex telemetry <subcommand> [args...]
+
+  status [--json]                  Show config, sinks, file size
+  rotate                           Gzip events.jsonl and truncate
+  emit <event_type> [--artifact X] [--version V] [--exit-status ok|error]
+                                   [--metadata K=V ...] [--synapse-repo PATH]
+                                   Emit a single event (used by hooks)
+
+Identity guardrail: telemetry emits and rotates. It NEVER reads back events.
+TELUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/telemetry_cli.py" "$sub" "$@"
         ;;
 
     # --- Help ---
