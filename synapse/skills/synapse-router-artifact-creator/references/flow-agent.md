@@ -51,7 +51,7 @@ Do:
   3. Confirm **input contract** — exact inputs, types, and which are required vs optional
   4. Confirm **output contract** — what the agent returns: shape, format, and success/failure signals
   5. Confirm the agent name matches `[a-z0-9-]+` and is globally unique (no collision in registry)
-  6. Confirm `domain` and `role` values are in `taxonomy/AGENT_TAXONOMY.md`
+  6. Confirm `domain`, `subdomain`, `scope`, and `role` values are in `registry/AGENT_VOCABULARY.md` (slot values live in vocabulary; `taxonomy/AGENT_TAXONOMY.md` defines only slug shape and required fields)
 Don't:
   - Proceed with a vague dispatch context ("it will be called when needed")
   - Accept an output contract of "prose describing what happened"

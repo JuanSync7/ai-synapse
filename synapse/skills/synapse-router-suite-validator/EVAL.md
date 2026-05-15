@@ -12,13 +12,13 @@
 
 <!-- Binary checks against SKILL.md and the skill directory layout. Evaluated WITHOUT running the skill. -->
 
-- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`).
+- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `subdomain`, `scope`, `role`, `tags`, `user-invocable`, `argument-hint`).
   - **Test:** Parse the frontmatter block. Each required field has a non-empty value.
   - **Fail signal:** Any field missing or empty; YAML parse error.
 
-- [ ] **EVAL-S02:** `domain: synapse` and `intent: validate` exist in `taxonomy/SKILL_TAXONOMY.md`.
-  - **Test:** grep for matching rows in `taxonomy/SKILL_TAXONOMY.md`.
-  - **Fail signal:** Either value absent from the taxonomy file.
+- [ ] **EVAL-S02:** `domain: synapse`, `subdomain: router`, `scope: suite`, `role: validator` all exist in `registry/SKILL_VOCABULARY.md`.
+  - **Test:** grep for matching rows in each section of `registry/SKILL_VOCABULARY.md`.
+  - **Fail signal:** Any value absent from the vocabulary file.
 
 - [ ] **EVAL-S03:** SKILL.md is under 300 lines.
   - **Test:** `wc -l SKILL.md` returns ≤ 300.

@@ -67,7 +67,7 @@ Every directory in the repo must have a README.md (exceptions: dot-directories a
 - **Wrong-Tool Detection** sections redirect to sibling skills when intent doesn't match.
 - **EVAL.md files are generated artifacts** containing structural criteria, output criteria, and test prompts. Run `/synapse-router-eval-writer <artifact-path>` to regenerate.
 - **Pipeline-routable skills** register a stage entry in [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml) with `stage_name`, `input_type`, `output_type`, `context_type`, and `requires_*`. Non-pipeline skills only need a row in [`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md).
-- **Taxonomy values** must come from the controlled vocabularies in [`taxonomy/`](taxonomy/). If nothing fits, propose an addition there — don't invent ad hoc values.
+- **Taxonomy values** must come from the controlled vocabularies in [`registry/<TYPE>_VOCABULARY.md`](registry/); [`taxonomy/`](taxonomy/) only defines slug shape and required fields. If nothing fits, propose an addition to the relevant vocabulary file — don't invent ad hoc values.
 
 ## Multi-Harness Note
 

@@ -114,15 +114,18 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 ### Skill flow
 
-> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md)** to validate `domain` and `intent` values against the controlled vocabulary.
+> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md)** for the shape of skill frontmatter (required fields, slug pattern).
+> **Read [`../../../../registry/SKILL_VOCABULARY.md`](../../../../registry/SKILL_VOCABULARY.md)** to validate `domain`, `subdomain`, `scope`, and `role` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
 | SKILL.md exists | File is present and non-empty |
 | EVAL.md exists | File is present (**REJECT if absent**) |
-| Frontmatter complete | `name`, `description`, `domain`, `intent` all present |
-| `domain` in SKILL_TAXONOMY.md | Value matches a row in SKILL_TAXONOMY.md |
-| `intent` in SKILL_TAXONOMY.md | Value matches a row in SKILL_TAXONOMY.md |
+| Frontmatter complete | `name`, `description`, `domain`, `subdomain`, `scope`, `role` all present |
+| `domain` in SKILL_VOCABULARY.md | Value matches a row in the `## Domains` section of SKILL_VOCABULARY.md |
+| `subdomain` in SKILL_VOCABULARY.md | Value matches a row in the `## Subdomains` section of SKILL_VOCABULARY.md |
+| `scope` in SKILL_VOCABULARY.md | Value matches a row in the `## Scopes` section of SKILL_VOCABULARY.md |
+| `role` in SKILL_VOCABULARY.md | Value matches a row in the `## Roles` section of SKILL_VOCABULARY.md |
 | `tags` well-formed | Array of lowercase hyphenated strings |
 | `user-invocable` present | Field exists (true or false) |
 | `argument-hint` present | Present when `user-invocable: true` |
@@ -141,15 +144,18 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Tool flow
 
-> **Read [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md)** to validate `domain`, `action`, and `type` values against the controlled vocabulary.
+> **Read [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md)** for the shape of tool frontmatter (required fields, slug pattern). Note: `kind` is a frontmatter-only field, NOT a slug slot.
+> **Read [`../../../../registry/TOOL_VOCABULARY.md`](../../../../registry/TOOL_VOCABULARY.md)** to validate `domain`, `subdomain`, `action`, `target`, and `kind` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
 | TOOL.md exists | File is present and non-empty |
-| Frontmatter complete | `name`, `description`, `domain`, `action`, `type` all present |
-| `domain` in TOOL_TAXONOMY.md | Value matches a row in TOOL_TAXONOMY.md |
-| `action` in TOOL_TAXONOMY.md | Value matches a row in TOOL_TAXONOMY.md |
-| `type` valid | Value is one of `external`, `internal`, `wrapper` |
+| Frontmatter complete | `name`, `description`, `domain`, `subdomain`, `action`, `target`, `kind` all present |
+| `domain` in TOOL_VOCABULARY.md | Value matches a row in the `## Domains` section |
+| `subdomain` in TOOL_VOCABULARY.md | Value matches a row in the `## Subdomains` section |
+| `action` in TOOL_VOCABULARY.md | Value matches a row in the `## Actions` section |
+| `target` in TOOL_VOCABULARY.md | Value matches a row in the `## Targets` section |
+| `kind` in TOOL_VOCABULARY.md | Value matches a row in the `## Kinds` section (frontmatter-only, not part of slug) |
 | `tags` well-formed | Array of lowercase hyphenated strings |
 | Domain README has row | Domain `README.md` contains a row linking this tool |
 | Listed in TOOL_REGISTRY.md | A row exists in `registry/TOOL_REGISTRY.md` for this tool |
@@ -198,7 +204,7 @@ Use the Tier 2 (Conformance) checks from `references/protocol-checklist.md`.
 
 | Check | Pass condition |
 |-------|---------------|
-| `type` classification accurate | `external`/`internal`/`wrapper` matches the actual content of the tool |
+| `kind` classification accurate | `kind` value matches the actual content of the tool (per `## Kinds` section in TOOL_VOCABULARY.md) |
 | Execution model documented | Inputs, outputs, and invocation method are clearly described |
 | No judgment | Tool is mechanical — if it contains judgment or persona, it should be an agent |
 | Under 300 lines | TOOL.md line count ≤ 300 |

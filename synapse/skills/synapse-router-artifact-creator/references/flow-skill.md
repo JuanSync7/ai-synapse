@@ -30,7 +30,7 @@ Load: `references/shared-steps.md`
 Brief: All validations before any file is written. Atomic creation guarantee.
 Do:
   1. → `shared-steps:placement-decision(skill)` — confirm `src/` or `synapse/` target
-  2. → `shared-steps:validate-frontmatter(skill, $artifact_dir)` — required fields, taxonomy values, name uniqueness
+  2. → `shared-steps:validate-frontmatter(skill, $artifact_dir)` — required fields, slot values against `registry/SKILL_VOCABULARY.md`, slug ↔ frontmatter slot agreement, name uniqueness in `registry/SKILL_REGISTRY.md`
   3. If existing artifact detected at target path → offer "complete partial creation?" or "abort and clean up?"
 Don't:
   - Write any file if any pre-flight step fails

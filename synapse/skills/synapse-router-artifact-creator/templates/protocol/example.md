@@ -21,7 +21,7 @@ tags: [failure-reporting, agent-failure, protocol-failure, observability]
 
 **Why this frontmatter works:**
 - `description` is a trigger/routing contract — tells you WHEN to use it (when you need standardized failure tags), not HOW it works
-- `domain`, `subdomain`, `kind` are from PROTOCOL_TAXONOMY.md; slug `{domain}-{subdomain}-{subject}-{kind}` matches the filename
+- `domain`, `subdomain`, `subject`, `kind` values are picked from PROTOCOL_VOCABULARY.md (PROTOCOL_TAXONOMY.md defines the shape); slug `{domain}-{subdomain}-{subject}-{kind}` matches the filename
 - `tags` are lowercase, hyphenated, descriptive
 
 ---

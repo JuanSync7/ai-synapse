@@ -2,7 +2,10 @@
 name: {{name}}
 description: "{{description}}"
 domain: {{domain}}
-intent: {{intent}}
+subdomain: {{subdomain}}
+scope: {{scope}}
+role: {{role}}
+status: draft
 tags: [{{tags}}]
 user-invocable: true
 argument-hint: "[args]"

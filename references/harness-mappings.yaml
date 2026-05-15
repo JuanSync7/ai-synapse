@@ -18,7 +18,7 @@ harnesses:
       scope: global
       format: SKILL.md          # YAML frontmatter + markdown body
       required_frontmatter: [name, description]
-      extra_frontmatter: [domain, intent, tags, user-invocable, argument-hint]
+      extra_frontmatter: [domain, subdomain, scope, role, tags, user-invocable, argument-hint]
       supports_companion_files: true
       supports_progressive_disclosure: true
     agents:

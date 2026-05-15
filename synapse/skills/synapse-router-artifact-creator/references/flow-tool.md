@@ -24,11 +24,10 @@ Brief: Validate inputs and placement before touching any file. Zero state exists
 
 Do:
   1. Run `shared-steps:validate-frontmatter(tool, $artifact_dir)`:
-     - Required frontmatter fields present: `name`, `description`, `domain`, `action`, `type`, `tags`
-     - `domain` value exists in `taxonomy/TOOL_TAXONOMY.md` domain table
-     - `action` value exists in `taxonomy/TOOL_TAXONOMY.md` action table
-     - `type` value exists in `taxonomy/TOOL_TAXONOMY.md` type table
+     - Required frontmatter fields present: `name`, `description`, `domain`, `subdomain`, `action`, `target`, `kind`, `tags`
+     - `domain`, `subdomain`, `action`, `target`, `kind` values all exist in their matching `## ` section of `registry/TOOL_VOCABULARY.md` (slot values live in vocabulary; `taxonomy/TOOL_TAXONOMY.md` only defines slug shape `{domain}-{subdomain}-{action}-{target}` and frontmatter requirements — `kind` is frontmatter-only, NOT in the slug)
      - `name` matches `[a-z0-9-]+` regex
+     - `name` splits into 4 slug slots matching frontmatter `domain`-`subdomain`-`action`-`target`
      - `name` is globally unique (no collision in `registry/TOOL_REGISTRY.md` or target dir)
   2. Run `shared-steps:placement-decision(tool)`:
      - Default placement: `src/tools/<domain>/<name>/`

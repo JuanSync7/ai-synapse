@@ -41,7 +41,7 @@ Do:
    | **Violation signal** | How do you detect the LLM skipped it? | "The output is wrong" — too vague |
 2. **Single-concern check:** If intent spans multiple independent behaviors — split. Test: "If I removed behavior A, would behavior B still make sense alone?" If yes → separate protocols.
 3. **Duplicate check:** Read `PROTOCOL_REGISTRY.md`; surface overlaps; let user decide: differentiate, merge, or abandon.
-4. Pick `domain` and `type` from `taxonomy/PROTOCOL_TAXONOMY.md`. If nothing fits, propose an addition — do not invent ad hoc values.
+4. Pick `domain`, `subdomain`, `subject`, and `kind` values from `registry/PROTOCOL_VOCABULARY.md` (slot values live in vocabulary; `taxonomy/PROTOCOL_TAXONOMY.md` defines only slug shape `{domain}-{subdomain}-{subject}-{kind}` and required frontmatter). If nothing fits, propose an addition in the vocabulary file — do not invent ad hoc values.
 
 Don't:
 - Proceed if any anchor is vague or missing
@@ -51,7 +51,7 @@ Gate — all must be true before exiting:
 - [ ] All 4 precision anchors have concrete, unambiguous answers
 - [ ] Single-concern confirmed
 - [ ] No unresolved duplicate in PROTOCOL_REGISTRY.md
-- [ ] `domain` and `type` selected from PROTOCOL_TAXONOMY.md
+- [ ] `domain`, `subdomain`, `subject`, `kind` all selected from PROTOCOL_VOCABULARY.md
 
 Exit: gate passed → `[W]`
 
@@ -71,8 +71,11 @@ Do:
    ---
    name: <protocol-name>
    description: "<trigger/routing contract — when this fires, not what it does>"
-   domain: <from PROTOCOL_TAXONOMY.md>
-   type: <from PROTOCOL_TAXONOMY.md>
+   domain: <from PROTOCOL_VOCABULARY.md §Domains>
+   subdomain: <from PROTOCOL_VOCABULARY.md §Subdomains>
+   subject: <from PROTOCOL_VOCABULARY.md §Subjects>
+   kind: <from PROTOCOL_VOCABULARY.md §Kinds>
+   version: <int — bump on breaking change; slug suffix `-v{n}` must match>
    tags: [<lowercase, hyphenated>]
    ---
    ```

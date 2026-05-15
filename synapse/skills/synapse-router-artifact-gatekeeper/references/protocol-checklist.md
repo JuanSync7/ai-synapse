@@ -9,9 +9,12 @@ Loaded by synapse-router-artifact-gatekeeper when the artifact path points to `s
 | Check | Pass condition |
 |-------|---------------|
 | Protocol file exists | `.md` file is present in `src/protocols/<domain>/` and non-empty |
-| Frontmatter complete | `name`, `description`, `domain`, `type` all present |
-| `domain` in PROTOCOL_TAXONOMY.md | Value matches a row in PROTOCOL_TAXONOMY.md |
-| `type` in PROTOCOL_TAXONOMY.md | Value matches a row in PROTOCOL_TAXONOMY.md |
+| Frontmatter complete | `name`, `description`, `domain`, `subdomain`, `subject`, `kind`, `version` all present |
+| `domain` in PROTOCOL_VOCABULARY.md | Value matches a row in the `## Domains` section of `registry/PROTOCOL_VOCABULARY.md` |
+| `subdomain` in PROTOCOL_VOCABULARY.md | Value matches a row in the `## Subdomains` section of `registry/PROTOCOL_VOCABULARY.md` |
+| `subject` in PROTOCOL_VOCABULARY.md | Value matches a row in the `## Subjects` section of `registry/PROTOCOL_VOCABULARY.md` |
+| `kind` in PROTOCOL_VOCABULARY.md | Value matches a row in the `## Kinds` section of `registry/PROTOCOL_VOCABULARY.md` |
+| `version` well-formed | Integer ≥ 1 |
 | `tags` well-formed | Array of lowercase hyphenated strings |
 | Mental model paragraph present | One paragraph after the heading explaining WHY the protocol exists |
 | Contract section present | Section with imperative rules (MUST/NEVER/BEFORE/AFTER) — behavioral or schema-based |
@@ -37,4 +40,4 @@ Loaded by synapse-router-artifact-gatekeeper when the artifact path points to `s
 |-----------|---------|
 | Both tiers pass | APPROVE |
 | Fixable gaps (weak wording, vague trigger moments, zero-overhead not confirmed) | REVISE |
-| Frontmatter absent, domain/type not in taxonomy, no contract section, no failure assertion | REJECT |
+| Frontmatter absent, any of domain/subdomain/subject/kind not in PROTOCOL_VOCABULARY.md, no contract section, no failure assertion | REJECT |

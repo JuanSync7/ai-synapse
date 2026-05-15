@@ -18,9 +18,11 @@ VERDICT: APPROVE
 ### Structural                    ✓
 - [x] SKILL.md exists
 - [x] EVAL.md exists
-- [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `skill.create` in SKILL_TAXONOMY.md
-- [x] intent `write` in SKILL_TAXONOMY.md
+- [x] Frontmatter complete (name, description, domain, subdomain, scope, role)
+- [x] domain `synapse` in SKILL_VOCABULARY.md
+- [x] subdomain `router` in SKILL_VOCABULARY.md
+- [x] scope `artifact` in SKILL_VOCABULARY.md
+- [x] role `creator` in SKILL_VOCABULARY.md
 - [x] tags well-formed: [skill, creation, scaffolding, eval]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-name> [--domain <domain>]"
@@ -56,9 +58,11 @@ VERDICT: REVISE
 ### Structural                    ✓
 - [x] SKILL.md exists
 - [x] EVAL.md exists
-- [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `skill.eval` in SKILL_TAXONOMY.md
-- [x] intent `generate` in SKILL_TAXONOMY.md
+- [x] Frontmatter complete (name, description, domain, subdomain, scope, role)
+- [x] domain `synapse` in SKILL_VOCABULARY.md
+- [x] subdomain `router` in SKILL_VOCABULARY.md
+- [x] scope `eval` in SKILL_VOCABULARY.md
+- [x] role `writer` in SKILL_VOCABULARY.md
 - [x] tags well-formed: [eval, skill, test-prompts, output-criteria]
 - [x] user-invocable: true
 - [x] argument-hint present: "<skill-path>"
@@ -99,9 +103,11 @@ VERDICT: REJECT
 ### Structural                    ✗
 - [x] SKILL.md exists
 - [ ] EVAL.md exists — ABSENT (REJECT)
-- [x] Frontmatter complete (name, description, domain, intent)
-- [x] domain `docs.scope` in SKILL_TAXONOMY.md
-- [x] intent `write` in SKILL_TAXONOMY.md
+- [x] Frontmatter complete (name, description, domain, subdomain, scope, role)
+- [x] domain `docs` in SKILL_VOCABULARY.md
+- [x] subdomain `scope` in SKILL_VOCABULARY.md
+- [x] scope `section` in SKILL_VOCABULARY.md
+- [x] role `writer` in SKILL_VOCABULARY.md
 - [x] tags well-formed
 - [x] user-invocable: true
 - [x] argument-hint present
@@ -132,9 +138,11 @@ VERDICT: APPROVE
 
 ### Structural                    ✓
 - [x] Agent file exists and is non-empty
-- [x] Frontmatter complete (name, description, domain, role)
-- [x] domain `synapse` in AGENT_TAXONOMY.md
-- [x] role `judge` in AGENT_TAXONOMY.md
+- [x] Frontmatter complete (name, description, domain, subdomain, scope, role)
+- [x] domain `synapse` in AGENT_VOCABULARY.md
+- [x] subdomain `skill` in AGENT_VOCABULARY.md
+- [x] scope `eval` in AGENT_VOCABULARY.md
+- [x] role `judge` in AGENT_VOCABULARY.md
 - [x] tags well-formed: [output-criteria, binary-grading, impartial]
 - [x] Name follows `<domain>-<concern>-<role>` convention
 - [x] Name globally unique in AGENTS_REGISTRY.md
@@ -167,9 +175,11 @@ VERDICT: REVISE
 ### Structural                    ✓
 - [x] Protocol file exists and is non-empty
 - [x] Frontmatter complete (name, description, domain, subdomain, subject, kind, version)
-- [x] domain `synapse` in PROTOCOL_TAXONOMY.md
-- [x] subdomain `observability` in PROTOCOL_TAXONOMY.md
-- [x] kind `trace` in PROTOCOL_TAXONOMY.md
+- [x] domain `synapse` in PROTOCOL_VOCABULARY.md
+- [x] subdomain `observability` in PROTOCOL_VOCABULARY.md
+- [x] subject `execution` in PROTOCOL_VOCABULARY.md
+- [x] kind `trace` in PROTOCOL_VOCABULARY.md
+- [x] version: 1
 - [x] tags well-formed: [execution-trace, self-reported, subagent-observability]
 - [x] Mental model paragraph present
 - [x] Contract section present
