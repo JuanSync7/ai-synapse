@@ -10,14 +10,14 @@ All artifact types follow: `{domain}-{subdomain?}-{purpose?}-{terminal}`
 
 The terminal segment is type-specific and must come from the artifact type's taxonomy file.
 
-| Artifact Type | Terminal Segment | Terminal Name | Taxonomy Source |
-|---|---|---|---|
-| Agent | role | judge, writer, reviewer, auditor, prompter | `taxonomy/AGENT_TAXONOMY.md` |
-| Protocol | type | trace, schema, contract | `taxonomy/PROTOCOL_TAXONOMY.md` |
-| Tool | action | scorer, generator, validator, parser, transformer, reporter | `taxonomy/TOOL_TAXONOMY.md` |
-| Skill | intent | write, review, improve, validate, plan, etc. | `taxonomy/SKILL_TAXONOMY.md` |
+| Artifact Type | Slug Pattern | Terminal Segment | Example Values | Vocabulary Source |
+|---|---|---|---|---|
+| Skill | `{domain}-{subdomain}-{scope}-{role}` | role | creator, writer, reviewer, improver, validator | `registry/SKILL_VOCABULARY.md` |
+| Agent | `{domain}-{subdomain}-{scope}-{role}` | role | judge, writer, reviewer, auditor, prompter | `registry/AGENT_VOCABULARY.md` |
+| Protocol | `{domain}-{subdomain}-{subject}-{kind}` | kind | trace, schema, contract | `registry/PROTOCOL_VOCABULARY.md` |
+| Tool | `{domain}-{subdomain}-{action}-{target}` | target | frontmatter, skills, registry, taxonomy | `registry/TOOL_VOCABULARY.md` |
 
-`subdomain` and `purpose` are optional. Simple artifacts use 2-3 segments; specific ones use 4.
+All four slots are required. Shape (required fields, slug pattern) lives in `taxonomy/<TYPE>_TAXONOMY.md`; values live in the vocabulary file above.
 
 ---
 

@@ -9,9 +9,11 @@ Loaded by synapse-router-artifact-gatekeeper when the artifact path points to `s
 | Check | Pass condition |
 |-------|---------------|
 | Agent file exists | `.md` file is present in `src/agents/<domain>/` and non-empty |
-| Frontmatter complete | `name`, `description`, `domain`, `role` all present |
-| `domain` in AGENT_TAXONOMY.md | Value matches a row in AGENT_TAXONOMY.md |
-| `role` in AGENT_TAXONOMY.md | Value matches a row in AGENT_TAXONOMY.md |
+| Frontmatter complete | `name`, `description`, `domain`, `subdomain`, `scope`, `role` all present |
+| `domain` in AGENT_VOCABULARY.md | Value matches a row in the `## Domains` section of `registry/AGENT_VOCABULARY.md` |
+| `subdomain` in AGENT_VOCABULARY.md | Value matches a row in the `## Subdomains` section of `registry/AGENT_VOCABULARY.md` |
+| `scope` in AGENT_VOCABULARY.md | Value matches a row in the `## Scopes` section of `registry/AGENT_VOCABULARY.md` |
+| `role` in AGENT_VOCABULARY.md | Value matches a row in the `## Roles` section of `registry/AGENT_VOCABULARY.md` |
 | `tags` well-formed | Array of lowercase hyphenated strings |
 | Name follows convention | `<domain>-<concern>-<role>` pattern (e.g., `synapse-skill-eval-judge`) |
 | Name globally unique | No collision in AGENTS_REGISTRY.md |
@@ -38,4 +40,4 @@ Loaded by synapse-router-artifact-gatekeeper when the artifact path points to `s
 |-----------|---------|
 | Both tiers pass | APPROVE |
 | Fixable gaps (missing registry entry, name convention violation, consumer not identified) | REVISE |
-| Frontmatter absent, domain/role not in taxonomy | REJECT |
+| Frontmatter absent, or any of domain/subdomain/scope/role not in AGENT_VOCABULARY.md | REJECT |

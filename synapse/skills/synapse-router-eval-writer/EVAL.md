@@ -12,8 +12,8 @@
 
 <!-- Binary checks against the SKILL.md document and skill directory layout. -->
 
-- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`)
-- [ ] **EVAL-S02:** `domain: skill` and `intent: write` exist in `taxonomy/SKILL_TAXONOMY.md`
+- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `subdomain`, `scope`, `role`, `tags`, `user-invocable`, `argument-hint`)
+- [ ] **EVAL-S02:** `domain: synapse`, `subdomain: router`, `scope: eval`, `role: writer` all exist in `registry/SKILL_VOCABULARY.md`
 - [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-skill-improver`, `/synapse-router-artifact-gatekeeper`, `/synapse-router-artifact-brainstormer`)
 - [ ] **EVAL-S04:** SKILL.md is under 120 lines (router stays thin — slightly higher cap than synapse-router-artifact-creator's 100 because the existing-EVAL guard belongs at `[ROUTE]`)
 - [ ] **EVAL-S05:** Every `Load:` path in SKILL.md resolves to a file in the skill directory

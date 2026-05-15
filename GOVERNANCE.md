@@ -18,7 +18,7 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 
 Agent definitions (`{synapse,src}/agents/`) are internal recipes dispatched by skills — never user-invocable. They follow the same governance rigor as skills, adapted for their role:
 
-- **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
+- **YAML frontmatter required** — `name`, `description`, `domain`, `subdomain`, `scope`, `role`, and `tags` fields. `AGENT_TAXONOMY.md` defines the slug shape and required fields; allowed values for each slot live in `registry/AGENT_VOCABULARY.md`
 - **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`, same as skills
 - **No standalone EVAL.md required** — agents are tested indirectly through the skills that dispatch them. To generate an EVAL.md when needed, use `/synapse-router-eval-writer agent <path>` (the unified eval router)
 - **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
@@ -30,7 +30,7 @@ An agent belongs in `{synapse,src}/agents/` when it is dispatched by 1+ skills a
 
 Protocols (`{synapse,src}/protocols/`) are shared conventions and schemas injected into agents by observers — never executed directly. They define structured formats for inter-agent communication and observability.
 
-- **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
+- **YAML frontmatter required** — `name`, `description`, `domain`, `subdomain`, `subject`, `kind`, `version`, and `tags` fields. `PROTOCOL_TAXONOMY.md` defines the slug shape and required fields; allowed values for each slot live in `registry/PROTOCOL_VOCABULARY.md`
 - **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
 - **No standalone EVAL.md required** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). To generate an EVAL.md when needed, use `/synapse-router-eval-writer protocol <path>` (the unified eval router)
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
@@ -41,8 +41,8 @@ A protocol belongs in `{synapse,src}/protocols/` when it defines a reusable conv
 
 Tools (`{synapse,src}/tools/`) are mechanical utilities — scripts, wrappers, or external integrations that perform a deterministic action. They contain no judgment or persona; if a tool needs judgment, it should be an agent instead.
 
-- **YAML frontmatter required** — `name`, `description`, `domain`, `action`, `type`, and `tags` fields, with `domain` and `action` values from `TOOL_TAXONOMY.md`
-- **Type classification** — `type` must be one of `external`, `internal`, or `wrapper` (from `TOOL_TAXONOMY.md`) and must match actual content
+- **YAML frontmatter required** — `name`, `description`, `domain`, `subdomain`, `action`, `target`, `kind`, and `tags` fields. `TOOL_TAXONOMY.md` defines the slug shape and required fields; allowed values for each slot live in `registry/TOOL_VOCABULARY.md`
+- **Kind classification** — `kind` must be one of the values enumerated under `## Kinds` in `registry/TOOL_VOCABULARY.md` and must match actual content
 - **Gatekeeper review required** — tools land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
 - **No standalone EVAL.md** — tools are tested by the skills or agents that invoke them
 - **Listed in TOOL_REGISTRY.md** — for discovery
@@ -98,9 +98,8 @@ Checked automatically by the pre-commit hook. No LLM required.
 
 - [ ] `SKILL.md` exists in the skill directory
 - [ ] `EVAL.md` exists alongside `SKILL.md` (**REJECT if absent**)
-- [ ] Frontmatter is complete: `name`, `description`, `domain`, `intent` all present
-- [ ] `domain` value exists in `SKILL_TAXONOMY.md`
-- [ ] `intent` value exists in `SKILL_TAXONOMY.md`
+- [ ] Frontmatter is complete: `name`, `description`, `domain`, `subdomain`, `scope`, `role` all present
+- [ ] `domain`, `subdomain`, `scope`, and `role` values each exist in the corresponding section of `registry/SKILL_VOCABULARY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
 - [ ] `user-invocable` field is present
 - [ ] `argument-hint` is present when `user-invocable: true`
@@ -132,9 +131,8 @@ Agents clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper` using 
 #### Tier 1 — Structural
 
 - [ ] Agent `.md` file exists in `{synapse,src}/agents/<domain>/` and is non-empty
-- [ ] Frontmatter complete: `name`, `description`, `domain`, `role` all present
-- [ ] `domain` value exists in `AGENT_TAXONOMY.md`
-- [ ] `role` value exists in `AGENT_TAXONOMY.md`
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `subdomain`, `scope`, `role` all present
+- [ ] `domain`, `subdomain`, `scope`, and `role` values each exist in the corresponding section of `registry/AGENT_VOCABULARY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
 - [ ] Name follows `<domain>-<concern>-<role>` convention
 - [ ] Name is globally unique (no collision in `AGENTS_REGISTRY.md`)
@@ -156,9 +154,8 @@ Protocols clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper` usi
 #### Tier 1 — Structural
 
 - [ ] Protocol `.md` file exists in `{synapse,src}/protocols/<domain>/` and is non-empty
-- [ ] Frontmatter complete: `name`, `description`, `domain`, `type` all present
-- [ ] `domain` value exists in `PROTOCOL_TAXONOMY.md`
-- [ ] `type` value exists in `PROTOCOL_TAXONOMY.md`
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `subdomain`, `subject`, `kind`, `version` all present
+- [ ] `domain`, `subdomain`, `subject`, and `kind` values each exist in the corresponding section of `registry/PROTOCOL_VOCABULARY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
 - [ ] Mental model paragraph present (explains WHY the protocol exists)
 - [ ] Contract section present (imperative rules: MUST/NEVER/BEFORE/AFTER)
@@ -179,17 +176,15 @@ Tools clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper`.
 #### Tier 1 — Structural
 
 - [ ] `TOOL.md` file exists in `{synapse,src}/tools/<domain>/` and is non-empty
-- [ ] Frontmatter complete: `name`, `description`, `domain`, `action`, `type` all present
-- [ ] `domain` value exists in `TOOL_TAXONOMY.md`
-- [ ] `action` value exists in `TOOL_TAXONOMY.md`
-- [ ] `type` value is one of `external`, `internal`, `wrapper` (from `TOOL_TAXONOMY.md`)
+- [ ] Frontmatter complete: `name`, `description`, `domain`, `subdomain`, `action`, `target`, `kind` all present
+- [ ] `domain`, `subdomain`, `action`, `target`, and `kind` values each exist in the corresponding section of `registry/TOOL_VOCABULARY.md`
 - [ ] `tags` is a well-formed array of lowercase hyphenated strings
 - [ ] Domain README has a row linking this tool
 - [ ] Listed in `TOOL_REGISTRY.md`
 
 #### Tier 2 — Quality
 
-- [ ] `type` classification accuracy — `external`/`internal`/`wrapper` matches actual content
+- [ ] `kind` classification accuracy — the value matches actual tool content
 - [ ] Execution model documented — inputs, outputs, and invocation are clearly described
 - [ ] No judgment in the tool definition — tools are mechanical; if it contains judgment, it should be an agent
 - [ ] Under 300 lines
@@ -238,15 +233,15 @@ Examples:
 
 **Agent-specific:**
 - REVISE: missing AGENTS_REGISTRY.md entry, name doesn't follow convention, consumer skills not identified
-- REJECT: frontmatter absent, domain/role not in AGENT_TAXONOMY.md
+- REJECT: frontmatter absent, slot values not in `registry/AGENT_VOCABULARY.md`
 
 **Protocol-specific:**
 - REVISE: missing example, injection instructions unclear, zero-overhead not confirmed
-- REJECT: frontmatter absent, domain/type not in PROTOCOL_TAXONOMY.md, no schema block
+- REJECT: frontmatter absent, slot values not in `registry/PROTOCOL_VOCABULARY.md`, no schema block
 
 **Tool-specific:**
 - REVISE: missing TOOL_REGISTRY.md entry, execution model undocumented, type classification doesn't match content
-- REJECT: frontmatter absent, domain/action not in TOOL_TAXONOMY.md, contains judgment (should be an agent)
+- REJECT: frontmatter absent, slot values not in `registry/TOOL_VOCABULARY.md`, contains judgment (should be an agent)
 
 **Pathway-specific:**
 - REVISE: naming doesn't follow taxonomy patterns, description is placeholder, tags irrelevant, composition incoherent
@@ -338,11 +333,17 @@ When brainstorming or improving a skill reveals that another skill, agent, proto
 
 ## Naming Conventions
 
-Each artifact class owns its naming rules in the corresponding taxonomy file:
+Each artifact class is governed by three companion files with distinct roles:
 
-- Skills → `taxonomy/SKILL_TAXONOMY.md`
-- Agents → `taxonomy/AGENT_TAXONOMY.md`
-- Protocols → `taxonomy/PROTOCOL_TAXONOMY.md`
-- Tools → `taxonomy/TOOL_TAXONOMY.md`
+- **`taxonomy/<TYPE>_TAXONOMY.md`** — *shape only*. Defines the slug pattern and the required frontmatter fields. Does not enumerate allowed values.
+- **`registry/<TYPE>_VOCABULARY.md`** — *values*. Enumerates the controlled vocabulary for each slug slot under section headers (`## Domains`, `## Subdomains`, etc.).
+- **`registry/<TYPE>_REGISTRY.md`** — *inventory*. Lists the artifacts that currently exist.
 
-Each file specifies the structural name pattern and the controlled vocabulary that fills its slots.
+To add a new allowed value for any slot, edit the relevant section of `registry/<TYPE>_VOCABULARY.md`. To change the slug shape or required-field set, edit `taxonomy/<TYPE>_TAXONOMY.md`. To register a new artifact, add a row to `registry/<TYPE>_REGISTRY.md`.
+
+Per-type files:
+
+- Skills → `taxonomy/SKILL_TAXONOMY.md` / `registry/SKILL_VOCABULARY.md` / `registry/SKILL_REGISTRY.md`
+- Agents → `taxonomy/AGENT_TAXONOMY.md` / `registry/AGENT_VOCABULARY.md` / `registry/AGENTS_REGISTRY.md`
+- Protocols → `taxonomy/PROTOCOL_TAXONOMY.md` / `registry/PROTOCOL_VOCABULARY.md` / `registry/PROTOCOL_REGISTRY.md`
+- Tools → `taxonomy/TOOL_TAXONOMY.md` / `registry/TOOL_VOCABULARY.md` / `registry/TOOL_REGISTRY.md`

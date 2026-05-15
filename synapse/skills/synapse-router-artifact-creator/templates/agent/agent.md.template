@@ -2,7 +2,10 @@
 name: {{name}}
 description: "{{description}}"
 domain: {{domain}}
+subdomain: {{subdomain}}
+scope: {{scope}}
 role: {{role}}
+status: draft
 tags: []
 ---
 

@@ -13,8 +13,8 @@
 <!-- Binary checks against the SKILL.md document and skill directory layout. -->
 <!-- Evaluated by synapse-skill-skill-improver WITHOUT running the skill. -->
 
-- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`)
-- [ ] **EVAL-S02:** `domain: synapse` and `intent: write` exist in `taxonomy/SKILL_TAXONOMY.md`
+- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `subdomain`, `scope`, `role`, `tags`, `user-invocable`, `argument-hint`)
+- [ ] **EVAL-S02:** `domain: synapse`, `subdomain: router`, `scope: artifact`, `role: creator` all exist in `registry/SKILL_VOCABULARY.md`
 - [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-skill-improver`, `/synapse-router-artifact-brainstormer`, `/synapse-router-artifact-gatekeeper`)
 - [ ] **EVAL-S04:** SKILL.md is under 100 lines (router stays thin)
 - [ ] **EVAL-S05:** Every `Load:` path in SKILL.md resolves to a file in the skill directory
@@ -98,8 +98,8 @@ Apply each `EVAL-Fxx` check independently to all four files: `flow-skill.md`, `f
 
 Acceptance checks:
 - [ ] **EVAL-T1.1:** Directory `<class-root>/skills/<domain>/widget-summarizer/` created
-- [ ] **EVAL-T1.2:** `SKILL.md` written with valid frontmatter (`name`, `description`, `domain`, `intent`)
-- [ ] **EVAL-T1.3:** `domain` value exists in `SKILL_TAXONOMY.md`
+- [ ] **EVAL-T1.2:** `SKILL.md` written with valid frontmatter (`name`, `description`, `domain`, `subdomain`, `scope`, `role`)
+- [ ] **EVAL-T1.3:** `domain`, `subdomain`, `scope`, and `role` values exist in `registry/SKILL_VOCABULARY.md`
 - [ ] **EVAL-T1.4:** Row appended to `registry/SKILL_REGISTRY.md`
 - [ ] **EVAL-T1.5:** Domain README has a row for widget-summarizer
 - [ ] **EVAL-T1.6:** `EVAL.md` scaffold or eval handoff dispatched
@@ -112,7 +112,7 @@ Acceptance checks:
 Acceptance checks:
 - [ ] **EVAL-T2.1:** Directory `<class-root>/protocols/<domain>/artifact-handoff-protocol/` created
 - [ ] **EVAL-T2.2:** `PROTOCOL.md` (or appropriate spec file per type-config) written with valid frontmatter
-- [ ] **EVAL-T2.3:** `domain` and `type` values exist in `PROTOCOL_TAXONOMY.md`
+- [ ] **EVAL-T2.3:** `domain`, `subdomain`, `subject`, and `kind` values exist in `registry/PROTOCOL_VOCABULARY.md`
 - [ ] **EVAL-T2.4:** Row appended to `registry/PROTOCOL_REGISTRY.md`
 - [ ] **EVAL-T2.5:** Domain README has a row
 - [ ] **EVAL-T2.6:** `rules/` and `examples/` (or templates analogues) scaffolded per protocol convention
@@ -124,8 +124,8 @@ Acceptance checks:
 
 Acceptance checks:
 - [ ] **EVAL-T3.1:** Single file `<class-root>/agents/<domain>/context-summarizer.md` created (NOT a directory)
-- [ ] **EVAL-T3.2:** Frontmatter has `name`, `description`, `domain`, `role` per `AGENT_TAXONOMY.md`
-- [ ] **EVAL-T3.3:** `domain` and `role` values exist in `AGENT_TAXONOMY.md`
+- [ ] **EVAL-T3.2:** Frontmatter has `name`, `description`, `domain`, `subdomain`, `scope`, `role` per `AGENT_TAXONOMY.md`
+- [ ] **EVAL-T3.3:** `domain`, `subdomain`, `scope`, and `role` values exist in `registry/AGENT_VOCABULARY.md`
 - [ ] **EVAL-T3.4:** Row appended to `registry/AGENTS_REGISTRY.md`
 - [ ] **EVAL-T3.5:** Domain README has a row
 - [ ] **EVAL-T3.6:** Eval handoff dispatched

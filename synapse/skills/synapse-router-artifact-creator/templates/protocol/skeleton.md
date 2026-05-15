@@ -8,8 +8,12 @@ Fill in this skeleton when drafting a new protocol. Delete the Configuration sec
 ---
 name: <protocol-name>
 description: "<trigger/routing contract — when this protocol fires, not a workflow summary>"
-domain: <pick from PROTOCOL_TAXONOMY.md>
-type: <pick from PROTOCOL_TAXONOMY.md>
+domain: <pick from PROTOCOL_VOCABULARY.md>
+subdomain: <pick from PROTOCOL_VOCABULARY.md>
+subject: <pick from PROTOCOL_VOCABULARY.md>
+kind: <pick from PROTOCOL_VOCABULARY.md>
+version: <integer, starting at 1>
+status: draft
 tags: [<lowercase, hyphenated>]
 ---
 

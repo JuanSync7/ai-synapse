@@ -11,8 +11,8 @@
 <!-- Binary checks against the SKILL.md document itself. -->
 <!-- Evaluated by improve-skill WITHOUT running the skill. -->
 
-- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`)
-- [ ] **EVAL-S02:** `domain` and `intent` values exist in `taxonomy/SKILL_TAXONOMY.md`
+- [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `subdomain`, `scope`, `role`, `tags`, `user-invocable`, `argument-hint`)
+- [ ] **EVAL-S02:** `domain`, `subdomain`, `scope`, and `role` values exist in `registry/SKILL_VOCABULARY.md`
 - [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills
 - [ ] **EVAL-S04:** SKILL.md is under 500 lines (hard cap)
 - [ ] **EVAL-S05:** Every `Load:` path resolves to a file that exists in the skill directory
@@ -48,9 +48,9 @@
   - **Test:** For each `### [ID]` node, confirm `Exit:` exists and every edge follows `→ [ID] : <condition>`.
   - **Fail signal:** Any node missing `Exit:`, or any edge written without a condition clause.
 
-- [ ] **EVAL-O03:** SKILL.md frontmatter contains all required fields with valid taxonomy values
-  - **Test:** Extract YAML frontmatter. Verify required fields. Cross-check `domain` and `intent` against `taxonomy/SKILL_TAXONOMY.md`.
-  - **Fail signal:** Any required field absent, or domain/intent values not in SKILL_TAXONOMY.md.
+- [ ] **EVAL-O03:** SKILL.md frontmatter contains all required fields with valid vocabulary values
+  - **Test:** Extract YAML frontmatter. Verify required fields. Cross-check `domain`, `subdomain`, `scope`, and `role` against `registry/SKILL_VOCABULARY.md`.
+  - **Fail signal:** Any required field absent, or domain/subdomain/scope/role values not in SKILL_VOCABULARY.md.
 
 - [ ] **EVAL-O04:** `description` field is a routing contract, not a workflow summary
   - **Test:** Ask: "Could someone follow this as a replacement for reading the body?" If it describes steps or outputs rather than trigger conditions, it fails.

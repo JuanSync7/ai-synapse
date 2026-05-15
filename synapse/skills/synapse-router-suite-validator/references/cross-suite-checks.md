@@ -37,16 +37,18 @@ Loaded by `synapse-router-suite-validator` Phase 4. These checks are invisible t
 
 ## Check 3 — Taxonomy drift
 
-**Trigger:** An artifact's controlled-vocabulary value (`domain`, `intent`, `role`, `type`, `action`, `harness`) does not appear in the relevant taxonomy file.
+**Trigger:** An artifact's controlled-vocabulary value (any slug-slot or frontmatter-only vocabulary field) does not appear in the relevant `*_VOCABULARY.md` file under `registry/`.
 
-**Taxonomies to load:**
-- skills → `taxonomy/SKILL_TAXONOMY.md` (`domain`, `intent`)
-- agents → `taxonomy/AGENT_TAXONOMY.md` (`domain`, `role`)
-- protocols → `taxonomy/PROTOCOL_TAXONOMY.md` (`domain`, `type`)
-- tools → `taxonomy/TOOL_TAXONOMY.md` (`domain`, `action`, `type`)
-- pathways → `taxonomy/PATHWAY_TAXONOMY.md` (`harness`)
+**Vocabularies to load (values):**
+- skills → `registry/SKILL_VOCABULARY.md` (`domain`, `subdomain`, `scope`, `role`)
+- agents → `registry/AGENT_VOCABULARY.md` (`domain`, `subdomain`, `scope`, `role`)
+- protocols → `registry/PROTOCOL_VOCABULARY.md` (`domain`, `subdomain`, `subject`, `kind`)
+- tools → `registry/TOOL_VOCABULARY.md` (`domain`, `subdomain`, `action`, `target`, `kind`)
+- pathways → `taxonomy/PATHWAY_TAXONOMY.md` (`harness`) *(pathways have no separate vocabulary file yet)*
 
-**Fail signal:** Cross-suite section lists each unknown value with the artifacts that use it: `domain=automation used by 2 skills (foo, bar) — not in SKILL_TAXONOMY.md`.
+**Taxonomies (shape, separate from values):** `taxonomy/<TYPE>_TAXONOMY.md` declares the required-fields list and slug pattern — load alongside for shape checks.
+
+**Fail signal:** Cross-suite section lists each unknown value with the artifacts that use it: `domain=automation used by 2 skills (foo, bar) — not in SKILL_VOCABULARY.md`.
 
 **Fix recommendation:** Two valid resolutions:
 1. **Suite changes** — rename to an existing taxonomy value (preferred for stylistic mismatches).

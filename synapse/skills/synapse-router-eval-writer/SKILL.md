@@ -87,7 +87,7 @@ Do:
 Don't:
   - Continue without confirmed `$TYPE` and `$ARTIFACT_PATH`
   - Inline any eval-generation logic — that lives in flow files
-  - Validate taxonomy values against `SKILL_TAXONOMY.md` / `AGENT_TAXONOMY.md` etc.
+  - Validate controlled-vocabulary values against `SKILL_VOCABULARY.md` / `AGENT_VOCABULARY.md` / `PROTOCOL_VOCABULARY.md` / `TOOL_VOCABULARY.md` (gatekeeper owns vocabulary validation; eval-writer must not duplicate it)
   - Load more than one flow file
   - Auto-infer type from natural language — explicit arg or interactive prompt only
 Exit:

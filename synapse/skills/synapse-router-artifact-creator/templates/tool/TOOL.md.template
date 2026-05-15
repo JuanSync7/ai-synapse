@@ -2,8 +2,11 @@
 name: {{name}}
 description: {{description}}
 domain: {{domain}}
+subdomain: {{subdomain}}
 action: {{action}}
-type: {{type}}
+target: {{target}}
+kind: {{kind}}
+status: draft
 tags: [{{tags}}]
 ---
 

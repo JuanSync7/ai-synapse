@@ -61,7 +61,7 @@ Each row below is a binary check. The anatomy-reviewer must verify presence/form
 
 | # | Section | Rule | Trigger condition |
 |---|---------|------|-------------------|
-| A1 | Frontmatter | Required fields: `name`, `description`, `domain`, `intent`. Optional: `tags`, `user-invocable`, `argument-hint`. Values for `domain` + `intent` MUST exist in `taxonomy/SKILL_TAXONOMY.md`. | Always |
+| A1 | Frontmatter | Required fields: `name`, `description`, `domain`, `subdomain`, `scope`, `role`. Optional: `tags`, `user-invocable`, `argument-hint`. Slug shape and required fields defined in `taxonomy/SKILL_TAXONOMY.md`; allowed values for `domain` / `subdomain` / `scope` / `role` MUST exist in the matching `##` section of `registry/SKILL_VOCABULARY.md`. | Always |
 | A2 | `description` field | Single-line, non-empty, ends with trigger condition language ("Use when…", "Triggered by…"). Must NOT be a workflow summary. | Always |
 | A3 | Skill title | First H1 heading after frontmatter. Title-case. | Always |
 | A4 | Mental Model paragraph | One paragraph immediately after the H1, before any section heading. Explains WHY the skill exists. | Always |
@@ -80,10 +80,12 @@ Each row below is a binary check. The anatomy-reviewer must verify presence/form
 
 ```yaml
 ---
-name: <kebab-case-string>            # MUST be globally unique across all skills
+name: <slug>                         # MUST be globally unique; MUST match {domain}-{subdomain}-{scope}-{role}
 description: "<trigger contract>"    # MUST be single line; routing contract not workflow summary
-domain: <value>                      # MUST exist in SKILL_TAXONOMY.md
-intent: <value>                      # MUST exist in SKILL_TAXONOMY.md
+domain: <value>                      # MUST exist in SKILL_VOCABULARY.md §Domains
+subdomain: <value>                   # MUST exist in SKILL_VOCABULARY.md §Subdomains
+scope: <noun>                        # MUST exist in SKILL_VOCABULARY.md §Scopes
+role: <noun>                         # MUST exist in SKILL_VOCABULARY.md §Roles
 tags: [<lowercase>, <hyphenated>]    # Optional; if present, lowercase-hyphenated only
 user-invocable: <true|false>         # Optional; default false
 argument-hint: "<inline help>"       # Optional; only if user-invocable: true

@@ -93,11 +93,12 @@ For each discovered artifact, parse frontmatter and record `{ type, path, name }
 
 > **Read [`../../skill/synapse-router-artifact-gatekeeper/SKILL.md`](../../skill/synapse-router-artifact-gatekeeper/SKILL.md)** Phase 2 — reuse the structural-tier tables for each artifact type. The per-type checklists are defined there in one place; this skill applies them.
 
-> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md), [`../../../../taxonomy/AGENT_TAXONOMY.md`](../../../../taxonomy/AGENT_TAXONOMY.md), [`../../../../taxonomy/PROTOCOL_TAXONOMY.md`](../../../../taxonomy/PROTOCOL_TAXONOMY.md), [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md), and [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** once at the start of this phase, so taxonomy values can be checked locally per artifact without re-reading.
+> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md), [`../../../../taxonomy/AGENT_TAXONOMY.md`](../../../../taxonomy/AGENT_TAXONOMY.md), [`../../../../taxonomy/PROTOCOL_TAXONOMY.md`](../../../../taxonomy/PROTOCOL_TAXONOMY.md), [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md), and [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** once at the start of this phase for SHAPE checks (required-field declarations, slug patterns).
+> **Read [`../../../../registry/SKILL_VOCABULARY.md`](../../../../registry/SKILL_VOCABULARY.md), [`../../../../registry/AGENT_VOCABULARY.md`](../../../../registry/AGENT_VOCABULARY.md), [`../../../../registry/PROTOCOL_VOCABULARY.md`](../../../../registry/PROTOCOL_VOCABULARY.md), and [`../../../../registry/TOOL_VOCABULARY.md`](../../../../registry/TOOL_VOCABULARY.md)** at the same time for VALUE checks (controlled vocabulary per slug slot).
 
 **Universal checks per artifact** (applied via the gatekeeper Phase 2 table for the artifact's type):
-- Required frontmatter fields all present.
-- All controlled-vocabulary values resolve in the relevant taxonomy file.
+- Required frontmatter fields all present (shape from `*_TAXONOMY.md`).
+- All controlled-vocabulary values resolve in the relevant `*_VOCABULARY.md` file under `registry/`.
 - For skills: `EVAL.md` exists alongside `SKILL.md`.
 - For tools: `TOOL.md` exists and frontmatter complete.
 - For pathways: every `synapses:` path resolves on disk.

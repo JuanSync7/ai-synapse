@@ -90,8 +90,8 @@ Do:
   1. Load `templates/skill/eval.md` skeleton.
   2. Substitute header tokens: skill name, generator (`synapse-router-eval-writer`), version `1.0`.
   3. Fill the **Structural Criteria** section with the static EVAL-Sxx checklist below — these are universal across all skills:
-     - EVAL-S01: Frontmatter complete (`name`, `description`, `domain`, `intent`)
-     - EVAL-S02: `domain` and `intent` exist in `taxonomy/SKILL_TAXONOMY.md`
+     - EVAL-S01: Frontmatter complete (`name`, `description`, `domain`, `subdomain`, `scope`, `role`)
+     - EVAL-S02: `domain`, `subdomain`, `scope`, and `role` exist in `registry/SKILL_VOCABULARY.md`
      - EVAL-S03: SKILL.md under 500 lines
      - EVAL-S04: `Wrong-Tool Detection` section present and names sibling skills
      - EVAL-S05: Every `Load:` path in SKILL.md resolves to an existing file

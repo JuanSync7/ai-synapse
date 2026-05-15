@@ -115,12 +115,12 @@ ai-synapse/
 │   └── SCRIPT_REGISTRY.md          # Script discovery table
 │
 ├── taxonomy/
-│   ├── SKILL_TAXONOMY.md           # Controlled vocabulary for skill domain/intent
-│   ├── AGENT_TAXONOMY.md           # Controlled vocabulary for agent domain/role
-│   ├── PROTOCOL_TAXONOMY.md        # Controlled vocabulary for protocol domain/type
-│   ├── TOOL_TAXONOMY.md            # Controlled vocabulary for tool domain/action/type
-│   ├── PATHWAY_TAXONOMY.md         # Controlled vocabulary for pathway harness + naming guide
-│   └── SCRIPT_TAXONOMY.md          # Controlled vocabulary for script audience/action/scope
+│   ├── SKILL_TAXONOMY.md           # Schema (slug pattern + required fields) for skills
+│   ├── AGENT_TAXONOMY.md           # Schema (slug pattern + required fields) for agents
+│   ├── PROTOCOL_TAXONOMY.md        # Schema (slug pattern + required fields) for protocols
+│   ├── TOOL_TAXONOMY.md            # Schema (slug pattern + required fields) for tools
+│   ├── PATHWAY_TAXONOMY.md         # Schema for pathway harness + naming guide
+│   └── SCRIPT_TAXONOMY.md          # Schema for script audience/action/scope
 │
 ├── docs/cli/                        # Per-command help docs (./cortex help <command>)
 │
@@ -161,13 +161,20 @@ Discovery tables for all artifact types. Check these before creating a new artif
 - [`SCRIPT_REGISTRY.md`](registry/SCRIPT_REGISTRY.md) — repo management scripts
 
 ### Taxonomies (`taxonomy/`)
-Controlled vocabularies for artifact metadata. Enforced by the pre-commit hook — committing an artifact with a value not listed in its taxonomy will fail:
-- [`SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) — `domain` and `intent` for skills
-- [`AGENT_TAXONOMY.md`](taxonomy/AGENT_TAXONOMY.md) — `domain` and `role` for agents
-- [`PROTOCOL_TAXONOMY.md`](taxonomy/PROTOCOL_TAXONOMY.md) — `domain` and `type` for protocols
-- [`TOOL_TAXONOMY.md`](taxonomy/TOOL_TAXONOMY.md) — `domain`, `action`, and `type` for tools
+Schema definitions — slug pattern and required frontmatter fields per artifact type. Does NOT enumerate allowed values; for those, see `registry/<TYPE>_VOCABULARY.md`. Enforced by the pre-commit hook — committing an artifact missing a required field or using a value not listed in the corresponding vocabulary file will fail:
+- [`SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) — slug `{domain}-{subdomain}-{scope}-{role}` and required fields for skills
+- [`AGENT_TAXONOMY.md`](taxonomy/AGENT_TAXONOMY.md) — slug `{domain}-{subdomain}-{scope}-{role}` and required fields for agents
+- [`PROTOCOL_TAXONOMY.md`](taxonomy/PROTOCOL_TAXONOMY.md) — slug `{domain}-{subdomain}-{subject}-{kind}` and required fields for protocols
+- [`TOOL_TAXONOMY.md`](taxonomy/TOOL_TAXONOMY.md) — slug `{domain}-{subdomain}-{action}-{target}` and required fields for tools
 - [`PATHWAY_TAXONOMY.md`](taxonomy/PATHWAY_TAXONOMY.md) — `harness` for pathways + naming convention guide
 - [`SCRIPT_TAXONOMY.md`](taxonomy/SCRIPT_TAXONOMY.md) — `audience`, `action`, and `scope` for scripts
+
+### Vocabularies (`registry/<TYPE>_VOCABULARY.md`)
+Controlled values for each slug slot, organized into `## Domains`, `## Subdomains`, etc. To add a new allowed value, edit the relevant section here:
+- [`SKILL_VOCABULARY.md`](registry/SKILL_VOCABULARY.md) — values for `domain`, `subdomain`, `scope`, `role`
+- [`AGENT_VOCABULARY.md`](registry/AGENT_VOCABULARY.md) — values for `domain`, `subdomain`, `scope`, `role`
+- [`PROTOCOL_VOCABULARY.md`](registry/PROTOCOL_VOCABULARY.md) — values for `domain`, `subdomain`, `subject`, `kind`
+- [`TOOL_VOCABULARY.md`](registry/TOOL_VOCABULARY.md) — values for `domain`, `subdomain`, `action`, `target`, `kind`
 
 ### [`GOVERNANCE.md`](GOVERNANCE.md)
 Promotion criteria and contribution workflow for all five synapse types (skills, agents, protocols, tools, pathways). Defines the two-tier validation model and gatekeeper scope.
@@ -202,8 +209,10 @@ Every skill lives at `{synapse,src}/skills/<domain>/<skill-name>/` and follows t
 ---
 name: skill-name
 description: "Trigger conditions — when this skill fires (not a workflow summary)"
-domain: docs.spec       # from SKILL_TAXONOMY.md
-intent: write           # from SKILL_TAXONOMY.md
+domain: docs            # required fields per SKILL_TAXONOMY.md; values from SKILL_VOCABULARY.md
+subdomain: spec         # value from SKILL_VOCABULARY.md ## Subdomains
+scope: artifact         # value from SKILL_VOCABULARY.md ## Scopes
+role: writer            # value from SKILL_VOCABULARY.md ## Roles
 tags: [lowercase, hyphenated]
 user-invocable: true
 argument-hint: "[args]"

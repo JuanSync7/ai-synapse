@@ -155,9 +155,9 @@ Consider discussing the approach with the user first.
 
 ## Naming
 
-Skills follow `{domain}-{subdomain?}-{purpose?}-{intent}` where:
-- `domain` and `intent` come from `taxonomy/SKILL_TAXONOMY.md`
+Skills follow `{domain}-{subdomain}-{scope}-{role}` (all four slots required) where:
+- `domain`, `subdomain`, `scope`, and `role` values come from `registry/SKILL_VOCABULARY.md` (shape/required-fields live in `taxonomy/SKILL_TAXONOMY.md`)
 - Names must be globally unique (flat `~/.claude/skills/` directory, no namespacing)
 - Use domain-prefixed names to avoid collisions across repos (e.g., `jira-reporter`, `jira-planner`)
 
-Validate the chosen `domain` and `intent` against the taxonomy before proceeding. If nothing fits, propose a taxonomy addition — don't invent ad hoc values.
+Validate the chosen slot values against `SKILL_VOCABULARY.md` before proceeding. If nothing fits, propose a vocabulary addition — don't invent ad hoc values.

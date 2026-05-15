@@ -28,7 +28,7 @@ One-line purpose: Read the source artifact's frontmatter and extract the artifac
 - Frontmatter absent or malformed → `FAIL: frontmatter could not be parsed at <path>. Source artifact malformed.`
 - `name:` missing from frontmatter → `FAIL: 'name' field absent in frontmatter at <path>. Source artifact malformed.`
 
-**Out of scope:** This step does NOT validate `domain`, `intent`, `role`, `type`, or any other taxonomy field. Taxonomy validation is `/synapse-router-artifact-gatekeeper`'s job — duplicating it here creates drift risk.
+**Out of scope:** This step does NOT validate `domain`, `subdomain`, `scope`, `role`, `subject`, `kind`, `action`, `target`, or any other controlled-vocabulary field. Vocabulary validation is `/synapse-router-artifact-gatekeeper`'s job — duplicating it here creates drift risk.
 
 ---
 
