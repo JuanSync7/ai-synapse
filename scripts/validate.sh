@@ -17,7 +17,7 @@ PROTOCOL_VOCABULARY="$REPO_ROOT/registry/PROTOCOL_VOCABULARY.md"
 TOOL_VOCABULARY="$REPO_ROOT/registry/TOOL_VOCABULARY.md"
 PROTOCOL_TAXONOMY="$REPO_ROOT/taxonomy/PROTOCOL_TAXONOMY.md"
 TOOL_TAXONOMY="$REPO_ROOT/taxonomy/TOOL_TAXONOMY.md"
-SCRIPT_TAXONOMY="$REPO_ROOT/taxonomy/SCRIPT_TAXONOMY.md"
+SCRIPT_VOCABULARY="$REPO_ROOT/registry/SCRIPT_VOCABULARY.md"
 
 SKILL_REGISTRY="$REPO_ROOT/registry/SKILL_REGISTRY.md"
 AGENTS_REGISTRY="$REPO_ROOT/registry/AGENTS_REGISTRY.md"
@@ -83,7 +83,7 @@ Checks performed:
 
   Scripts (scripts/*.sh):
     - Comment-based frontmatter with required fields (@name, @description, @audience, @action, @scope)
-    - audience/action/scope values exist in taxonomy/SCRIPT_TAXONOMY.md
+    - audience/action/scope values exist in registry/SCRIPT_VOCABULARY.md
     - Script listed in registry/SCRIPT_REGISTRY.md
 
   Stale registry entries:
@@ -511,8 +511,8 @@ validate_script() {
   local audience_val
   audience_val="$(extract_script_field "$script_file" "audience")"
   if [ -n "$audience_val" ]; then
-    if ! check_taxonomy_value "$SCRIPT_TAXONOMY" "Audiences" "$audience_val"; then
-      report_error "$rel_path" "audience '$audience_val' not found in taxonomy/SCRIPT_TAXONOMY.md"
+    if ! check_taxonomy_value "$SCRIPT_VOCABULARY" "Audiences" "$audience_val"; then
+      report_error "$rel_path" "audience '$audience_val' not found in registry/SCRIPT_VOCABULARY.md"
     fi
   fi
 
@@ -520,8 +520,8 @@ validate_script() {
   local action_val
   action_val="$(extract_script_field "$script_file" "action")"
   if [ -n "$action_val" ]; then
-    if ! check_taxonomy_value "$SCRIPT_TAXONOMY" "Actions" "$action_val"; then
-      report_error "$rel_path" "action '$action_val' not found in taxonomy/SCRIPT_TAXONOMY.md"
+    if ! check_taxonomy_value "$SCRIPT_VOCABULARY" "Actions" "$action_val"; then
+      report_error "$rel_path" "action '$action_val' not found in registry/SCRIPT_VOCABULARY.md"
     fi
   fi
 
@@ -529,8 +529,8 @@ validate_script() {
   local scope_val
   scope_val="$(extract_script_field "$script_file" "scope")"
   if [ -n "$scope_val" ]; then
-    if ! check_taxonomy_value "$SCRIPT_TAXONOMY" "Scopes" "$scope_val"; then
-      report_error "$rel_path" "scope '$scope_val' not found in taxonomy/SCRIPT_TAXONOMY.md"
+    if ! check_taxonomy_value "$SCRIPT_VOCABULARY" "Scopes" "$scope_val"; then
+      report_error "$rel_path" "scope '$scope_val' not found in registry/SCRIPT_VOCABULARY.md"
     fi
   fi
 

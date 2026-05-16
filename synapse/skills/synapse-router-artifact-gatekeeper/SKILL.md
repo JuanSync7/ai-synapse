@@ -88,7 +88,8 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 **Pathway flow — read:**
 - The pathway `.yaml` file itself
-- > **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for harness values and naming conventions
+- > **Read [`../../../../registry/PATHWAY_VOCABULARY.md`](../../../../registry/PATHWAY_VOCABULARY.md)** for the controlled `harness` values
+- > **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for naming conventions and frontmatter shape
 
 **Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/synapse-skill-skill-improver` or `/auto-research`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
 
@@ -162,13 +163,14 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Pathway flow
 
-> **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** to validate `harness` value against the controlled vocabulary.
+> **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for the shape of pathway frontmatter (required fields).
+> **Read [`../../../../registry/PATHWAY_VOCABULARY.md`](../../../../registry/PATHWAY_VOCABULARY.md)** to validate `harness` against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
 | Valid YAML | File parses as valid YAML |
 | Required fields present | `name`, `description`, `harness`, `synapses` all present |
-| `harness` in PATHWAY_TAXONOMY.md | Value matches a row in PATHWAY_TAXONOMY.md |
+| `harness` in PATHWAY_VOCABULARY.md | Value matches a row in the `## Harnesses` section of PATHWAY_VOCABULARY.md |
 | Synapse paths resolve | Every path under `synapses:` points to an existing artifact on disk |
 | `inherits:` target exists | If set, the parent pathway file exists |
 | Listed in PATHWAY_REGISTRY.md | A row exists in `registry/PATHWAY_REGISTRY.md` for this pathway |

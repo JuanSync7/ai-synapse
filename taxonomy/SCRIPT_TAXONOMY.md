@@ -1,34 +1,23 @@
 # Script Taxonomy
 
-Controlled vocabulary for script metadata. When creating a new script, pick `audience`, `action`, and `scope` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
+Comment-frontmatter contract for scripts. The controlled vocabulary for `audience`, `action`, and `scope` lives in [`registry/SCRIPT_VOCABULARY.md`](../registry/SCRIPT_VOCABULARY.md). The inventory of scripts currently in the repo lives in [`registry/SCRIPT_REGISTRY.md`](../registry/SCRIPT_REGISTRY.md). This file defines the *shape*; vocabulary holds the *values*; registry holds the *inventory*.
 
-## Audiences
+Scripts have no slug pattern and no YAML frontmatter — they carry their metadata as bash comments at the top of each `scripts/*.sh` file.
 
-| Audience | Description |
-|----------|-------------|
-| `consumer` | End users loading synapses into their environment |
-| `contributor` | People creating or modifying artifacts |
-| `maintainer` | Repo hygiene, drift detection, structural repair |
-| `automation` | CI/CD pipelines and scheduled jobs (reserved) |
+## Comment frontmatter
 
-## Actions
+Every script under `scripts/` must declare the following comment-based fields near the top of the file. `scripts/validate.sh` parses these comments and rejects scripts that omit any required field or use a value not listed in `registry/SCRIPT_VOCABULARY.md`.
 
-| Action | Description |
-|--------|-------------|
-| `install` | Put synapses into a harness or environment |
-| `create` | Scaffold new artifacts or pathways |
-| `inspect` | Read-only analysis — list, validate, audit, doctor |
-| `repair` | Write operations that fix drift or clean state |
+```bash
+#!/usr/bin/env bash
+# @name: <script-name>
+# @description: <one-line description of what the script does>
+# @audience: <value>     # must be a row in registry/SCRIPT_VOCABULARY.md → ## Audiences
+# @action: <value>       # must be a row in registry/SCRIPT_VOCABULARY.md → ## Actions
+# @scope: <value>        # must be a row in registry/SCRIPT_VOCABULARY.md → ## Scopes
+```
 
-## Scopes
-
-| Scope | Description |
-|-------|-------------|
-| `synapse` | Individual artifacts (skills, agents, protocols, tools) |
-| `pathway` | Named bundles of synapses |
-| `repo` | Repository structure (registries, READMEs, taxonomies) |
-| `harness` | Installed symlinks in target environment (claude, codex, gemini) |
-| `identity` | Identity files (SOUL.md, STAKEHOLDER.md) |
+All five fields are required. `@name` should match the filename (without `.sh`).
 
 ## Tags
 

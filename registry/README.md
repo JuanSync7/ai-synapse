@@ -38,4 +38,10 @@ All registry tables share one shape:
 | [TOOL_REGISTRY.md](TOOL_REGISTRY.md) | All tools — mechanical capabilities dispatched by skills/agents |
 | [PATHWAY_REGISTRY.md](PATHWAY_REGISTRY.md) | All pathways — named synapse bundles |
 | [SCRIPT_REGISTRY.md](SCRIPT_REGISTRY.md) | All scripts — repo management scripts |
+| [SKILL_VOCABULARY.md](SKILL_VOCABULARY.md) | Controlled values for skill `domain` / `subdomain` / `scope` / `role` slots |
+| [AGENT_VOCABULARY.md](AGENT_VOCABULARY.md) | Controlled values for agent `domain` / `subdomain` / `scope` / `role` slots |
+| [PROTOCOL_VOCABULARY.md](PROTOCOL_VOCABULARY.md) | Controlled values for protocol `domain` / `subdomain` / `subject` / `kind` slots |
+| [TOOL_VOCABULARY.md](TOOL_VOCABULARY.md) | Controlled values for tool `domain` / `subdomain` / `action` / `target` / `kind` slots |
+| [PATHWAY_VOCABULARY.md](PATHWAY_VOCABULARY.md) | Controlled values for pathway `harness` field |
+| [SCRIPT_VOCABULARY.md](SCRIPT_VOCABULARY.md) | Controlled values for script `audience` / `action` / `scope` comment-frontmatter fields |
 

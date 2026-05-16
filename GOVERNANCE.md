@@ -55,7 +55,7 @@ A tool belongs in `{synapse,src}/tools/` when it encapsulates a reusable mechani
 Pathways (`pathways/`) are curated bundles of synapses (skills, agents, protocols, tools) installed together for a specific harness and use case. They define *what to install*, not *how to execute*.
 
 - **YAML format** — each pathway is a `.yaml` file with `name`, `description`, `harness`, `tags`, and `synapses` fields
-- **Harness value from taxonomy** — `harness` must be a value from `taxonomy/PATHWAY_TAXONOMY.md`
+- **Harness value from vocabulary** — `harness` must be a value from `registry/PATHWAY_VOCABULARY.md`
 - **All synapse paths resolve** — every path listed under `synapses:` must point to an existing artifact on disk
 - **Gatekeeper review required** — pathways land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
 - **Listed in PATHWAY_REGISTRY.md** — for discovery
@@ -197,7 +197,7 @@ Pathways clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper`.
 
 - [ ] Pathway `.yaml` file exists and is valid YAML
 - [ ] Required fields present: `name`, `description`, `harness`, `synapses`
-- [ ] `harness` value exists in `taxonomy/PATHWAY_TAXONOMY.md`
+- [ ] `harness` value exists in `registry/PATHWAY_VOCABULARY.md`
 - [ ] All synapse paths listed under `synapses:` resolve to existing artifacts on disk
 - [ ] If `inherits:` is set, the parent pathway exists
 - [ ] Listed in `PATHWAY_REGISTRY.md`
@@ -245,7 +245,7 @@ Examples:
 
 **Pathway-specific:**
 - REVISE: naming doesn't follow taxonomy patterns, description is placeholder, tags irrelevant, composition incoherent
-- REJECT: harness not in PATHWAY_TAXONOMY.md, synapse paths don't resolve, missing required fields
+- REJECT: harness not in `registry/PATHWAY_VOCABULARY.md`, synapse paths don't resolve, missing required fields
 
 ---
 
@@ -347,3 +347,5 @@ Per-type files:
 - Agents → `taxonomy/AGENT_TAXONOMY.md` / `registry/AGENT_VOCABULARY.md` / `registry/AGENTS_REGISTRY.md`
 - Protocols → `taxonomy/PROTOCOL_TAXONOMY.md` / `registry/PROTOCOL_VOCABULARY.md` / `registry/PROTOCOL_REGISTRY.md`
 - Tools → `taxonomy/TOOL_TAXONOMY.md` / `registry/TOOL_VOCABULARY.md` / `registry/TOOL_REGISTRY.md`
+- Pathways → `taxonomy/PATHWAY_TAXONOMY.md` (free-form naming patterns + frontmatter shape; no slug pattern) / `registry/PATHWAY_VOCABULARY.md` (controlled `harness` values) / `registry/PATHWAY_REGISTRY.md`
+- Scripts → `taxonomy/SCRIPT_TAXONOMY.md` (comment-frontmatter contract; no slug pattern, no YAML frontmatter slot) / `registry/SCRIPT_VOCABULARY.md` (controlled `audience` / `action` / `scope` values) / `registry/SCRIPT_REGISTRY.md`
