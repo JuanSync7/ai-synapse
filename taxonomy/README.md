@@ -11,5 +11,5 @@ Schema definitions for artifact metadata — slug pattern and required frontmatt
 | [AGENT_TAXONOMY.md](AGENT_TAXONOMY.md) | Agent schema `{domain}-{subdomain}-{scope}-{role}` + required fields. Values: [`../registry/AGENT_VOCABULARY.md`](../registry/AGENT_VOCABULARY.md) |
 | [PROTOCOL_TAXONOMY.md](PROTOCOL_TAXONOMY.md) | Protocol schema `{domain}-{subdomain}-{subject}-{kind}` + required fields. Values: [`../registry/PROTOCOL_VOCABULARY.md`](../registry/PROTOCOL_VOCABULARY.md) |
 | [TOOL_TAXONOMY.md](TOOL_TAXONOMY.md) | Tool schema `{domain}-{subdomain}-{action}-{target}` + required fields. Values: [`../registry/TOOL_VOCABULARY.md`](../registry/TOOL_VOCABULARY.md) |
-| [SCRIPT_TAXONOMY.md](SCRIPT_TAXONOMY.md) | Schema for script `audience`, `action`, and `scope` fields |
-| [PATHWAY_TAXONOMY.md](PATHWAY_TAXONOMY.md) | Schema for pathway `harness` field and naming conventions |
+| [SCRIPT_TAXONOMY.md](SCRIPT_TAXONOMY.md) | Comment-frontmatter contract for scripts (required `# @name` / `# @description` / `# @audience` / `# @action` / `# @scope` fields). Values: [`../registry/SCRIPT_VOCABULARY.md`](../registry/SCRIPT_VOCABULARY.md) |
+| [PATHWAY_TAXONOMY.md](PATHWAY_TAXONOMY.md) | Schema for pathway frontmatter (required fields) and naming conventions. Values: [`../registry/PATHWAY_VOCABULARY.md`](../registry/PATHWAY_VOCABULARY.md) |

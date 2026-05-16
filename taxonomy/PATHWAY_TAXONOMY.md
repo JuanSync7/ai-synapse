@@ -1,15 +1,21 @@
 # Pathway Taxonomy
 
-Controlled vocabulary for pathway metadata. When creating a new pathway, pick `harness` from the table below. Naming is free-form — see the Naming Conventions section for guidance.
+Naming and metadata rules for pathways. The controlled vocabulary for the `harness` field lives in [`registry/PATHWAY_VOCABULARY.md`](../registry/PATHWAY_VOCABULARY.md). The inventory of pathways currently in the repo lives in [`registry/PATHWAY_REGISTRY.md`](../registry/PATHWAY_REGISTRY.md). This file defines the *shape* and naming guidance; vocabulary holds the *values*; registry holds the *inventory*.
 
-## Harnesses
+Pathways have no slug slot vocabulary — naming is free-form within the patterns below. The only controlled value is `harness`, enumerated in `registry/PATHWAY_VOCABULARY.md`.
 
-| Harness | Description |
-|---------|-------------|
-| `claude` | Claude Code — installs to ~/.claude/skills/ |
-| `codex` | Codex CLI — installs to ~/.codex/skills/ |
-| `gemini` | Gemini CLI — installs to ~/.gemini/extensions/ |
-| `multi` | Installs to all supported harnesses |
+## Frontmatter
+
+Required fields on every pathway `.yaml`:
+
+```yaml
+name: <descriptor>      # see Naming Conventions below
+description: <string>
+harness: <value>        # must be a row in registry/PATHWAY_VOCABULARY.md
+synapses: [...]         # list of artifact paths
+```
+
+Optional: `tags`, `inherits`.
 
 ## Naming Conventions
 
@@ -49,4 +55,4 @@ Freeform — no controlled list. Use lowercase, hyphenated multi-word tags (e.g.
 
 ## Enforcement
 
-Naming conventions are guidance for authors — not enforced by pre-commit or structural validation. The synapse-router-artifact-gatekeeper evaluates naming quality during PR review using the patterns above as criteria. Pre-commit validates only structural fields (harness value, synapse paths, inherits target).
+Naming conventions are guidance for authors — not enforced by pre-commit or structural validation. The synapse-router-artifact-gatekeeper evaluates naming quality during PR review using the patterns above as criteria. Pre-commit validates only structural fields (harness value against `registry/PATHWAY_VOCABULARY.md`, synapse paths, inherits target).

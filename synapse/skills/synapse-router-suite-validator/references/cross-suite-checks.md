@@ -44,7 +44,8 @@ Loaded by `synapse-router-suite-validator` Phase 4. These checks are invisible t
 - agents → `registry/AGENT_VOCABULARY.md` (`domain`, `subdomain`, `scope`, `role`)
 - protocols → `registry/PROTOCOL_VOCABULARY.md` (`domain`, `subdomain`, `subject`, `kind`)
 - tools → `registry/TOOL_VOCABULARY.md` (`domain`, `subdomain`, `action`, `target`, `kind`)
-- pathways → `taxonomy/PATHWAY_TAXONOMY.md` (`harness`) *(pathways have no separate vocabulary file yet)*
+- pathways → `registry/PATHWAY_VOCABULARY.md` (`harness`)
+- scripts → `registry/SCRIPT_VOCABULARY.md` (`audience`, `action`, `scope`)
 
 **Taxonomies (shape, separate from values):** `taxonomy/<TYPE>_TAXONOMY.md` declares the required-fields list and slug pattern — load alongside for shape checks.
 
