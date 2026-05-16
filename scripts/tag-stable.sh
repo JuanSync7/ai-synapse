@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @name: tag-stable
+# @description: Promote the latest v<X>.<Y>.<Z>-pre.<N> tag to a stable v<X>.<Y>.<Z> tag and push
+# @audience: maintainer
+# @action: repair
+# @scope: repo
 # tag-stable.sh — promote the latest v<X>.<Y>.<Z>-pre.<N> tag to stable.
 #
 # Process:
