@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @name: tag-dev
+# @description: Classify branch diff against main and print the next pre-tag (dry run, no apply)
+# @audience: maintainer
+# @action: inspect
+# @scope: repo
 # tag-dev.sh — local convenience: classify the current branch's diff
 # against main, then PRINT (not apply) the next pre-tag.
 #
