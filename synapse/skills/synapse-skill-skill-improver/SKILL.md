@@ -15,16 +15,16 @@ Applies the autoresearch loop (modify → measure → keep if improved → repea
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
 ## MUST (every turn)
-- Record position: `Position: [node-id] — <context>`
-- Create tasks at session start (per Progress Tracking) and update at phase transitions
-- Set `model:` explicitly on every subagent dispatch
-- Apply structure-preserving edit rules when fixing flow-graph targets
+- Record position: `Position: [node-id] — <context>`; without this, multi-cycle runs lose track of which node a fix belongs to and re-enter nodes incorrectly
+- Create tasks at session start (per Progress Tracking) and update at phase transitions; without this, long sessions have no visible progress and the user cannot tell which pass is active
+- Set `model:` explicitly on every subagent dispatch; without this, inherited model selection is undefined and EVAL-E03/E08 fail every run
+- Apply structure-preserving edit rules when fixing flow-graph targets; without this, node renames or Load consolidations silently break the graph topology
 
 ## MUST NOT (global)
-- Change functional content — only fix items that fail criteria
-- Rewrite instructions just to "improve" phrasing — conciseness is itself a quality criterion
-- Modify test prompts or EVAL.md criteria to make them pass — the fix is always in SKILL.md
-- Guess when domain knowledge is missing — surface as blocker
+- Change functional content — only fix items that fail criteria; violating this risks introducing new failures in passing nodes
+- Rewrite instructions just to "improve" phrasing — conciseness is itself a quality criterion; phrasing-only rewrites inflate diff noise and can soften effective constraints
+- Modify test prompts or EVAL.md criteria to make them pass — the fix is always in SKILL.md; without this constraint the agent games the score by softening criteria instead of improving the skill, making the eval permanently meaningless
+- Guess when domain knowledge is missing — surface as blocker; silent guessing produces a passing score against fabricated criteria, which is worse than no score
 
 ## Wrong-Tool Detection
 - **User wants to create a new skill** → redirect to `/synapse-router-artifact-creator`
@@ -61,7 +61,7 @@ Do:
   3. Detect structure: flow-graph or prose — if prose, flag as structural finding and recommend `/synapse-router-artifact-creator` for migration
   4. Check for EVAL.md in target directory:
      - **Present** → use its EVAL-Sxx criteria in [S], EVAL-O/EVAL-E criteria and test prompts in [B]
-     - **Absent** and behavioral pass needed → offer to dispatch `/synapse-router-eval-writer skill <path>` as isolated subagent (model: sonnet, no session context — bias control)
+     - **Absent** and behavioral pass needed → offer to dispatch `/synapse-router-eval-writer skill <path>` as isolated subagent (model: sonnet, no session context — bias control); if the user declines, state the consequence: behavioral quality remains unverified for this run
 Don't:
   - Proceed with broken symlinks or unresolvable Load targets — FAIL LOUDLY with paths listed
   - Auto-convert prose to flow-graph — flag the finding, continue scoring against prose checklist
@@ -75,8 +75,12 @@ Load: `references/structural-checklist.md`, `references/flow-graph-pattern.md`, 
 Do:
   1. Score target against full structural checklist (baseline + extended + principles + flow-graph conformance) plus EVAL-Sxx criteria if EVAL.md exists
   2. List each failing item with one-line reason
-  3. Fix SKILL.md to address failures — if fix requires new companion file, dispatch `synapse-skill-companion-writer` (model: sonnet; Load: `agents/synapse-skill-companion-writer.md`, `references/companion-dispatch-protocol.md`)
+  3. Fix SKILL.md to address failures — if fix requires new companion file, dispatch `synapse-skill-companion-writer` (model: sonnet; Load: `agents/synapse-skill-companion-writer.md`, `references/companion-dispatch-protocol.md`); if multiple companion files are needed in the same cycle, dispatch them in parallel — not sequentially
   4. Re-score — if not at 100%, return to step 2
+
+  > **Fix boundary — correct vs. incorrect:**
+  > - CORRECT: "EVAL-S03 fails because no failure-mode rationale is present → add one-line consequence to each MUST item"
+  > - INCORRECT: "MUST block reads stiffly → rewrite for clarity" (item was passing; this is phrasing-only and breaks MUST NOT)
 Don't:
   - Continue past 2 fix cycles on the same failing item — surface as blocker
   - Fix items that pass — do not rewrite passing content
@@ -106,8 +110,9 @@ Load: `templates/score-card-format.md`
 Do:
   1. Present structural score card (if structural pass ran) — separate baseline, extended, EVAL-S, and flow-graph conformance tallies
   2. Present behavioral score card (if behavioral pass ran) — per-prompt per-criterion table
-  3. Surface remaining blockers with specific failing items and what's needed to resolve them
-  4. Suggest next steps (prose, not deterministic routing)
+  3. Surface remaining blockers — each blocker phrased as a specific question or gap (e.g., "Line 42 says X but the criterion requires Y — domain knowledge needed to resolve"); never phrase as "criterion N still failing"
+  4. Verify score card totals: count PASS cells in each grading table and confirm the cycle total (N/M) matches; report any mismatch
+  5. Suggest next steps (prose, not deterministic routing)
 Don't:
   - End without presenting score cards
   - Auto-route to next skill — suggest, don't dispatch

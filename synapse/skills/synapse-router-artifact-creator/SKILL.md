@@ -1,6 +1,6 @@
 ---
 name: synapse-router-artifact-creator
-description: Use when creating a new skill, protocol, agent, or tool in ai-synapse. Routes to type-specific creation flow.
+description: "Use when creating a new skill, protocol, agent, or tool in ai-synapse."
 domain: synapse
 subdomain: router
 scope: artifact
@@ -15,11 +15,11 @@ argument-hint: "<skill|protocol|agent|tool> [name]"
 Single entry point for creating a new ai-synapse artifact. The router commits to one artifact type before any type-specific content loads — three of the four flows never enter context for a given session. Shared mechanics (frontmatter validation, registry write, README row update, eval handoff, placement, draft-marking) run parametrically against `references/type-config.md`, never via `if $TYPE` branching.
 
 ## MUST (every turn)
-- Record position: `Position: [node-id] — <context>`
-- Confirm `$TYPE` ∈ {skill, protocol, agent, tool} BEFORE loading any flow file — `[ROUTE]` is a hard gate
-- Validate `$NAME` against `[a-z0-9-]+` BEFORE flow load — pattern hint on failure
-- Load EXACTLY ONE `references/flow-<type>.md` per session — token-budget invariant
-- Run all pre-flight validations BEFORE any file is written (atomic creation)
+- Record position: `Position: [node-id] — <context>` — without this, resumption after interruption has no anchor
+- Confirm `$TYPE` ∈ {skill, protocol, agent, tool} BEFORE loading any flow file — `[ROUTE]` is a hard gate — without this, an invalid type loads dead-end flow content and wastes token budget
+- Validate `$NAME` against `[a-z0-9-]+` BEFORE flow load — pattern hint on failure — without this, an invalid name propagates into registry and filesystem writes that cannot be safely rolled back
+- Load EXACTLY ONE `references/flow-<type>.md` per session — token-budget invariant — loading multiple flows inflates context and makes competing instructions active
+- Run all pre-flight validations BEFORE any file is written (atomic creation) — without this, a mid-flight failure leaves partial state with no clean rollback path
 
 ## MUST NOT (global)
 - Inline creation logic in this SKILL.md — routing only
@@ -32,9 +32,6 @@ Single entry point for creating a new ai-synapse artifact. The router commits to
 - **Idea exploration without a chosen artifact yet** → redirect to `/synapse-router-artifact-brainstormer`
 - **Asking whether an existing artifact passes promotion bar** → redirect to `/synapse-router-artifact-gatekeeper <path>`
 - **Creating multiple artifacts in one session** → reject; dispatch one parallel `synapse-router-artifact-creator` per artifact
-
-## Concurrency contract
-ONE artifact per invocation. Multi-artifact sessions use parallel `synapse-router-artifact-creator` agents.
 
 ## Progress Tracking
 

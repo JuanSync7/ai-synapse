@@ -10,8 +10,6 @@ user-invocable: true
 argument-hint: "<skill|protocol|agent|tool> <path-to-artifact>"
 ---
 
-# synapse-router-eval-writer
-
 Single entry point for generating an `EVAL.md` against an existing artifact (skill, protocol, agent, tool). The router commits to one type before any flow file loads — three of the four flows never enter context for a given session. The skill produces criteria; it does NOT grade the artifact (that is `/synapse-router-artifact-gatekeeper`).
 
 The four flows are asymmetric by design:
@@ -41,9 +39,6 @@ The four flows are asymmetric by design:
 - **Brainstorming what eval to write** → redirect to `/synapse-router-artifact-brainstormer`
 - **Path points at an existing EVAL.md, not the source artifact** → clarify and redirect to source artifact path
 - **Multiple artifacts in one session** → reject; dispatch one parallel `synapse-router-eval-writer` per artifact
-
-## Concurrency contract
-ONE artifact per invocation. Multi-artifact sessions use parallel `synapse-router-eval-writer` agents.
 
 ## Progress Tracking
 
@@ -104,13 +99,7 @@ Don't:
 
 | Output | Count | Purpose |
 |--------|-------|---------|
-| `EVAL.md` (or `<name>.eval.md` for flat artifacts) | 1 per invocation | Evaluation criteria + (skill only) test prompts |
-
-Output path semantics (encoded in `references/type-config.md`):
-- `skill`, `tool`: `<artifact-dir>/EVAL.md`
-- `agent`, `protocol`: `<artifact-name>.eval.md` adjacent to the flat `.md` file
-
-Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S, 7 EVAL-O, 4 test prompts").
+| `EVAL.md` (or `<name>.eval.md` for flat artifacts) | 1 per invocation | Evaluation criteria + (skill only) test prompts; path/tier-count semantics in `references/type-config.md` |
 
 ## Examples
 
@@ -118,19 +107,6 @@ Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S
 ```
 /synapse-router-eval-writer skill synapse/skills/synapse-skill-skill-improver
 → Wrote synapse/skills/synapse-skill-skill-improver/EVAL.md with 14 EVAL-S, 9 EVAL-O, 6 test prompts
-```
-
-**Invalid `$TYPE`:**
-```
-/synapse-router-eval-writer pathway synapse/pathways/full.yaml
-→ FAIL: $TYPE='pathway' invalid. Expected one of: skill, protocol, agent, tool.
-```
-
-**Type/path mismatch (`$TYPE=skill` but path is a flat .md):**
-```
-/synapse-router-eval-writer skill synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md
-→ FAIL: $TYPE='skill' expects a directory containing SKILL.md, got a flat .md file.
-  If this is an agent, use: /synapse-router-eval-writer agent synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md
 ```
 
 **Existing EVAL.md (no `--force`):**

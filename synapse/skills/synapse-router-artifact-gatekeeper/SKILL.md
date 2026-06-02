@@ -14,10 +14,21 @@ Synapse gatekeeper is the promotion gate for ai-synapse. An artifact is not read
 
 Five artifact types, five flows:
 - **Skill** (default) — `SKILL.md` in a directory under `src/skills/` → three tiers (structural, quality, registry)
-- **Agent** — `.md` file in `src/agents/` → two tiers (structural, quality) via `references/agent-checklist.md`
-- **Protocol** — `.md` file in `src/protocols/` → two tiers (structural, conformance) via `references/protocol-checklist.md`
+- **Agent** — `.md` file in `src/agents/` or `synapse/agents/` → two tiers (structural, quality) via `references/agent-checklist.md`
+- **Protocol** — `.md` file in `src/protocols/` or `synapse/protocols/` → two tiers (structural, conformance) via `references/protocol-checklist.md`
 - **Tool** — `TOOL.md` in a directory under `src/tools/` → two tiers (structural, quality)
 - **Pathway** — `.yaml` file in `pathways/` → two tiers (structural, quality)
+
+## MUST (every turn)
+- Record position: `Position: [phase-name] — <artifact-path> (<artifact-type>)`
+- Mark each TaskCreate item `in_progress` when starting a phase, `completed` when done
+- Emit verdict as the first line of output — never prepend preamble, headers, or blank lines before it
+
+## MUST NOT (global)
+- Evaluate a EVAL.md-dependent tier when EVAL.md is absent — skip and note as skipped
+- Issue APPROVE when any tier item is unchecked `[ ]`
+- Suppress a REJECT-tier finding to soften the verdict
+- Modify the artifact being reviewed — read only
 
 ---
 
@@ -54,16 +65,18 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 | Input | Required | Description |
 |-------|----------|-------------|
-| `<artifact-path>` | Yes | Path to the artifact: skill directory (containing SKILL.md), agent `.md` file in `src/agents/`, protocol `.md` file in `src/protocols/`, tool directory (containing TOOL.md) in `src/tools/`, or pathway `.yaml` file in `pathways/` |
+| `<artifact-path>` | Yes | Path to the artifact: skill directory (containing SKILL.md), agent `.md` file in `src/agents/` or `synapse/agents/`, protocol `.md` file in `src/protocols/` or `synapse/protocols/`, tool directory (containing TOOL.md) in `src/tools/`, or pathway `.yaml` file in `pathways/` |
 | `--score <0-100>` | No | Eval score from a prior `/synapse-skill-skill-improver` or auto-research run (skills only) |
 
 ---
 
+## Flow
+
 ## Phase 1 — Load and Detect Type
 
 **Artifact type detection:**
-- Path matches `src/agents/<domain>/<agent>.md` → **agent flow**
-- Path matches `src/protocols/<domain>/<protocol>.md` → **protocol flow**
+- Path matches `src/agents/<domain>/<agent>.md` or `synapse/agents/<domain>/<name>/<agent>.md` → **agent flow**
+- Path matches `src/protocols/<domain>/<protocol>.md` or `synapse/protocols/<domain>/<protocol>.md` → **protocol flow**
 - Path contains a `TOOL.md` file (under `src/tools/`) → **tool flow**
 - Path matches `pathways/<pathway>.yaml` → **pathway flow**
 - Path contains a `SKILL.md` file → **skill flow** (default)
@@ -88,8 +101,8 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 **Pathway flow — read:**
 - The pathway `.yaml` file itself
-- > **Read [`../../../../registry/PATHWAY_VOCABULARY.md`](../../../../registry/PATHWAY_VOCABULARY.md)** for the controlled `harness` values
-- > **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for naming conventions and frontmatter shape
+- > **Read [`../../../registry/PATHWAY_VOCABULARY.md`](../../../registry/PATHWAY_VOCABULARY.md)** for the controlled `harness` values
+- > **Read [`../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../taxonomy/PATHWAY_TAXONOMY.md)** for naming conventions and frontmatter shape
 
 **Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/synapse-skill-skill-improver` or `/auto-research`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
 
@@ -115,8 +128,8 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 ### Skill flow
 
-> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md)** for the shape of skill frontmatter (required fields, slug pattern).
-> **Read [`../../../../registry/SKILL_VOCABULARY.md`](../../../../registry/SKILL_VOCABULARY.md)** to validate `domain`, `subdomain`, `scope`, and `role` values against the controlled vocabulary.
+> **Read [`../../../taxonomy/SKILL_TAXONOMY.md`](../../../taxonomy/SKILL_TAXONOMY.md)** for the shape of skill frontmatter (required fields, slug pattern).
+> **Read [`../../../registry/SKILL_VOCABULARY.md`](../../../registry/SKILL_VOCABULARY.md)** to validate `domain`, `subdomain`, `scope`, and `role` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -145,8 +158,8 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Tool flow
 
-> **Read [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md)** for the shape of tool frontmatter (required fields, slug pattern). Note: `kind` is a frontmatter-only field, NOT a slug slot.
-> **Read [`../../../../registry/TOOL_VOCABULARY.md`](../../../../registry/TOOL_VOCABULARY.md)** to validate `domain`, `subdomain`, `action`, `target`, and `kind` values against the controlled vocabulary.
+> **Read [`../../../taxonomy/TOOL_TAXONOMY.md`](../../../taxonomy/TOOL_TAXONOMY.md)** for the shape of tool frontmatter (required fields, slug pattern). Note: `kind` is a frontmatter-only field, NOT a slug slot.
+> **Read [`../../../registry/TOOL_VOCABULARY.md`](../../../registry/TOOL_VOCABULARY.md)** to validate `domain`, `subdomain`, `action`, `target`, and `kind` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -163,8 +176,8 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Pathway flow
 
-> **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for the shape of pathway frontmatter (required fields).
-> **Read [`../../../../registry/PATHWAY_VOCABULARY.md`](../../../../registry/PATHWAY_VOCABULARY.md)** to validate `harness` against the controlled vocabulary.
+> **Read [`../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../taxonomy/PATHWAY_TAXONOMY.md)** for the shape of pathway frontmatter (required fields).
+> **Read [`../../../registry/PATHWAY_VOCABULARY.md`](../../../registry/PATHWAY_VOCABULARY.md)** to validate `harness` against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -226,8 +239,8 @@ Use the Tier 2 (Conformance) checks from `references/protocol-checklist.md`.
 
 **Agent, protocol, tool, and pathway flows skip this phase entirely** — their registry checks are handled in Phase 2.
 
-> **Read [`../../../../registry/SKILL_REGISTRY.md`](../../../../registry/SKILL_REGISTRY.md)** to verify the skill has an inventory row.
-> **Read [`../../../SKILLS_REGISTRY.yaml`](../../../SKILLS_REGISTRY.yaml)** to verify pipeline stage registration (pipeline-routable skills only).
+> **Read [`../../../registry/SKILL_REGISTRY.md`](../../../registry/SKILL_REGISTRY.md)** to verify the skill has an inventory row.
+> **Read [`../../SKILLS_REGISTRY.yaml`](../../SKILLS_REGISTRY.yaml)** to verify pipeline stage registration (pipeline-routable skills only).
 
 A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b) produces a defined artifact type, and (c) other skills in the registry depend on its output via `requires_all` or `requires_any`.
 
@@ -243,7 +256,7 @@ A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b
 
 ## Phase 5 — Verdict and Report
 
-> **Read [`../../../../GOVERNANCE.md`](../../../../GOVERNANCE.md)** for authoritative REVISE vs. REJECT classification.
+> **Read [`../../../GOVERNANCE.md`](../../../GOVERNANCE.md)** for authoritative REVISE vs. REJECT classification.
 
 **Verdict rules:**
 

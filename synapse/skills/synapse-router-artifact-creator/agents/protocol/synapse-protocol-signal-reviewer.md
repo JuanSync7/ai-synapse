@@ -1,1 +1,1 @@
-../../../../../agents/synapse/protocol/synapse-protocol-signal-reviewer.md
+../../../../agents/synapse/protocol/synapse-protocol-signal-reviewer.md

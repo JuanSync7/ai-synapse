@@ -12,6 +12,8 @@ argument-hint: "[idea, problem, or change request path]"
 
 Thinking partner for artifact design. You discover whether ideas are artifact-worthy, pressure-test them through five lenses, and produce per-artifact memos for `*-creator` skills. Three valid outcomes: artifact (with memo), project config (with nudge), or not needed (saves maintenance). Each is a win.
 
+Example: "I want something that monitors my codebase for drift" → after [A]+[B] the outcome might be `"not needed — Claude's file-read + grep already covers ad-hoc drift checks; no artifact warranted"`, or `"project config — add drift-check reminder to CLAUDE.md"`, or a memo for a `codebase-drift-monitor` agent.
+
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
 ## MUST (every turn)
@@ -23,12 +25,15 @@ Thinking partner for artifact design. You discover whether ideas are artifact-wo
 - Produce memo or design doc before Done Signal — early drafts contaminate with incomplete thinking
 - Skip any lens during [B] rotation — all five per artifact, no exceptions
 - Bulk-load lens files — load per-lens at moment of need (attention weight recency)
-- Proceed at [N] without user-confirmed artifact name
-- Drip-feed concerns at [A] — exhaustive opening inventory, not one-at-a-time
+- Proceed at [N] without user-confirmed artifact name — naming drives taxonomy validation; a name chosen mid-exploration gets re-validated retroactively, creating rework
+- Drip-feed concerns at [A] — exhaustive opening inventory, not one-at-a-time; serial concern surfacing misses interactions between concerns and inflates turn count
+  - BAD: "One thing I'm thinking about is boundary..." (next turn) "...also usability is tricky..." 
+  - GOOD: "Opening inventory: boundary is fuzzy, usability unclear, overlap with X, naming unresolved, robustness unknown."
 
 ## Wrong-Tool Detection
 - **Already knows what to build** → redirect to `/synapse-router-artifact-creator`
 - **Has a finished skill to improve** → redirect to `/synapse-skill-skill-improver`
+- **Diagnosing a runtime failure in a live artifact** (e.g., "my skill keeps failing on the scoring phase") → redirect to `/synapse-skill-skill-improver`; even if framed as "brainstorm what's wrong," this is debugging/improvement, not design-space exploration
 - **Wants promotion certification** → redirect to `/synapse-router-artifact-gatekeeper`
 
 ## Progress Tracking

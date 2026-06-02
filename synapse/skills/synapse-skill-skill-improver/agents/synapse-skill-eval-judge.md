@@ -1,1 +1,1 @@
-../../../../agents/synapse/skill-eval/synapse-skill-eval-judge.md
+../../../agents/synapse/skill-eval/synapse-skill-eval-judge.md

@@ -1,1 +1,1 @@
-../../../../agents/synapse/skill/synapse-skill-companion-writer.md
+../../../agents/synapse/skill/synapse-skill-companion-writer.md

@@ -53,7 +53,9 @@ Gate — all must be true before exiting:
 - [ ] No unresolved duplicate in PROTOCOL_REGISTRY.md
 - [ ] `domain`, `subdomain`, `subject`, `kind` all selected from PROTOCOL_VOCABULARY.md
 
-Exit: gate passed → `[W]`
+Exit:
+- Gate passed → `[W]`
+- Any anchor vague or missing → `[A]` : re-elicit the specific gap; do not advance
 
 ---
 
@@ -164,6 +166,10 @@ Do: Print verbatim summary:
 - Domain README row added
 - EVAL.md scaffold dispatched to `synapse-router-eval-writer (protocol flow)`
 - Status: `draft` — run `/synapse-router-artifact-gatekeeper <protocol-path>` before promoting
+
+Don't:
+- Auto-route to the next skill — suggest `/synapse-router-artifact-gatekeeper`, do not dispatch it
+- Claim eval completion — handoff was dispatched, not awaited
 
 ---
 
